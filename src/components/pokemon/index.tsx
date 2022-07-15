@@ -1,11 +1,12 @@
-import { Box, Flex, Heading, HStack, Stack, Tooltip } from '@chakra-ui/react'
-import { MdCatchingPokemon } from 'react-icons/md'
+import { Box, Heading, HStack, Stack } from '@chakra-ui/react'
 import Icon from '@components/icon'
 import MotionBox from '@components/motion-box'
 import { pokemonTypeData } from '@data/pokemon-types'
-import { memo } from 'react'
+import { usePagination } from '@hooks/usePagination'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
+import { memo } from 'react'
+import { MdCatchingPokemon } from 'react-icons/md'
 import { useLocalStorage } from 'react-use'
 
 const Pokemon = memo(({ pokemon }: { pokemon: Pokemon }) => {
@@ -13,6 +14,7 @@ const Pokemon = memo(({ pokemon }: { pokemon: Pokemon }) => {
   const [previousPokemonId, setPreviousPokemonId] = useLocalStorage<
     Pokemon['id'] | null
   >('previous', null)
+  const { currentPage } = usePagination()
   const primaryType = pokemonTypeData[pokemon.type[0]]
   const secondaryType = pokemonTypeData[pokemon.type[1]] || null
 
@@ -80,6 +82,8 @@ const PokemonImage = ({ image, alt }: { image: string; alt: string }) => {
     <MotionBox
       zIndex={1}
       display="flex"
+      maxH="170px"
+      overflow="hidden"
       pointerEvents="none"
       alignItems="center"
       alignSelf="flex-end"

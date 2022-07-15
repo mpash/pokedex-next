@@ -4,6 +4,7 @@ import MotionBox from '@components/motion-box'
 import PaginationBar from '@components/pagination-bar'
 import Pokemon from '@components/pokemon'
 import { usePagination } from '@hooks/usePagination'
+import { debounce } from 'lodash/fp'
 import Image from 'next/image'
 import { createRef, RefObject, useEffect, useRef } from 'react'
 import { useLocalStorage } from 'react-use'
@@ -45,10 +46,18 @@ const PokemonList = () => {
     },
     {},
   )
+  useEffect(() => {
+    if (!previousPokemonId) {
+      containerRef?.current?.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+  }, [])
 
   useEffect(() => {
-    containerRef?.current?.scrollTo({ top: 0, behavior: 'smooth' })
-  }, [containerRef, currentPage])
+    const waitToScroll = debounce(100, () =>
+      containerRef?.current?.scrollTo({ top: 0, behavior: 'smooth' }),
+    )
+    // waitToScroll()
+  }, [currentPage])
 
   useEffect(() => {
     if (previousPokemonId && !!refs[previousPokemonId]?.current) {
