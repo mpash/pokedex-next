@@ -26,7 +26,7 @@ export default async function handler(
 
       const profileImages: string[] =
         $('.profile-images')
-          .html()z
+          .html()
           ?.trim()
           ?.trim()
           .split('\n')
