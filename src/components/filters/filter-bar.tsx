@@ -79,7 +79,14 @@ const FilterBar = () => {
         </Button> */}
       </HStack>
     ),
-    [toggleNumberOrder, selectedFilter, numberOrder, toggleAlphaOrder, alphaOrder, handleSearch],
+    [
+      toggleNumberOrder,
+      selectedFilter,
+      numberOrder,
+      toggleAlphaOrder,
+      alphaOrder,
+      handleSearch,
+    ],
   )
 }
 
@@ -88,18 +95,23 @@ export default FilterBar
 const ResetFiltersButton = memo(
   ({ inputRef }: { inputRef: RefObject<HTMLInputElement> }) => {
     const { resetAllFilters } = useFilters()
-    const { resetSelectedTypes, setIsExact } = useSelectedPokemonTypes()
+    const { resetSelectedTypes, setExactFilterEnabled: setIsExact } =
+      useSelectedPokemonTypes()
     const { onPageChange } = usePagination()
-    // const handleClearFilters = 
+    // const handleClearFilters =
     return (
-      <Button size="sm" variant="outline" onClick={() => {
-        resetAllFilters()
-        resetSelectedTypes()
-        setIsExact(false)
-        onPageChange(1)
-        if (!inputRef?.current) return
-        inputRef.current.value = ''
-      }}>
+      <Button
+        size="sm"
+        variant="outline"
+        onClick={() => {
+          resetAllFilters()
+          resetSelectedTypes()
+          setIsExact(false)
+          onPageChange(1)
+          if (!inputRef?.current) return
+          inputRef.current.value = ''
+        }}
+      >
         <Icon w="18px" fontSize="18px" icon={faFilterSlash} />
       </Button>
     )

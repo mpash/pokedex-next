@@ -1,4 +1,4 @@
-import { Box, Flex, Heading, HStack, Stack } from '@chakra-ui/react'
+import { Box, Flex, Heading, HStack, Stack, Tooltip } from '@chakra-ui/react'
 import { MdCatchingPokemon } from 'react-icons/md'
 import Icon from '@components/icon'
 import MotionBox from '@components/motion-box'
@@ -10,10 +10,11 @@ import { useLocalStorage } from 'react-use'
 
 const Pokemon = memo(({ pokemon }: { pokemon: Pokemon }) => {
   const router = useRouter()
-  const [previousPokemonId, setPreviousPokemonId] = useLocalStorage<Pokemon['id'] | null>('previous', null)
+  const [previousPokemonId, setPreviousPokemonId] = useLocalStorage<
+    Pokemon['id'] | null
+  >('previous', null)
   const primaryType = pokemonTypeData[pokemon.type[0]]
   const secondaryType = pokemonTypeData[pokemon.type[1]] || null
-  
 
   const props = !!secondaryType
     ? {
@@ -53,11 +54,15 @@ const Pokemon = memo(({ pokemon }: { pokemon: Pokemon }) => {
         alt={pokemon.ThumbnailAltText}
       />
       <PokemonNumber number={pokemon.number} />
-      <Stack alignItems="center">
+      <Stack zIndex={1} alignItems="center">
         <Heading size="md" color="gray.700" noOfLines={1}>
           {pokemon.name}
         </Heading>
         <PokemonTypes types={pokemon.type} />
+        <PokemonTypes
+          size="sm"
+          types={pokemon.weakness.map(w => w.toLowerCase())}
+        />
       </Stack>
     </MotionBox>
   )
@@ -75,6 +80,7 @@ const PokemonImage = ({ image, alt }: { image: string; alt: string }) => {
     <MotionBox
       zIndex={1}
       display="flex"
+      pointerEvents="none"
       alignItems="center"
       alignSelf="flex-end"
       justifyContent="center"
@@ -95,64 +101,70 @@ const PokemonImage = ({ image, alt }: { image: string; alt: string }) => {
   )
 }
 
-export const PokemonTypes = memo(({ types }: { types: string[] }) => {
-  return (
-    <HStack zIndex={2} spacing={2}>
-      {types.map((type: any, index: number) => {
-        const { icon, primary, color } = pokemonTypeData[type]
-        return (
-          <Box
-            py={1}
-            px={2}
-            key={index}
-            color={color}
-            display="flex"
-            fontWeight={700}
-            bgColor={primary}
-            borderRadius="20px"
-            alignItems="center"
-            fontSize={[10, 'xs']}
-            justifyContent="center"
-            textTransform="uppercase"
-          >
-            {typeof icon === 'function' && (
-              <Box mr={1} minW="14px" maxH="14px" fontSize="14px">
-                {icon()}
-              </Box>
-            )}
-            {typeof icon === 'object' && (
-              <Icon
-                mr={1}
-                minW="14px"
-                maxH="14px"
-                fixedWidth
-                fontSize="14px"
-                icon={icon}
-              />
-            )}
-            <Box>{type}</Box>
-          </Box>
-        )
-      })}
-    </HStack>
-  )
-})
+export const PokemonTypes = memo(
+  ({ size = 'md', types }: { size?: 'md' | 'sm'; types: string[] }) => {
+    return (
+      <HStack zIndex={2} spacing={2}>
+        {types.map((type: any, index: number) => {
+          const { icon, primary, color } = pokemonTypeData[type]
+          return (
+            <Box
+              key={type}
+              py={size === 'sm' ? 1.5 : 1}
+              px={size === 'sm' ? 1.5 : 2}
+              color={color}
+              display="flex"
+              fontWeight={700}
+              bgColor={primary}
+              borderRadius={size === 'sm' ? '100%' : '25px'}
+              alignItems="center"
+              fontSize={size === 'md' ? 'xs' : '8px'}
+              // fontSize={[10, 'xs']}
+              justifyContent="center"
+              textTransform="uppercase"
+              title={type}
+            >
+              {/* {typeof icon === 'function' && (
+                <Box mr={1} minW="14px" maxH="14px" fontSize="14px">
+                  {icon()}
+                </Box>
+              )} */}
+              {typeof icon === 'object' && (
+                <Icon
+                  mr={size === 'sm' ? 0 : 1}
+                  minW={size === 'md' ? '14px' : '12px'}
+                  maxH={size === 'md' ? '14px' : '12px'}
+                  fixedWidth
+                  fontSize={size === 'md' ? '14px' : '12px'}
+                  icon={icon}
+                />
+              )}
+              <Box hidden={size === 'sm'}>{type}</Box>
+            </Box>
+          )
+        })}
+      </HStack>
+    )
+  },
+)
 
 PokemonTypes.displayName = 'PokemonTypes'
 
 const PokemonNumber = ({ number }: { number: string }) => {
   return (
     <Box
-      width="100%"
-      fontSize={40}
-      textAlign="center"
-      fontWeight="bold"
-      bgClip="text"
+      fontSize={50}
+      fontWeight="black"
+      // bgClip="text"
       pos="absolute"
-      top={4}
-      color="blackAlpha.300"
+      // whiteSpace="nowrap"
+      top={0}
+      right={3}
+      color="blackAlpha.200"
+      // textShadow="0px 0px 10px rgba(0, 0, 0, 0.1)"
       fontFamily="Arial"
       zIndex={0}
+      // transform="rotate(45deg)"
       sx={{
         fontVariantNumeric: 'tabular-nums',
       }}

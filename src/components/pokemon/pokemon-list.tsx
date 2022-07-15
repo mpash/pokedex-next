@@ -1,12 +1,11 @@
 import { Flex } from '@chakra-ui/react'
+import { usePokemonList } from '@components/hooks/usePokemonList'
 import MotionBox from '@components/motion-box'
+import PaginationBar from '@components/pagination-bar'
 import Pokemon from '@components/pokemon'
 import { usePagination } from '@hooks/usePagination'
 import Image from 'next/image'
-import { createRef, RefObject, useEffect, useState } from 'react'
-import { usePokemonList } from '@components/hooks/usePokemonList'
-import PaginationBar from '@components/pagination-bar'
-import { debounce } from 'lodash/fp'
+import { createRef, RefObject, useEffect, useRef } from 'react'
 import { useLocalStorage } from 'react-use'
 
 const PokemonList = () => {
@@ -38,7 +37,7 @@ const PokemonList = () => {
     }
   }, [totalPages, currentPage, onPageChange])
 
-  const containerRef: RefObject<HTMLDivElement> = createRef()
+  const containerRef = useRef<HTMLDivElement>(null)
   const refs: { [k: number]: RefObject<HTMLDivElement> } = pokemon.reduce(
     (acc, pokemonItem) => {
       acc[pokemonItem.id] = createRef<HTMLDivElement>()
@@ -48,10 +47,8 @@ const PokemonList = () => {
   )
 
   useEffect(() => {
-    if (containerRef.current) {
-      containerRef.current.scrollTo({ top: 0 })
-    }
-  }, [currentPage, containerRef])
+    containerRef?.current?.scrollTo({ top: 0, behavior: 'smooth' })
+  }, [containerRef, currentPage])
 
   useEffect(() => {
     if (previousPokemonId && !!refs[previousPokemonId]?.current) {
@@ -61,7 +58,7 @@ const PokemonList = () => {
         setPreviousPokemonId(null)
       }
     }
-  }, [refs, previousPokemonId])
+  }, [refs, previousPokemonId, setPreviousPokemonId])
 
   if (isLoading) {
     return (
@@ -118,44 +115,39 @@ const PokemonList = () => {
       }}
       h="100%"
       overflowY="scroll"
-      // onScroll={e => {
-      //   // e.stopPropagation()
-      // }}
-      // scrollBehavior="smooth"
-      // overflowX="hidden"
       drag="x"
-      dragSnapToOrigin
       dragConstraints={{ left: 0, right: 0 }}
-      // dragTransition={{ bounceStiffness: 900, bounceDamping: 100 }}
-      // whileDrag={{ scale: 0.95 }}
       dragElastic={0}
       dragMomentum={false}
       onDragEnd={(event, info) => {
-        if(info.offset.y > 0 || info.offset.y < 0) return
-        if (info.offset.x < 0) {
+        const realY =
+          info.velocity.y < 0 ? info.velocity.y * -1 : info.velocity.y
+        const realX =
+          info.velocity.x < 0 ? info.velocity.x * -1 : info.velocity.x
+        if (realY > realX) return
+        if (info.velocity.x < 0) {
           onNextPage()
         } else {
           onPreviousPage()
         }
       }}
-      // WebkitOverflowScrolling="touch"
       sx={{
-        touchAction: 'none',
-        '-webkit-overflow-scrolling': 'touch',
+        overflowScrolling: 'touch',
+        WebkitOverflowScrolling: 'touch',
       }}
     >
       {!!pokemon &&
         pokemon
           .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
-          .map((pokemon: Pokemon, index) => {
+          .map((pokemon: Pokemon) => {
             return (
               <MotionBox
                 layout
                 key={pokemon.number}
                 ref={refs[pokemon.id]}
-                initial={{ opacity: 0, y: -100 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -100 }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
               >
                 <Pokemon pokemon={pokemon} />
               </MotionBox>

@@ -1,6 +1,6 @@
 import { Box, Heading, Text } from '@chakra-ui/react'
 import FilterBar from '@components/filters/filter-bar'
-import TypeFilter from '@components/filters/type-filter'
+import PokemonTypeFilter from '@components/filters/pokemon-type-filter'
 import PokemonList from '@components/pokemon/pokemon-list'
 import type { NextPage } from 'next'
 import Head from 'next/head'
@@ -32,7 +32,7 @@ const Home: NextPage = () => {
           </Text>
         </Box>
         <FilterBar />
-        <TypeFilter />
+        <PokemonTypeFilter />
         <PokemonList />
       </Box>
     </div>

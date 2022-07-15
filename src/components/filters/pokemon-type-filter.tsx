@@ -1,12 +1,14 @@
 import { Box, Button, Divider, HStack, Text, Tooltip } from '@chakra-ui/react'
 import {
+  faBolt,
+  faBoltSlash,
   faChevronDown,
   faClone,
   faEye,
   faEyeSlash,
 } from '@fortawesome/pro-solid-svg-icons'
-import { memo, useState } from 'react'
-import { useLocalStorage, useScrollbarWidth } from 'react-use'
+import { memo } from 'react'
+import { useLocalStorage } from 'react-use'
 import { pokemonTypeData } from '../../data/pokemon-types'
 import {
   PokemonType,
@@ -14,18 +16,20 @@ import {
 } from '../../hooks/useSelectedPokemonTypes'
 import Icon from '../icon'
 
-const TypeFilter = () => {
+const PokemonTypeFilter = () => {
   const [isExpanded, setIsExpanded] = useLocalStorage('expand-types', false)
   const {
     clearAllSelectedTypes,
     selectedTypes,
     selectAllTypes,
     totalTypes,
-    isExact,
+    exactFilterEnabled,
     isSelected,
     removeSelectedType,
-    setIsExact,
+    setExactFilterEnabled,
     addSelectedType,
+    weakFilterEnabled,
+    setWeakFilterEnabled,
   } = useSelectedPokemonTypes()
 
   const handleClick = (type: PokemonType) => {
@@ -55,14 +59,29 @@ const TypeFilter = () => {
         <HStack shouldWrapChildren>
           <Button
             size="xs"
-            isActive={isExact}
+            isActive={weakFilterEnabled}
             onClick={() => {
-              // Buggy
-              // if (!isExact) {
-              //   clearAllSelectedTypes()
-              //   addSelectedType('grass')
-              // }
-              setIsExact(!isExact)
+              setExactFilterEnabled(false)
+              setWeakFilterEnabled(!weakFilterEnabled)
+            }}
+            title="Weak Against"
+          >
+            <Icon
+              w="14px"
+              maxH="14px"
+              fontSize="14px"
+              icon={weakFilterEnabled ? faBolt : faBoltSlash}
+            />
+            <Box as="span" ml={1} display={['none', 'block']}>
+              Weak Against
+            </Box>
+          </Button>
+          <Button
+            size="xs"
+            isDisabled={weakFilterEnabled}
+            isActive={exactFilterEnabled}
+            onClick={() => {
+              setExactFilterEnabled(!exactFilterEnabled)
             }}
             title="Exact Match"
           >
@@ -86,7 +105,7 @@ const TypeFilter = () => {
           <Button
             size="xs"
             onClick={() => {
-              setIsExact(false)
+              // setExactFilterEnabled(false)
               selectAllTypes()
             }}
             isActive={selectedTypes.length < totalTypes}
@@ -143,12 +162,16 @@ const TypeFilter = () => {
   )
 }
 
-export default TypeFilter
+export default PokemonTypeFilter
 
 const TypeBadge = memo(
   ({ type, handleClick }: { type: PokemonType; handleClick: any }) => {
     const { icon, primary, color } = pokemonTypeData[type]
-    const { isSelected, isExact, selectedTypes } = useSelectedPokemonTypes()
+    const {
+      isSelected,
+      exactFilterEnabled: isExact,
+      selectedTypes,
+    } = useSelectedPokemonTypes()
     const maxSelected = isExact && selectedTypes.length === 2
     const isDisabled = maxSelected && !isSelected(type)
     return (

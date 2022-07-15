@@ -5,12 +5,13 @@ import {
   useContext,
   useState,
 } from 'react'
+import { useLocalStorage } from 'react-use'
 import { pokemonTypeData } from '../data/pokemon-types'
 
 export type PokemonType = keyof typeof pokemonTypeData
 const pokemonTypes = Object.keys(pokemonTypeData) as PokemonType[]
 
-const SelectedTypesContext = createContext<{
+type SelectedPokemonTypesContext = {
   pokemonTypes: PokemonType[]
   totalTypes: number
   selectedTypes: PokemonType[]
@@ -20,9 +21,14 @@ const SelectedTypesContext = createContext<{
   resetSelectedTypes: () => void
   selectAllTypes: () => void
   isSelected: (type: PokemonType) => boolean
-  isExact: boolean
-  setIsExact: (isExact: boolean) => void
-}>(null as any)
+  exactFilterEnabled: boolean
+  setExactFilterEnabled: (isExact: boolean) => void
+  weakFilterEnabled: boolean
+  setWeakFilterEnabled: (weakFilterEnabled: boolean) => void
+}
+const SelectedPokemonTypesContext = createContext<SelectedPokemonTypesContext>(
+  null as any,
+)
 
 export const SelectedPokemonTypesProvider = ({
   children,
@@ -30,55 +36,70 @@ export const SelectedPokemonTypesProvider = ({
   children?: ReactNode
 }) => {
   const totalTypes = pokemonTypes.length
-  const [selectedTypes, setSelectedTypes] =
-    useState<PokemonType[]>(pokemonTypes)
-  const [isExact, setIsExact] = useState(false)
+  const [selectedTypes, setSelectedTypes] = useLocalStorage<PokemonType[]>(
+    'selected-types',
+    pokemonTypes,
+  )
+  const [exactFilterEnabled, setExactFilterEnabled] = useState(false)
+  const [weakFilterEnabled, setWeakFilterEnabled] = useState(false)
 
   const addSelectedType = useCallback(
     (type: PokemonType) => {
+      if (!selectedTypes) return
       if (selectedTypes.includes(type)) return
       setSelectedTypes([...selectedTypes, type])
     },
-    [selectedTypes],
+    [selectedTypes, setSelectedTypes],
   )
+
   const removeSelectedType = useCallback(
     (type: PokemonType) => {
+      if (!selectedTypes) return
       setSelectedTypes(selectedTypes.filter(t => t !== type))
+    },
+    [selectedTypes, setSelectedTypes],
+  )
+
+  const clearAllSelectedTypes = useCallback(() => {
+    setSelectedTypes([])
+  }, [setSelectedTypes])
+
+  const selectAllTypes = useCallback(() => setSelectedTypes(pokemonTypes), [])
+
+  const isSelected = useCallback(
+    (type: PokemonType) => {
+      if (!selectedTypes) return false
+      return selectedTypes.includes(type)
     },
     [selectedTypes],
   )
-  const clearAllSelectedTypes = useCallback(() => {
-    setSelectedTypes([])
-  }, [])
-  const selectAllTypes = useCallback(() => setSelectedTypes(pokemonTypes), [])
-  const isSelected = useCallback(
-    (type: PokemonType) => selectedTypes.includes(type),
-    [selectedTypes],
-  )
+
   const resetSelectedTypes = useCallback(
     () => setSelectedTypes(pokemonTypes),
-    [],
+    [setSelectedTypes],
   )
 
   return (
-    <SelectedTypesContext.Provider
+    <SelectedPokemonTypesContext.Provider
       value={{
-        isExact,
+        exactFilterEnabled,
+        setExactFilterEnabled,
+        weakFilterEnabled,
+        setWeakFilterEnabled,
         pokemonTypes,
         totalTypes,
-        selectedTypes,
+        selectedTypes: selectedTypes ?? [],
         addSelectedType,
         removeSelectedType,
         clearAllSelectedTypes,
         resetSelectedTypes,
         selectAllTypes,
         isSelected,
-        setIsExact,
       }}
     >
       {children}
-    </SelectedTypesContext.Provider>
+    </SelectedPokemonTypesContext.Provider>
   )
 }
 
-export const useSelectedPokemonTypes = () => useContext(SelectedTypesContext)
+export const useSelectedPokemonTypes = () => useContext(SelectedPokemonTypesContext)
