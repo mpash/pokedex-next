@@ -39,35 +39,35 @@ const PokemonList = () => {
   }, [totalPages, currentPage, onPageChange])
 
   const containerRef = useRef<HTMLDivElement>(null)
-  const refs: { [k: number]: RefObject<HTMLDivElement> } = pokemon.reduce(
-    (acc, pokemonItem) => {
-      acc[pokemonItem.id] = createRef<HTMLDivElement>()
-      return acc
-    },
-    {},
-  )
+  // const refs: { [k: number]: RefObject<HTMLDivElement> } = pokemon.reduce(
+  //   (acc, pokemonItem) => {
+  //     acc[pokemonItem.id] = createRef<HTMLDivElement>()
+  //     return acc
+  //   },
+  //   {},
+  // )
   useEffect(() => {
     if (!previousPokemonId) {
       containerRef?.current?.scrollTo({ top: 0, behavior: 'smooth' })
     }
   }, [])
 
-  useEffect(() => {
-    const waitToScroll = debounce(100, () =>
-      containerRef?.current?.scrollTo({ top: 0, behavior: 'smooth' }),
-    )
-    // waitToScroll()
-  }, [currentPage])
+  // useEffect(() => {
+  //   const waitToScroll = debounce(100, () =>
+  //     containerRef?.current?.scrollTo({ top: 0, behavior: 'smooth' }),
+  //   )
+  //   // waitToScroll()
+  // }, [currentPage])
 
-  useEffect(() => {
-    if (previousPokemonId && !!refs[previousPokemonId]?.current) {
-      const current = refs[previousPokemonId].current
-      if (current) {
-        current.scrollIntoView()
-        setPreviousPokemonId(null)
-      }
-    }
-  }, [refs, previousPokemonId, setPreviousPokemonId])
+  // useEffect(() => {
+  //   if (previousPokemonId && !!refs[previousPokemonId]?.current) {
+  //     const current = refs[previousPokemonId].current
+  //     if (current) {
+  //       current.scrollIntoView()
+  //       setPreviousPokemonId(null)
+  //     }
+  //   }
+  // }, [refs, previousPokemonId, setPreviousPokemonId])
 
   if (isLoading) {
     return (
@@ -89,7 +89,7 @@ const PokemonList = () => {
     )
   }
 
-  if (totalPages === 0) {
+  if (pokemon.length === 0) {
     return (
       <Flex
         fontSize={24}
@@ -153,7 +153,7 @@ const PokemonList = () => {
               <MotionBox
                 layout
                 key={pokemon.number}
-                ref={refs[pokemon.id]}
+                // ref={refs[pokemon.id]}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}

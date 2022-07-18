@@ -218,7 +218,7 @@ const TypeBadge = memo(
         {typeof icon === 'object' && (
           <Icon mr={[1, 0]} w="16px" maxH="10px" icon={icon} />
         )}
-        <Box w="100%" display={!isExpanded && ['none', null, 'block']}>
+        <Box w="100%" display={!isExpanded ? ['none', null, 'block'] : 'unset'}>
           {type}
         </Box>
       </Button>

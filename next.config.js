@@ -10,7 +10,4 @@ module.exports = {
   images: {
     domains: ['assets.pokemon.com'],
   },
-  experimental: {
-    scrollRestoration: true,
-  },
 }
