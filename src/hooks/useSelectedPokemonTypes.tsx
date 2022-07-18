@@ -25,6 +25,8 @@ type SelectedPokemonTypesContext = {
   setExactFilterEnabled: (isExact: boolean) => void
   weakFilterEnabled: boolean
   setWeakFilterEnabled: (weakFilterEnabled: boolean) => void
+  isExpanded: boolean
+  setIsExpanded: (isExpanded: boolean) => void
 }
 const SelectedPokemonTypesContext = createContext<SelectedPokemonTypesContext>(
   null as any,
@@ -42,6 +44,7 @@ export const SelectedPokemonTypesProvider = ({
   )
   const [exactFilterEnabled, setExactFilterEnabled] = useState(false)
   const [weakFilterEnabled, setWeakFilterEnabled] = useState(false)
+  const [isExpanded, setIsExpanded] = useLocalStorage('expand-types', false)
 
   const addSelectedType = useCallback(
     (type: PokemonType) => {
@@ -95,6 +98,8 @@ export const SelectedPokemonTypesProvider = ({
         resetSelectedTypes,
         selectAllTypes,
         isSelected,
+        isExpanded: isExpanded ?? false,
+        setIsExpanded,
       }}
     >
       {children}

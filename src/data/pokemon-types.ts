@@ -1,4 +1,3 @@
-import { PokemonTypes } from '@components/pokemon'
 import {
   faBat,
   faBolt,
@@ -24,53 +23,53 @@ export const pokemonTypeData: PokemonTypeData = {
   grass: {
     primary: 'green.400',
     secondary: 'green.50',
-    color: 'green.50',
+    color: 'white',
     icon: faSpa,
   },
   bug: {
     primary: 'green.600',
     secondary: 'green.50',
-    color: 'green.50',
+    color: 'white',
     icon: faBug,
   },
   water: {
     primary: 'blue.300',
     secondary: 'blue.50',
-    color: 'blue.50',
+    color: 'white',
     icon: faDroplet,
   },
   fairy: {
     primary: 'pink.500',
     secondary: 'pink.50',
-    color: 'pink.50',
+    color: 'white',
     icon: faSparkles,
   },
   ice: {
-    primary: 'blue.700',
-    secondary: 'blue.50',
-    color: 'blue.50',
+    primary: 'teal.300',
+    secondary: 'teal.50',
+    color: 'white',
     icon: faSnowflake,
   },
   ghost: {
-    primary: 'gray.300',
-    secondary: 'gray.50',
-    color: 'gray.600',
+    primary: 'blue.700',
+    secondary: 'blue.50',
+    color: 'white',
     icon: faGhost,
   },
   flying: {
     primary: 'yellow.300',
     secondary: 'yellow.50',
-    color: 'yellow.900',
+    color: 'white',
     icon: faBat,
   },
   normal: {
     primary: 'gray.500',
     secondary: 'gray.50',
-    color: 'gray.50',
+    color: 'white',
     icon: faCircleNotch,
   },
   steel: {
-    primary: 'gray.700',
+    primary: 'gray.800',
     secondary: 'gray.50',
     color: 'white',
     icon: faRing,
@@ -100,9 +99,9 @@ export const pokemonTypeData: PokemonTypeData = {
     icon: faFireFlame,
   },
   electric: {
-    primary: 'yellow.500',
+    primary: 'yellow.300',
     secondary: 'yellow.50',
-    color: 'white',
+    color: 'gray.800',
     icon: faBolt,
   },
   fighting: {

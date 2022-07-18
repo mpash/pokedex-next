@@ -8,7 +8,6 @@ import {
   faEyeSlash,
 } from '@fortawesome/pro-solid-svg-icons'
 import { memo } from 'react'
-import { useLocalStorage } from 'react-use'
 import { pokemonTypeData } from '../../data/pokemon-types'
 import {
   PokemonType,
@@ -17,7 +16,6 @@ import {
 import Icon from '../icon'
 
 const PokemonTypeFilter = () => {
-  const [isExpanded, setIsExpanded] = useLocalStorage('expand-types', false)
   const {
     clearAllSelectedTypes,
     selectedTypes,
@@ -30,6 +28,8 @@ const PokemonTypeFilter = () => {
     addSelectedType,
     weakFilterEnabled,
     setWeakFilterEnabled,
+    isExpanded,
+    setIsExpanded,
   } = useSelectedPokemonTypes()
 
   const handleClick = (type: PokemonType) => {
@@ -61,8 +61,14 @@ const PokemonTypeFilter = () => {
             size="xs"
             isActive={weakFilterEnabled}
             onClick={() => {
-              setExactFilterEnabled(false)
               setWeakFilterEnabled(!weakFilterEnabled)
+              setExactFilterEnabled(!weakFilterEnabled)
+              if (selectedTypes.length === totalTypes && !weakFilterEnabled) {
+                const result = confirm(
+                  'Going into weak filter mode will clear all currently selected types. Are you sure?',
+                )
+                result && clearAllSelectedTypes()
+              }
             }}
             title="Weak Against"
           >
@@ -82,6 +88,12 @@ const PokemonTypeFilter = () => {
             isActive={exactFilterEnabled}
             onClick={() => {
               setExactFilterEnabled(!exactFilterEnabled)
+              if (selectedTypes.length === totalTypes && !exactFilterEnabled) {
+                const result = confirm(
+                  'Going into exact match mode will clear all currently selected types. Are you sure?',
+                )
+                result && clearAllSelectedTypes()
+              }
             }}
             title="Exact Match"
           >
@@ -105,7 +117,6 @@ const PokemonTypeFilter = () => {
           <Button
             size="xs"
             onClick={() => {
-              // setExactFilterEnabled(false)
               selectAllTypes()
             }}
             isActive={selectedTypes.length < totalTypes}
@@ -167,23 +178,23 @@ export default PokemonTypeFilter
 const TypeBadge = memo(
   ({ type, handleClick }: { type: PokemonType; handleClick: any }) => {
     const { icon, primary, color } = pokemonTypeData[type]
-    const {
-      isSelected,
-      exactFilterEnabled: isExact,
-      selectedTypes,
-    } = useSelectedPokemonTypes()
-    const maxSelected = isExact && selectedTypes.length === 2
+    const { isSelected, exactFilterEnabled, selectedTypes, isExpanded } =
+      useSelectedPokemonTypes()
+    const maxSelected = exactFilterEnabled && selectedTypes.length === 2
     const isDisabled = maxSelected && !isSelected(type)
     return (
       <Button
+        minW="auto"
         size="xs"
-        variant="unstyled"
-        minW="90px"
+        w={!isExpanded ? [8, 'auto'] : 'auto'}
+        h={!isExpanded ? [8, 'auto'] : 'auto'}
+        // variant="unstyled"
+        // minW="90px"
         onClick={() => handleClick(type)}
         fontSize="xs"
         display="flex"
         fontWeight={700}
-        borderRadius="20px"
+        borderRadius={['100%', 20]}
         alignItems="center"
         justifyContent="center"
         textTransform="uppercase"
@@ -205,16 +216,11 @@ const TypeBadge = memo(
           </Box>
         )}
         {typeof icon === 'object' && (
-          <Icon
-            mr={1}
-            minW="14px"
-            maxH="14px"
-            fixedWidth
-            fontSize="14px"
-            icon={icon}
-          />
+          <Icon mr={[1, 0]} w="16px" maxH="10px" icon={icon} />
         )}
-        <Box>{type}</Box>
+        <Box w="100%" display={!isExpanded && ['none', null, 'block']}>
+          {type}
+        </Box>
       </Button>
     )
   },
