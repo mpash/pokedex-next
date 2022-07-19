@@ -1,3 +1,23 @@
 {
-    "makefile.extensionOutputFolder": "./.vscode"
+  "makefile.extensionOutputFolder": "./.vscode",
+  "workbench.colorCustomizations": {
+    "activityBar.activeBackground": "#d26f1d",
+    "activityBar.activeBorder": "#3be488",
+    "activityBar.background": "#d26f1d",
+    "activityBar.foreground": "#15202b",
+    "activityBar.inactiveForeground": "#15202b99",
+    "activityBarBadge.background": "#3be488",
+    "activityBarBadge.foreground": "#15202b",
+    "sash.hoverBorder": "#d26f1d",
+    "statusBar.background": "#a55717",
+    "statusBar.foreground": "#e7e7e7",
+    "statusBarItem.hoverBackground": "#d26f1d",
+    "statusBarItem.remoteBackground": "#a55717",
+    "statusBarItem.remoteForeground": "#e7e7e7",
+    "titleBar.activeBackground": "#a55717",
+    "titleBar.activeForeground": "#e7e7e7",
+    "titleBar.inactiveBackground": "#a5571799",
+    "titleBar.inactiveForeground": "#e7e7e799"
+  },
+  "peacock.color": "#a55717"
 }

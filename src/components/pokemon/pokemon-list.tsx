@@ -4,9 +4,9 @@ import MotionBox from '@components/motion-box'
 import PaginationBar from '@components/pagination-bar'
 import Pokemon from '@components/pokemon'
 import { usePagination } from '@hooks/usePagination'
-import { debounce } from 'lodash/fp'
+import { debounce, once } from 'lodash/fp'
 import Image from 'next/image'
-import { createRef, RefObject, useEffect, useRef } from 'react'
+import { createRef, RefObject, useEffect, useMemo, useRef } from 'react'
 import { useLocalStorage } from 'react-use'
 
 const PokemonList = () => {
@@ -18,6 +18,7 @@ const PokemonList = () => {
     itemsPerPage,
     onNextPage,
     onPreviousPage,
+    containerRef,
   } = usePagination()
   const { isLoading, pokemon } = usePokemonList()
   const [previousPokemonId, setPreviousPokemonId] = useLocalStorage(
@@ -32,43 +33,34 @@ const PokemonList = () => {
     }
   }, [pokemon, setTotalPages, itemsPerPage])
 
+  // useEffect(() => {
+  //   if (currentPage > totalPages && totalPages !== 0) {
+  //     onPageChange(totalPages)
+  //   }
+  // }, [totalPages, currentPage, onPageChange])
+
+  const refs: { [k: number]: RefObject<HTMLDivElement> } = useMemo(() => {
+    return pokemon.reduce((acc, pokemonItem) => {
+      acc[pokemonItem.id] = createRef<HTMLDivElement>()
+      return acc
+    }, {})
+  }, [pokemon])
+
   useEffect(() => {
-    if (currentPage > totalPages && totalPages !== 0) {
-      onPageChange(totalPages)
+    if (previousPokemonId && !!refs[previousPokemonId]?.current) {
+      const current = refs[previousPokemonId].current
+      if (current) {
+        current.scrollIntoView()
+        setPreviousPokemonId(null)
+      }
     }
-  }, [totalPages, currentPage, onPageChange])
+  }, [refs, previousPokemonId, setPreviousPokemonId])
 
-  const containerRef = useRef<HTMLDivElement>(null)
-  // const refs: { [k: number]: RefObject<HTMLDivElement> } = pokemon.reduce(
-  //   (acc, pokemonItem) => {
-  //     acc[pokemonItem.id] = createRef<HTMLDivElement>()
-  //     return acc
-  //   },
-  //   {},
-  // )
-  
-  // useEffect(() => {
-  //   if (!previousPokemonId) {
-  //     containerRef?.current?.scrollTo({ top: 0, behavior: 'smooth' })
-  //   }
-  // }, [])
-
-  // useEffect(() => {
-  //   const waitToScroll = debounce(100, () =>
-  //     containerRef?.current?.scrollTo({ top: 0, behavior: 'smooth' }),
-  //   )
-  //   // waitToScroll()
-  // }, [currentPage])
-
-  // useEffect(() => {
-  //   if (previousPokemonId && !!refs[previousPokemonId]?.current) {
-  //     const current = refs[previousPokemonId].current
-  //     if (current) {
-  //       current.scrollIntoView()
-  //       setPreviousPokemonId(null)
-  //     }
-  //   }
-  // }, [refs, previousPokemonId, setPreviousPokemonId])
+  useEffect(() => {
+    if (pokemon.length === 0) {
+      onPageChange(1)
+    }
+  }, [pokemon, onPageChange])
 
   if (isLoading) {
     return (
@@ -151,14 +143,7 @@ const PokemonList = () => {
           .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
           .map((pokemon: Pokemon) => {
             return (
-              <MotionBox
-                layout
-                key={pokemon.number}
-                // ref={refs[pokemon.id]}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-              >
+              <MotionBox key={pokemon.number} ref={refs[pokemon.id]}>
                 <Pokemon pokemon={pokemon} />
               </MotionBox>
             )
