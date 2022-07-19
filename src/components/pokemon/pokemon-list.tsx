@@ -4,6 +4,7 @@ import MotionBox from '@components/motion-box'
 import PaginationBar from '@components/pagination-bar'
 import Pokemon from '@components/pokemon'
 import { usePagination } from '@hooks/usePagination'
+import { AnimatePresence } from 'framer-motion'
 import Image from 'next/image'
 import { createRef, RefObject, useEffect, useMemo } from 'react'
 import { useLocalStorage } from 'react-use'
@@ -99,7 +100,8 @@ const PokemonList = () => {
   return (
     <MotionBox
       ref={containerRef}
-      gap={[3, 5]}
+      gridGap={4}
+      // gap={[3, 5]}
       pos="relative"
       display="grid"
       alignItems="flex-start"
@@ -131,16 +133,26 @@ const PokemonList = () => {
         WebkitOverflowScrolling: 'touch',
       }}
     >
-      {!!pokemon &&
-        pokemon
-          .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
-          .map((pokemon: Pokemon, index) => {
-            return (
-              <MotionBox key={index} ref={refs[pokemon.id]}>
-                <Pokemon pokemon={pokemon} />
-              </MotionBox>
-            )
-          })}
+      {/* <AnimatePresence presenceAffectsLayout> */}
+        {!!pokemon &&
+          pokemon
+            .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+            .map((pokemon: Pokemon, index) => {
+              return (
+                <MotionBox
+                  // layout
+                  key={`${pokemon.number}-${pokemon?.fId ?? 'f1'}`}
+                  ref={refs[pokemon.id]}
+                  // initial={{ opacity: 0 }}
+                  // animate={{ opacity: 1 }}
+                  // exit={{ opacity: 0 }}
+                  willChange="transform"
+                >
+                  <Pokemon pokemon={pokemon} />
+                </MotionBox>
+              )
+            })}
+      {/* </AnimatePresence> */}
       <PaginationBar />
     </MotionBox>
   )

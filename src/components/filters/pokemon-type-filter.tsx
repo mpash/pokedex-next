@@ -1,24 +1,15 @@
-import { Box, Button, Divider, HStack, Text, Tooltip } from '@chakra-ui/react'
+import { Box, Button, Divider, HStack, Text } from '@chakra-ui/react'
 import {
   faBolt,
   faBoltSlash,
-  faCalculator,
-  faCheckCircle,
   faChevronDown,
-  faCircleBolt,
-  faCircleExclamationCheck,
-  faClone,
-  faEquals,
   faEye,
   faEyeSlash,
   faLambda,
 } from '@fortawesome/pro-solid-svg-icons'
 import { memo } from 'react'
 import { pokemonTypeData } from '../../data/pokemon-types'
-import {
-  PokemonType,
-  useSelectedPokemonTypes,
-} from '../../hooks/useSelectedPokemonTypes'
+import { useSelectedPokemonTypes } from '../../hooks/useSelectedPokemonTypes'
 import Icon from '../icon'
 
 const PokemonTypeFilter = () => {
@@ -38,7 +29,7 @@ const PokemonTypeFilter = () => {
     setIsExpanded,
   } = useSelectedPokemonTypes()
 
-  const handleClick = (type: PokemonType) => {
+  const handleClick = (type: PokemonTypes) => {
     if (selectedTypes.length === 2) {
       console.log('hit')
       clearAllSelectedTypes()
@@ -169,7 +160,7 @@ const PokemonTypeFilter = () => {
         }
         overflowX="scroll"
       >
-        {(Object.keys(pokemonTypeData) as PokemonType[]).map(type => (
+        {(Object.keys(pokemonTypeData) as PokemonTypes[]).map(type => (
           <TypeBadge key={type} type={type} handleClick={handleClick} />
         ))}
       </Box>
@@ -180,7 +171,7 @@ const PokemonTypeFilter = () => {
 export default PokemonTypeFilter
 
 const TypeBadge = memo(
-  ({ type, handleClick }: { type: PokemonType; handleClick: any }) => {
+  ({ type, handleClick }: { type: PokemonTypes; handleClick: any }) => {
     const { icon, primary, color } = pokemonTypeData[type]
     const {
       isSelected,
@@ -220,7 +211,7 @@ const TypeBadge = memo(
         }}
         bgColor={isSelected(type) ? primary : 'gray.200'}
         color={isSelected(type) ? color : 'gray.600'}
-        textShadow="1px 1px 0px rgba(0, 0, 0, 0.1)"
+        // textShadow="1px 1px 0px rgba(0, 0, 0, 0.1)"
       >
         {/* Supports for react-icons */}
         {typeof icon === 'function' && (
@@ -232,11 +223,9 @@ const TypeBadge = memo(
           <Icon
             minW="14px"
             h="14px"
-            fixedWidth
             icon={icon}
-            fontSize="14px"
             mr={isExpanded ? 1 : [0, null, 1]}
-            filter="drop-shadow(1px 1px 0px rgba(0, 0, 0, 0.1))"
+            // filter="drop-shadow(1px 1px 0px rgba(0, 0, 0, 0.1))"
           />
         )}
         <Box display={!isExpanded ? ['none', null, 'block'] : 'unset'}>

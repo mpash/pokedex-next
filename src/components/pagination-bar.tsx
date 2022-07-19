@@ -46,12 +46,12 @@ const PaginationBar = () => {
       <Flex
         boxShadow="md"
         bgColor="white"
+        py={1}
         px={2}
-        // py={1}
         justifyContent="center"
         borderRadius={14}
       >
-        <HStack spacing={[2, 4]}>{buttons}</HStack>
+        <HStack spacing={[3]}>{buttons}</HStack>
       </Flex>
     </Box>
   )

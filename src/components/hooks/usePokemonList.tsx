@@ -1,9 +1,6 @@
 import { useFilters } from '@hooks/useFilters'
-import {
-  PokemonType,
-  useSelectedPokemonTypes,
-} from '@hooks/useSelectedPokemonTypes'
-import { flatten, isEqual, uniqBy } from 'lodash/fp'
+import { useSelectedPokemonTypes } from '@hooks/useSelectedPokemonTypes'
+import { isEqual, uniqBy } from 'lodash/fp'
 import { useMemo } from 'react'
 import { useQuery } from 'react-query'
 
@@ -28,7 +25,7 @@ export const usePokemonList = () => {
               type: p.type,
               number: p.number,
               id: p.id,
-              fId: `f${index + 1}`
+              fId: `f${index + 1}`,
             }
             if (index > 0) {
               const fId = `f${index + 1}`
@@ -63,7 +60,7 @@ export const usePokemonList = () => {
       (item: any) =>
         search === '' ||
         item.name.toLowerCase().includes(search.toLowerCase()) ||
-        item.originalName.toLowerCase().includes(search.toLowerCase()) ||
+        item?.originalName?.toLowerCase()?.includes(search.toLowerCase()) ||
         item.number.toString().includes(search),
     )
 
@@ -71,7 +68,7 @@ export const usePokemonList = () => {
     return collection.filter((pokemon: Pokemon) => {
       const weaknesses = pokemon.weakness.map(w =>
         w.toLowerCase(),
-      ) as PokemonType[]
+      ) as PokemonTypes[]
       if (exactFilterEnabled) {
         return selectedTypes.every(type => weaknesses.includes(type))
       }

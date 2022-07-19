@@ -30,7 +30,7 @@ const FilterBar = () => {
     numberOrder,
     alphaOrder,
     showVariants,
-    toggleShowVariants
+    toggleShowVariants,
   } = useFilters()
 
   const handleSearch = debounce(400, (search: string) => {
@@ -47,7 +47,14 @@ const FilterBar = () => {
         </InputLeftElement>
         <Input
           ref={ref}
-          onChange={e => handleSearch(e.target.value)}
+          onKeyDown={e => {
+            // Prevents the input from causing keyboard events
+            // to bubble up (e.g. pagination keyboard listeners)
+            e.stopPropagation()
+          }}
+          onChange={e => {
+            return handleSearch(e.target.value)
+          }}
           placeholder="Name or number"
         />
       </InputGroup>

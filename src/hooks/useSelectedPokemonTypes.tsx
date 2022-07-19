@@ -8,19 +8,18 @@ import {
 import { useLocalStorage } from 'react-use'
 import { pokemonTypeData } from '../data/pokemon-types'
 
-export type PokemonType = keyof typeof pokemonTypeData
-const pokemonTypes = Object.keys(pokemonTypeData) as PokemonType[]
+const pokemonTypes = Object.keys(pokemonTypeData) as PokemonTypes[]
 
 type SelectedPokemonTypesContext = {
-  pokemonTypes: PokemonType[]
+  pokemonTypes: PokemonTypes[]
   totalTypes: number
-  selectedTypes: PokemonType[]
-  addSelectedType: (type: PokemonType) => void
-  removeSelectedType: (type: PokemonType) => void
+  selectedTypes: PokemonTypes[]
+  addSelectedType: (type: PokemonTypes) => void
+  removeSelectedType: (type: PokemonTypes) => void
   clearAllSelectedTypes: () => void
   resetSelectedTypes: () => void
   selectAllTypes: () => void
-  isSelected: (type: PokemonType) => boolean
+  isSelected: (type: PokemonTypes) => boolean
   exactFilterEnabled: boolean
   setExactFilterEnabled: (isExact: boolean) => void
   weakFilterEnabled: boolean
@@ -38,7 +37,7 @@ export const SelectedPokemonTypesProvider = ({
   children?: ReactNode
 }) => {
   const totalTypes = pokemonTypes.length
-  const [selectedTypes, setSelectedTypes] = useLocalStorage<PokemonType[]>(
+  const [selectedTypes, setSelectedTypes] = useLocalStorage<PokemonTypes[]>(
     'selected-types',
     pokemonTypes,
   )
@@ -47,7 +46,7 @@ export const SelectedPokemonTypesProvider = ({
   const [isExpanded, setIsExpanded] = useLocalStorage('expand-types', false)
 
   const addSelectedType = useCallback(
-    (type: PokemonType) => {
+    (type: PokemonTypes) => {
       if (!selectedTypes) return
       if (selectedTypes.includes(type)) return
       setSelectedTypes([...selectedTypes, type])
@@ -56,7 +55,7 @@ export const SelectedPokemonTypesProvider = ({
   )
 
   const removeSelectedType = useCallback(
-    (type: PokemonType) => {
+    (type: PokemonTypes) => {
       if (!selectedTypes) return
       setSelectedTypes(selectedTypes.filter(t => t !== type))
     },
@@ -68,7 +67,7 @@ export const SelectedPokemonTypesProvider = ({
   const selectAllTypes = useCallback(() => setSelectedTypes(pokemonTypes), [])
 
   const isSelected = useCallback(
-    (type: PokemonType) => {
+    (type: PokemonTypes) => {
       if (!selectedTypes) return false
       return selectedTypes.includes(type)
     },

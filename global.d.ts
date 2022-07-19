@@ -20,6 +20,8 @@ type Pokemon = {
     descriptionY: string
     image: string
   }[]
+  fId: string
+  originalName: string
 }
 
 type PokemonList = Pokemon[]
