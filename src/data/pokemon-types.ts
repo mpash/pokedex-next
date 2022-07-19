@@ -33,9 +33,9 @@ export const pokemonTypeData: PokemonTypeData = {
     icon: faBug,
   },
   water: {
-    primary: 'blue.100',
+    primary: 'blue.400',
     secondary: 'blue.50',
-    color: 'blue.400',
+    color: 'white',
     icon: faDroplet,
   },
   fairy: {
@@ -45,9 +45,9 @@ export const pokemonTypeData: PokemonTypeData = {
     icon: faSparkles,
   },
   ice: {
-    primary: 'teal.200',
+    primary: 'teal.300',
     secondary: 'teal.50',
-    color: 'teal.900',
+    color: 'white',
     icon: faSnowflake,
   },
   ghost: {
@@ -57,8 +57,8 @@ export const pokemonTypeData: PokemonTypeData = {
     icon: faGhost,
   },
   flying: {
-    primary: 'yellow.500',
-    secondary: 'yellow.50',
+    primary: 'cyan.500',
+    secondary: 'cyan.50',
     color: 'white',
     icon: faKite,
   },
@@ -99,9 +99,9 @@ export const pokemonTypeData: PokemonTypeData = {
     icon: faFireFlame,
   },
   electric: {
-    primary: 'yellow.300',
+    primary: 'yellow.400',
     secondary: 'yellow.50',
-    color: 'yellow.900',
+    color: 'white',
     icon: faBolt,
   },
   fighting: {
@@ -123,9 +123,9 @@ export const pokemonTypeData: PokemonTypeData = {
     icon: faHillRockslide,
   },
   dragon: {
-    primary: 'blue.100',
+    primary: 'cyan.800',
     secondary: 'blue.50',
-    color: 'blue.900',
+    color: 'white',
     icon: faDragon,
   },
 }

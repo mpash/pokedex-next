@@ -62,13 +62,7 @@ const Pokemon = memo(({ pokemon }: { pokemon: Pokemon }) => {
       />
       <PokemonNumber number={pokemon.number} />
       <Stack zIndex={1} alignItems="center" mt={2}>
-        <Heading
-          textAlign="center"
-          size="md"
-          color="gray.700"
-          // noOfLines={2}
-          // h="40px"
-        >
+        <Heading textAlign="center" size="md" color="gray.700">
           {pokemon?.originalName &&
           !pokemon.name.includes(pokemon?.originalName) ? (
             <>
@@ -124,10 +118,11 @@ const PokemonImage = ({ image, alt }: { image: string; alt: string }) => {
       variants={imageVariants}
     >
       <Image
+        priority
         style={{ objectFit: 'contain', maxHeight: 150, maxWidth: 150 }}
         width={150 * 2}
         height={150 * 2}
-        quality={100}
+        quality={20}
         src={image}
         alt={alt}
       />

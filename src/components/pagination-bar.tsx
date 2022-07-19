@@ -41,13 +41,13 @@ const PaginationBar = () => {
       zIndex={2}
       pos="fixed"
       left={`calc(50% - ${width}px / 2)`}
-      bottom="calc(env(safe-area-inset-bottom) + 0px)"
+      bottom="calc(env(safe-area-inset-bottom) + 10px)"
     >
       <Flex
         boxShadow="md"
         bgColor="white"
         px={2}
-        py={1}
+        // py={1}
         justifyContent="center"
         borderRadius={14}
       >

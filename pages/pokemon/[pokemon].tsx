@@ -41,8 +41,6 @@ const PokemonDetail = () => {
     }
   }, [fId])
 
-  console.log(!!fId ? parseInt(fId?.split('f')[1]) - 1 : 0, selectedVariant)
-
   if (isLoading) {
     return <Heading>Loading...</Heading>
   }
@@ -71,7 +69,9 @@ const PokemonDetail = () => {
         <Heading textAlign="center" textTransform="capitalize">
           {pokemon.name}
           <br />
-          {pokemon.variants[selectedVariant].name}
+          {pokemon.name !== pokemon.variants[selectedVariant].name && (
+            <>({pokemon.variants[selectedVariant].name})</>
+          )}
         </Heading>
         <HStack>
           <Button
@@ -112,10 +112,10 @@ const PokemonDetail = () => {
           <FormControl maxW={350}>
             <FormLabel>Variants</FormLabel>
             <Select
-              defaultValue={selectedVariant}
-              // defaultValue={0}
+              value={selectedVariant}
               onChange={e => {
-                setSelectedVariant(e.currentTarget.value as any)
+                const fId = parseInt(e.target.value) + 1
+                router.push(`/pokemon/${id}?fId=f${fId}`)
               }}
             >
               {pokemon.variants.map(({ name }, index) => (
