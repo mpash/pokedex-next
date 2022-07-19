@@ -39,65 +39,55 @@ const FilterBar = () => {
 
   const ref = useRef<HTMLInputElement>(null)
 
-  return useMemo(
-    () => (
-      <HStack spacing={4}>
-        <InputGroup size="sm" variant="flushed">
-          <InputLeftElement color="gray.400">
-            <Icon fixedWidth width="14px" icon={faSearch} />
-          </InputLeftElement>
-          <Input
-            ref={ref}
-            onChange={e => handleSearch(e.target.value)}
-            placeholder="Name or number"
-          />
-        </InputGroup>
-        <Button
-          size="sm"
-          variant="outline"
-          onClick={() => {
-            setShowVariants(!showVariants)
-          }}
-          isActive={showVariants}
-          title={showVariants ? 'Hide Variants' : 'Show Variants'}
-        >
-          <Icon w="18px" fontSize="18px" icon={faDna} />
-        </Button>
-        <Button
-          size="sm"
-          variant="outline"
-          onClick={toggleNumberOrder}
-          isActive={selectedFilter === 'number'}
-        >
-          <Icon
-            w="18px"
-            fontSize="18px"
-            icon={numberOrder === 1 ? faArrowDown19 : faArrowUp19}
-          />
-        </Button>
-        <Button
-          size="sm"
-          variant="outline"
-          onClick={toggleAlphaOrder}
-          isActive={selectedFilter === 'alpha'}
-        >
-          <Icon
-            w="18px"
-            fontSize="18px"
-            icon={alphaOrder === 'az' ? faArrowDownAZ : faArrowUpAZ}
-          />
-        </Button>
-        <ResetFiltersButton inputRef={ref} />
-      </HStack>
-    ),
-    [
-      toggleNumberOrder,
-      selectedFilter,
-      numberOrder,
-      toggleAlphaOrder,
-      alphaOrder,
-      handleSearch,
-    ],
+  return (
+    <HStack spacing={4}>
+      <InputGroup size="sm" variant="flushed">
+        <InputLeftElement color="gray.400">
+          <Icon fixedWidth width="14px" icon={faSearch} />
+        </InputLeftElement>
+        <Input
+          ref={ref}
+          onChange={e => handleSearch(e.target.value)}
+          placeholder="Name or number"
+        />
+      </InputGroup>
+      <Button
+        size="sm"
+        variant="outline"
+        onClick={() => {
+          setShowVariants(!showVariants)
+        }}
+        isActive={showVariants}
+        title={showVariants ? 'Hide Variants' : 'Show Variants'}
+      >
+        <Icon w="18px" fontSize="18px" icon={faDna} />
+      </Button>
+      <Button
+        size="sm"
+        variant="outline"
+        onClick={toggleNumberOrder}
+        isActive={selectedFilter === 'number'}
+      >
+        <Icon
+          w="18px"
+          fontSize="18px"
+          icon={numberOrder === 1 ? faArrowDown19 : faArrowUp19}
+        />
+      </Button>
+      <Button
+        size="sm"
+        variant="outline"
+        onClick={toggleAlphaOrder}
+        isActive={selectedFilter === 'alpha'}
+      >
+        <Icon
+          w="18px"
+          fontSize="18px"
+          icon={alphaOrder === 'az' ? faArrowDownAZ : faArrowUpAZ}
+        />
+      </Button>
+      <ResetFiltersButton inputRef={ref} />
+    </HStack>
   )
 }
 

@@ -21,6 +21,7 @@
     "@fortawesome/pro-thin-svg-icons": "^6.1.1",
     "@fortawesome/react-fontawesome": "^0.2.0",
     "@types/cheerio": "^0.22.31",
+    "axios": "^0.27.2",
     "bun-framework-next": "^12.1.5",
     "cheerio": "1.0.0-rc.12",
     "color-blend": "^4.0.0",

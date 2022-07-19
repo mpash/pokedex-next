@@ -10,4 +10,5 @@ module.exports = {
   images: {
     domains: ['assets.pokemon.com'],
   },
+  experimental: { images: { allowFutureImage: true } },
 }
