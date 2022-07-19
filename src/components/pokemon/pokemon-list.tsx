@@ -1,4 +1,4 @@
-import { Flex } from '@chakra-ui/react'
+import { Box, Flex } from '@chakra-ui/react'
 import { usePokemonList } from '@components/hooks/usePokemonList'
 import MotionBox from '@components/motion-box'
 import PaginationBar from '@components/pagination-bar'
@@ -133,26 +133,19 @@ const PokemonList = () => {
         WebkitOverflowScrolling: 'touch',
       }}
     >
-      {/* <AnimatePresence presenceAffectsLayout> */}
-        {!!pokemon &&
-          pokemon
-            .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
-            .map((pokemon: Pokemon, index) => {
-              return (
-                <MotionBox
-                  // layout
-                  key={`${pokemon.number}-${pokemon?.fId ?? 'f1'}`}
-                  ref={refs[pokemon.id]}
-                  // initial={{ opacity: 0 }}
-                  // animate={{ opacity: 1 }}
-                  // exit={{ opacity: 0 }}
-                  willChange="transform"
-                >
-                  <Pokemon pokemon={pokemon} />
-                </MotionBox>
-              )
-            })}
-      {/* </AnimatePresence> */}
+      {!!pokemon &&
+        pokemon
+          .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+          .map((pokemon: Pokemon, index) => {
+            return (
+              <Box
+                key={`${pokemon.number}-${pokemon?.fId ?? 'f1'}`}
+                ref={refs[pokemon.id]}
+              >
+                <Pokemon pokemon={pokemon} />
+              </Box>
+            )
+          })}
       <PaginationBar />
     </MotionBox>
   )
