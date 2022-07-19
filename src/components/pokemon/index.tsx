@@ -28,7 +28,7 @@ const Pokemon = memo(({ pokemon }: { pokemon: Pokemon }) => {
 
   return (
     <MotionBox
-      h={300}
+      h={280}
       w="100%"
       pb={4}
       zIndex={1}
@@ -61,10 +61,10 @@ const Pokemon = memo(({ pokemon }: { pokemon: Pokemon }) => {
           {pokemon.name}
         </Heading>
         <PokemonTypes types={pokemon.type} />
-        <PokemonTypes
+        {/* <PokemonTypes
           size="sm"
           types={pokemon.weakness.map(w => w.toLowerCase())}
-        />
+        /> */}
       </Stack>
     </MotionBox>
   )

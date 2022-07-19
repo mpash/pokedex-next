@@ -4,9 +4,8 @@ import MotionBox from '@components/motion-box'
 import PaginationBar from '@components/pagination-bar'
 import Pokemon from '@components/pokemon'
 import { usePagination } from '@hooks/usePagination'
-import { debounce, once } from 'lodash/fp'
 import Image from 'next/image'
-import { createRef, RefObject, useEffect, useMemo, useRef } from 'react'
+import { createRef, RefObject, useEffect, useMemo } from 'react'
 import { useLocalStorage } from 'react-use'
 
 const PokemonList = () => {
@@ -32,12 +31,6 @@ const PokemonList = () => {
       setTotalPages(0)
     }
   }, [pokemon, setTotalPages, itemsPerPage])
-
-  // useEffect(() => {
-  //   if (currentPage > totalPages && totalPages !== 0) {
-  //     onPageChange(totalPages)
-  //   }
-  // }, [totalPages, currentPage, onPageChange])
 
   const refs: { [k: number]: RefObject<HTMLDivElement> } = useMemo(() => {
     return pokemon.reduce((acc, pokemonItem) => {
@@ -110,7 +103,7 @@ const PokemonList = () => {
       pos="relative"
       display="grid"
       alignItems="flex-start"
-      gridTemplateRows="300px"
+      gridTemplateRows="280px"
       gridTemplateColumns={{
         base: 'repeat(auto-fill, minmax(170px, auto))',
         sm: 'repeat(auto-fill, minmax(220px, auto))',

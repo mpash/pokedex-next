@@ -11,6 +11,7 @@ import {
   faArrowDownAZ,
   faArrowUp19,
   faArrowUpAZ,
+  faDna,
   faFilterSlash,
   faSearch,
 } from '@fortawesome/pro-solid-svg-icons'
@@ -19,6 +20,7 @@ import { debounce } from 'lodash/fp'
 import { memo, RefObject, useMemo, useRef } from 'react'
 import { useFilters } from '../../hooks/useFilters'
 import Icon from '../icon'
+import { useLocalStorage } from 'react-use'
 
 const FilterBar = () => {
   const {
@@ -29,6 +31,7 @@ const FilterBar = () => {
     numberOrder,
     alphaOrder,
   } = useFilters()
+  const [showVariants, setShowVariants] = useLocalStorage('showVariants', false)
 
   const handleSearch = debounce(400, (search: string) => {
     setSearch(search)
@@ -49,6 +52,17 @@ const FilterBar = () => {
             placeholder="Name or number"
           />
         </InputGroup>
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={() => {
+            setShowVariants(!showVariants)
+          }}
+          isActive={showVariants}
+          title={showVariants ? 'Hide Variants' : 'Show Variants'}
+        >
+          <Icon w="18px" fontSize="18px" icon={faDna} />
+        </Button>
         <Button
           size="sm"
           variant="outline"
@@ -74,9 +88,6 @@ const FilterBar = () => {
           />
         </Button>
         <ResetFiltersButton inputRef={ref} />
-        {/* <Button size="sm" variant="outline" onClick={handleClearFilters}>
-          <Icon w="18px" fontSize="18px" icon={faFilterSlash} />
-        </Button> */}
       </HStack>
     ),
     [
