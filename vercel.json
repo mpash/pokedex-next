@@ -1,0 +1,11 @@
+{
+  "routes": [
+    {
+      "src": "/(?<filepath>.+)\\.(?<ext>jpg)",
+      "dest": "https://media.githubusercontent.com/media/mpash/pokedex-next/main/$filepath.$ext",
+      "headers": {
+        "Cache-Control": "s-maxage=3600"
+      }
+    }
+  ]
+}
