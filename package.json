@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@chakra-ui/react": "^2.2.3",
+    "@chakra-ui/react": "2.2.4",
     "@emotion/react": "^11.9.3",
     "@emotion/styled": "^11.9.3",
     "@fortawesome/fontawesome-svg-core": "^6.1.1",
@@ -21,7 +21,7 @@
     "@fortawesome/pro-thin-svg-icons": "^6.1.1",
     "@fortawesome/react-fontawesome": "^0.2.0",
     "@types/cheerio": "^0.22.31",
-    "axios": "^0.27.2",
+    "axios": "0.27.2",
     "bun-framework-next": "^12.1.5",
     "cheerio": "1.0.0-rc.12",
     "color-blend": "^4.0.0",
