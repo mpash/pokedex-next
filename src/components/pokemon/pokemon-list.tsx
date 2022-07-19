@@ -46,11 +46,12 @@ const PokemonList = () => {
   //   },
   //   {},
   // )
-  useEffect(() => {
-    if (!previousPokemonId) {
-      containerRef?.current?.scrollTo({ top: 0, behavior: 'smooth' })
-    }
-  }, [])
+  
+  // useEffect(() => {
+  //   if (!previousPokemonId) {
+  //     containerRef?.current?.scrollTo({ top: 0, behavior: 'smooth' })
+  //   }
+  // }, [])
 
   // useEffect(() => {
   //   const waitToScroll = debounce(100, () =>
