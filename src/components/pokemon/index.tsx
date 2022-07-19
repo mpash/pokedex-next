@@ -28,6 +28,7 @@ const Pokemon = memo(({ pokemon }: { pokemon: Pokemon }) => {
 
   return (
     <MotionBox
+      layout
       h={280}
       w="100%"
       pb={4}
@@ -45,7 +46,11 @@ const Pokemon = memo(({ pokemon }: { pokemon: Pokemon }) => {
       gridTemplateRows="1fr auto"
       onTap={() => {
         setPreviousPokemonId(pokemon.id)
-        router.push(`/pokemon/${pokemon.id}`)
+        if (!!pokemon?.fId && pokemon?.fId !== 'f1') {
+          router.push(`/pokemon/${pokemon.id}?fId=${pokemon.fId}`)
+        } else {
+          router.push(`/pokemon/${pokemon.id}`)
+        }
       }}
       {...props}
     >
@@ -56,9 +61,38 @@ const Pokemon = memo(({ pokemon }: { pokemon: Pokemon }) => {
         alt={pokemon.ThumbnailAltText}
       />
       <PokemonNumber number={pokemon.number} />
-      <Stack zIndex={1} alignItems="center">
-        <Heading size="md" color="gray.700" noOfLines={1}>
-          {pokemon.name}
+      <Stack zIndex={1} alignItems="center" mt={2}>
+        <Heading
+          textAlign="center"
+          size="md"
+          color="gray.700"
+          // noOfLines={2}
+          // h="40px"
+        >
+          {pokemon?.originalName &&
+          !pokemon.name.includes(pokemon?.originalName) ? (
+            <>
+              <Box as="span" pr={2}>
+                {pokemon?.originalName}
+              </Box>
+              <br />
+              <Box fontSize="sm">({pokemon.name})</Box>
+            </>
+          ) : (
+            <>
+              {pokemon.name.split('(').length > 1 ? (
+                <>
+                  {pokemon.name.split('(')[0]}
+                  <br />
+                  <Box fontSize="sm">
+                    ({pokemon.name.split('(')[1].split(')')[0]})
+                  </Box>
+                </>
+              ) : (
+                pokemon.name
+              )}
+            </>
+          )}
         </Heading>
         <PokemonTypes types={pokemon.type} />
         {/* <PokemonTypes
@@ -82,8 +116,6 @@ const PokemonImage = ({ image, alt }: { image: string; alt: string }) => {
     <MotionBox
       zIndex={1}
       display="flex"
-      maxH="170px"
-      overflow="hidden"
       pointerEvents="none"
       alignItems="center"
       alignSelf="flex-end"
@@ -91,16 +123,14 @@ const PokemonImage = ({ image, alt }: { image: string; alt: string }) => {
       filter="drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.2))"
       variants={imageVariants}
     >
-      <Flex maxW={100} maxH={100}>
-        <Image
-          style={{ objectFit: 'contain' }}
-          width={100 * 2}
-          height={100 * 2}
-          quality={1}
-          src={image}
-          alt={alt}
-        />
-      </Flex>
+      <Image
+        style={{ objectFit: 'contain', maxHeight: 150, maxWidth: 150 }}
+        width={150 * 2}
+        height={150 * 2}
+        quality={100}
+        src={image}
+        alt={alt}
+      />
     </MotionBox>
   )
 }

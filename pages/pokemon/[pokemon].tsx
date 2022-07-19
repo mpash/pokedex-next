@@ -14,13 +14,14 @@ import { pokemonTypeData } from '@data/pokemon-types'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { MdCatchingPokemon } from 'react-icons/md'
 import { useQuery } from 'react-query'
 
 const PokemonDetail = () => {
   const router = useRouter()
   const id = router.query.pokemon as string
+  const fId = router.query.fId as string
   const [selectedVariant, setSelectedVariant] = useState(0)
   const [xOrY, setXOrY] = useState<'x' | 'y'>('x')
   const { isLoading, data: pokemon } = useQuery(
@@ -33,6 +34,14 @@ const PokemonDetail = () => {
       enabled: !!id,
     },
   )
+
+  useEffect(() => {
+    if (!!fId) {
+      setSelectedVariant(parseInt(fId?.split('f')[1]) - 1)
+    }
+  }, [fId])
+
+  console.log(!!fId ? parseInt(fId?.split('f')[1]) - 1 : 0, selectedVariant)
 
   if (isLoading) {
     return <Heading>Loading...</Heading>
@@ -59,7 +68,9 @@ const PokemonDetail = () => {
           src={pokemon.variants[selectedVariant].image}
           alt={longId}
         />
-        <Heading textTransform="capitalize">
+        <Heading textAlign="center" textTransform="capitalize">
+          {pokemon.name}
+          <br />
           {pokemon.variants[selectedVariant].name}
         </Heading>
         <HStack>
@@ -101,6 +112,8 @@ const PokemonDetail = () => {
           <FormControl maxW={350}>
             <FormLabel>Variants</FormLabel>
             <Select
+              defaultValue={selectedVariant}
+              // defaultValue={0}
               onChange={e => {
                 setSelectedVariant(e.currentTarget.value as any)
               }}

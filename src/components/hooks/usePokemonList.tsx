@@ -16,8 +16,6 @@ export const usePokemonList = () => {
     fetch('/api/pokedex').then(res => res.json()),
   )
 
-  let pokemonListWithVariants: any = []
-
   const pokemonById = useMemo(() => {
     if (showVariants) {
       return uniqBy('id', data)
@@ -25,9 +23,12 @@ export const usePokemonList = () => {
           p.variants.map((v, index) => {
             const base = {
               ...v,
+              originalName: p.name,
               weakness: p.weakness,
               type: p.type,
               number: p.number,
+              id: p.id,
+              fId: `f${index + 1}`
             }
             if (index > 0) {
               const fId = `f${index + 1}`
@@ -45,7 +46,7 @@ export const usePokemonList = () => {
       ...p,
       ThumbnailImage: `/img/full-trimmed/${p.number}.png`,
     }))
-  }, [data, pokemonListWithVariants, showVariants])
+  }, [data, showVariants])
 
   const filterBySelectedType = (collection: PokemonList) =>
     collection.filter((item: any) => {
@@ -62,6 +63,7 @@ export const usePokemonList = () => {
       (item: any) =>
         search === '' ||
         item.name.toLowerCase().includes(search.toLowerCase()) ||
+        item.originalName.toLowerCase().includes(search.toLowerCase()) ||
         item.number.toString().includes(search),
     )
 
@@ -105,7 +107,7 @@ export const usePokemonList = () => {
     }
   }
 
-  const pokemonBySearch = filterBySearch(pokemonById)
+  const pokemonBySearch = filterBySearch(pokemonById as any)
 
   const filteredCollection = weakFilterEnabled
     ? filterByWeakness(pokemonBySearch)

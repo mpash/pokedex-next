@@ -39,8 +39,8 @@ const PokemonTypeFilter = () => {
   } = useSelectedPokemonTypes()
 
   const handleClick = (type: PokemonType) => {
-    if(selectedTypes.length === 2) {
-      console.log('hit');
+    if (selectedTypes.length === 2) {
+      console.log('hit')
       clearAllSelectedTypes()
     }
 
@@ -71,7 +71,7 @@ const PokemonTypeFilter = () => {
         >
           Types
         </Text>
-        <HStack shouldWrapChildren>
+        <HStack shouldWrapChildren overflowX="scroll">
           <Button
             size="xs"
             variant="outline"
@@ -155,13 +155,13 @@ const PokemonTypeFilter = () => {
             display: 'none',
           },
         }}
-        gridGap={[2, 4]}
+        gridGap={[2, null, 4]}
         gridAutoFlow={isExpanded ? 'row' : 'column'}
         gridTemplateColumns={
           isExpanded
             ? [
-                'repeat(auto-fill, minmax(100px, auto))',
-                'repeat(auto-fill, minmax(80px, auto))',
+                'repeat(auto-fill, minmax(90px, auto))',
+                null,
                 null,
                 'repeat(9, auto)',
               ]
@@ -197,14 +197,15 @@ const TypeBadge = memo(
         size="xs"
         py={0.5}
         // p={[1, null, 0]}
-        w={!isExpanded ? [8, 'auto'] : 'auto'}
-        h={!isExpanded ? [8, 'auto'] : 'auto'}
+        // w={!isExpanded ? [8, 'auto'] : 'unset'}
+        // h={!isExpanded ? [8, 'auto'] : 'unset'}
         // variant="unstyled"
         // minW="auto"
         onClick={() => handleClick(type)}
         fontSize="xs"
         fontWeight={700}
-        borderRadius={['100%', 20]}
+        borderRadius={25}
+        // borderRadius={isExpanded ? 10 : ['100%', 20]}
         // display="flex"
         // alignItems="center"
         // justifyContent="center"
@@ -219,6 +220,7 @@ const TypeBadge = memo(
         }}
         bgColor={isSelected(type) ? primary : 'gray.200'}
         color={isSelected(type) ? color : 'gray.600'}
+        textShadow="1px 1px 0px rgba(0, 0, 0, 0.1)"
       >
         {/* Supports for react-icons */}
         {typeof icon === 'function' && (
@@ -228,10 +230,13 @@ const TypeBadge = memo(
         )}
         {typeof icon === 'object' && (
           <Icon
-            mr={isExpanded ? 1 : [0, 1]}
-            w={['16px', '14px']}
-            maxH={['16px', '14px']}
+            minW="14px"
+            h="14px"
+            fixedWidth
             icon={icon}
+            fontSize="14px"
+            mr={isExpanded ? 1 : [0, null, 1]}
+            filter="drop-shadow(1px 1px 0px rgba(0, 0, 0, 0.1))"
           />
         )}
         <Box display={!isExpanded ? ['none', null, 'block'] : 'unset'}>
