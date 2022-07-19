@@ -13,6 +13,13 @@ type Pokemon = {
   ThumbnailAltText: string
   ThumbnailImage: string
   type: string[]
+  variants: {
+    name: string
+    number: string
+    descriptionX: string
+    descriptionY: string
+    image: string
+  }[]
 }
 
 type PokemonList = Pokemon[]

@@ -39,7 +39,16 @@ const PokemonTypeFilter = () => {
   } = useSelectedPokemonTypes()
 
   const handleClick = (type: PokemonType) => {
-    isSelected(type) ? removeSelectedType(type) : addSelectedType(type)
+    if(selectedTypes.length === 2) {
+      console.log('hit');
+      clearAllSelectedTypes()
+    }
+
+    if (isSelected(type)) {
+      removeSelectedType(type)
+    } else {
+      addSelectedType(type)
+    }
   }
 
   return (
@@ -70,7 +79,7 @@ const PokemonTypeFilter = () => {
             onClick={() => {
               setWeakFilterEnabled(!weakFilterEnabled)
             }}
-            isDisabled={exactFilterEnabled}
+            // isDisabled={exactFilterEnabled}
             title="Weak Against"
           >
             <Icon
@@ -85,7 +94,7 @@ const PokemonTypeFilter = () => {
           <Button
             size="xs"
             variant="outline"
-            isDisabled={weakFilterEnabled}
+            // isDisabled={weakFilterEnabled}
             isActive={exactFilterEnabled}
             onClick={() => {
               setExactFilterEnabled(!exactFilterEnabled)
@@ -180,8 +189,8 @@ const TypeBadge = memo(
       isExpanded,
       weakFilterEnabled,
     } = useSelectedPokemonTypes()
-    const maxSelected = exactFilterEnabled && selectedTypes.length === 2
-    const isDisabled = maxSelected && !isSelected(type)
+    // const maxSelected = exactFilterEnabled && selectedTypes.length === 2
+    // const isDisabled = maxSelected && !isSelected(type)
     return (
       <Button
         minW="auto"
@@ -203,7 +212,7 @@ const TypeBadge = memo(
         borderWidth={2}
         borderColor="transparent"
         transition="all 0.2s ease"
-        isDisabled={isDisabled}
+        // isDisabled={isDisabled}
         _hover={{
           borderColor: primary,
           color: isSelected(type) ? color : primary,

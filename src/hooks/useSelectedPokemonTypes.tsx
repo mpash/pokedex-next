@@ -63,9 +63,7 @@ export const SelectedPokemonTypesProvider = ({
     [selectedTypes, setSelectedTypes],
   )
 
-  const clearAllSelectedTypes = useCallback(() => {
-    setSelectedTypes([])
-  }, [setSelectedTypes])
+  const clearAllSelectedTypes = () => setSelectedTypes([])
 
   const selectAllTypes = useCallback(() => setSelectedTypes(pokemonTypes), [])
 
@@ -107,4 +105,5 @@ export const SelectedPokemonTypesProvider = ({
   )
 }
 
-export const useSelectedPokemonTypes = () => useContext(SelectedPokemonTypesContext)
+export const useSelectedPokemonTypes = () =>
+  useContext(SelectedPokemonTypesContext)

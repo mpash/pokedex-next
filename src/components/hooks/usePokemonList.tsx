@@ -1,19 +1,51 @@
 import { useFilters } from '@hooks/useFilters'
-import { useSelectedPokemonTypes } from '@hooks/useSelectedPokemonTypes'
-import { useQuery } from 'react-query'
+import {
+  PokemonType,
+  useSelectedPokemonTypes,
+} from '@hooks/useSelectedPokemonTypes'
+import { flatten, isEqual, uniqBy } from 'lodash/fp'
 import { useMemo } from 'react'
-import { isEqual, uniqBy } from 'lodash/fp'
-import PokemonList from '@components/pokemon/pokemon-list'
+import { useQuery } from 'react-query'
 
 export const usePokemonList = () => {
-  const { search, alphaOrder, numberOrder, selectedFilter } = useFilters()
+  const { search, alphaOrder, numberOrder, selectedFilter, showVariants } =
+    useFilters()
   const { selectedTypes, exactFilterEnabled, weakFilterEnabled } =
     useSelectedPokemonTypes()
   const { isLoading, data } = useQuery<PokemonList>('pokedex', () =>
     fetch('/api/pokedex').then(res => res.json()),
   )
 
-  const pokemonById = useMemo(() => uniqBy('id', data), [data])
+  let pokemonListWithVariants: any = []
+
+  const pokemonById = useMemo(() => {
+    if (showVariants) {
+      return uniqBy('id', data)
+        .map(p =>
+          p.variants.map((v, index) => {
+            const base = {
+              ...v,
+              weakness: p.weakness,
+              type: p.type,
+              number: p.number,
+            }
+            if (index > 0) {
+              const fId = `f${index + 1}`
+              const path = `/img/full-trimmed/${p.number}_${fId}.png`
+              return { ...base, ThumbnailImage: path }
+            } else {
+              const path = `/img/full-trimmed/${p.number}.png`
+              return { ...base, ThumbnailImage: path }
+            }
+          }),
+        )
+        .flat()
+    }
+    return uniqBy('id', data).map(p => ({
+      ...p,
+      ThumbnailImage: `/img/full-trimmed/${p.number}.png`,
+    }))
+  }, [data, pokemonListWithVariants, showVariants])
 
   const filterBySelectedType = (collection: PokemonList) =>
     collection.filter((item: any) => {
@@ -34,20 +66,15 @@ export const usePokemonList = () => {
     )
 
   const filterByWeakness = (collection: PokemonList) => {
-    const newLocal = collection.filter((pokemon: Pokemon) => {
+    return collection.filter((pokemon: Pokemon) => {
       const weaknesses = pokemon.weakness.map(w =>
         w.toLowerCase(),
-      ) as PokemonTypes[]
-      // console.log(
-      //   weaknesses,
-      //   selectedTypes,
-      //   weaknesses.some(weakness => selectedTypes.includes(weakness)),
-      // )
+      ) as PokemonType[]
+      if (exactFilterEnabled) {
+        return selectedTypes.every(type => weaknesses.includes(type))
+      }
       return weaknesses.some(weakness => selectedTypes.includes(weakness))
     })
-    // console.log(newLocal)
-
-    return newLocal
   }
 
   const orderByAlpha = (collection: PokemonList) =>
@@ -70,6 +97,13 @@ export const usePokemonList = () => {
     })
 
   let pokemon: PokemonList = []
+
+  if (!pokemonById) {
+    return {
+      isLoading,
+      pokemon,
+    }
+  }
 
   const pokemonBySearch = filterBySearch(pokemonById)
 

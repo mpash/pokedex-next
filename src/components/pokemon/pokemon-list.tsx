@@ -134,9 +134,9 @@ const PokemonList = () => {
       {!!pokemon &&
         pokemon
           .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
-          .map((pokemon: Pokemon) => {
+          .map((pokemon: Pokemon, index) => {
             return (
-              <MotionBox key={pokemon.number} ref={refs[pokemon.id]}>
+              <MotionBox key={index} ref={refs[pokemon.id]}>
                 <Pokemon pokemon={pokemon} />
               </MotionBox>
             )

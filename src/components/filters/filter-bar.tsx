@@ -5,7 +5,6 @@ import {
   InputGroup,
   InputLeftElement,
 } from '@chakra-ui/react'
-import { usePagination } from '@hooks/usePagination'
 import {
   faArrowDown19,
   faArrowDownAZ,
@@ -15,12 +14,12 @@ import {
   faFilterSlash,
   faSearch,
 } from '@fortawesome/pro-solid-svg-icons'
+import { usePagination } from '@hooks/usePagination'
 import { useSelectedPokemonTypes } from '@hooks/useSelectedPokemonTypes'
 import { debounce } from 'lodash/fp'
-import { memo, RefObject, useMemo, useRef } from 'react'
+import { memo, RefObject, useRef } from 'react'
 import { useFilters } from '../../hooks/useFilters'
 import Icon from '../icon'
-import { useLocalStorage } from 'react-use'
 
 const FilterBar = () => {
   const {
@@ -30,8 +29,9 @@ const FilterBar = () => {
     selectedFilter,
     numberOrder,
     alphaOrder,
+    showVariants,
+    toggleShowVariants
   } = useFilters()
-  const [showVariants, setShowVariants] = useLocalStorage('showVariants', false)
 
   const handleSearch = debounce(400, (search: string) => {
     setSearch(search)
@@ -54,9 +54,7 @@ const FilterBar = () => {
       <Button
         size="sm"
         variant="outline"
-        onClick={() => {
-          setShowVariants(!showVariants)
-        }}
+        onClick={toggleShowVariants}
         isActive={showVariants}
         title={showVariants ? 'Hide Variants' : 'Show Variants'}
       >
@@ -96,10 +94,9 @@ export default FilterBar
 const ResetFiltersButton = memo(
   ({ inputRef }: { inputRef: RefObject<HTMLInputElement> }) => {
     const { resetAllFilters } = useFilters()
-    const { resetSelectedTypes, setExactFilterEnabled: setIsExact } =
+    const { resetSelectedTypes, setExactFilterEnabled, setWeakFilterEnabled } =
       useSelectedPokemonTypes()
     const { onPageChange } = usePagination()
-    // const handleClearFilters =
     return (
       <Button
         size="sm"
@@ -107,7 +104,8 @@ const ResetFiltersButton = memo(
         onClick={() => {
           resetAllFilters()
           resetSelectedTypes()
-          setIsExact(false)
+          setExactFilterEnabled(false)
+          setWeakFilterEnabled(false)
           onPageChange(1)
           if (!inputRef?.current) return
           inputRef.current.value = ''

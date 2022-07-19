@@ -25,7 +25,7 @@ const PaginationContext = createContext<PaginationContext>(null as any)
 export const PaginationProvider = ({ children }) => {
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPages, setTotalPages] = useState(0)
-  const [itemsPerPage, setItemsPerPage] = useState(100)
+  const [itemsPerPage, setItemsPerPage] = useState(50)
   const containerRef = useRef<HTMLDivElement>(null)
 
   const scrollToTop = useCallback(() => {

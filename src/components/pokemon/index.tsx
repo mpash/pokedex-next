@@ -1,4 +1,4 @@
-import { Box, Heading, HStack, Stack } from '@chakra-ui/react'
+import { Box, Flex, Heading, HStack, Stack } from '@chakra-ui/react'
 import Icon from '@components/icon'
 import MotionBox from '@components/motion-box'
 import { pokemonTypeData } from '@data/pokemon-types'
@@ -91,16 +91,16 @@ const PokemonImage = ({ image, alt }: { image: string; alt: string }) => {
       filter="drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.2))"
       variants={imageVariants}
     >
-      <Box w={170} h={170}>
+      <Flex maxW={100} maxH={100}>
         <Image
-          priority
-          width={170 * 2}
-          height={170 * 2}
-          quality={100}
+          style={{ objectFit: 'contain' }}
+          width={100 * 2}
+          height={100 * 2}
+          quality={1}
           src={image}
           alt={alt}
         />
-      </Box>
+      </Flex>
     </MotionBox>
   )
 }
