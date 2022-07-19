@@ -3,6 +3,8 @@ RUN apk add --no-cache libc6-compat
 WORKDIR /home/node/app
 COPY pnpm-lock.yaml .npmr[c] ./
 
+ARG FORTAWESOME_TOKEN
+
 RUN pnpm fetch
 
 FROM mitchpash/pnpm AS builder

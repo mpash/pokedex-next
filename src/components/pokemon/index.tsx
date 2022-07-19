@@ -42,12 +42,9 @@ const Pokemon = memo(({ pokemon }: { pokemon: Pokemon }) => {
       w="100%"
       pb={4}
       zIndex={1}
-      borderWidth={2}
-      // borderColor={primaryType.primary}
-      borderColor="gray.50"
-      // boxShadow="2px 2px 5px rgba(0, 0, 0, 0.1)"
+      borderWidth={5}
+      borderColor="blackAlpha.200"
       cursor="pointer"
-      // borderRadius={10}
       overflow="hidden"
       position="relative"
       display="grid"
