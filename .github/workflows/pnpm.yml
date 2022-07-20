@@ -11,23 +11,13 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: [16.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-
     steps:
-    - uses: actions/checkout@v3
-      with:         
-        lfs: true
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'pnpm-lock.yaml'
-    - run: npm install -g pnpm
-    - run: git lfs pull
-    - run: pnpm build
+      - uses: actions/checkout@v3
+        with:         
+          lfs: true
+      - uses: pnpm/action-setup@v2.2.2
+        with:
+          version: 7.5.2
+      - run: pnpm build
