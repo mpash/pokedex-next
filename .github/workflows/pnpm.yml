@@ -27,7 +27,7 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
-        cache: 'pnpm'
+        cache: 'pnpm-lock.yaml'
     - run: npm install -g pnpm
     - run: git lfs pull
     - run: pnpm build
