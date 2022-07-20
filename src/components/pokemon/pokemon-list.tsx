@@ -56,6 +56,24 @@ const PokemonList = () => {
     }
   }, [pokemon, onPageChange])
 
+  // count the number of types for all pokemon
+  const typeCounts = useMemo(() => {
+    const counts = pokemon.reduce((acc, pokemonItem) => {
+      pokemonItem.type.forEach(type => {
+        if (acc[type]) {
+          acc[type]++
+        } else {
+          acc[type] = 1
+        }
+      })
+      return acc
+    }, {})
+    return counts
+  }, [pokemon])
+
+  console.log(typeCounts);
+  
+
   if (isLoading) {
     return (
       <Flex

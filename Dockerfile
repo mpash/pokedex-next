@@ -1,9 +1,8 @@
 FROM mitchpash/pnpm AS deps
-RUN apk add --no-cache libc6-compat
+RUN apk update && apk add --no-cache libc6-compat
 WORKDIR /home/node/app
-COPY pnpm-lock.yaml .npmr[c] ./
 
-ARG FORTAWESOME_TOKEN
+COPY pnpm-lock.yaml .npmr[c] ./
 
 RUN pnpm fetch
 
@@ -12,6 +11,7 @@ WORKDIR /home/node/app
 COPY --from=deps /home/node/app/node_modules ./node_modules
 COPY . .
 
+RUN cat .npmr[c]
 RUN pnpm install -r --offline
 
 RUN pnpm build
