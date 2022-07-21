@@ -12,6 +12,10 @@ type FilterContext = {
   showVariants: boolean
   setShowVariants: (shouldShow: boolean) => void
   toggleShowVariants: () => void
+  startNumber: number
+  setStartNumber: (startNumber: number) => void
+  endNumber: number
+  setEndNumber: (endNumber: number) => void
 }
 const FilterContext = createContext<FilterContext>(null as any)
 
@@ -23,6 +27,8 @@ export const FilterProvider = ({ children }) => {
   const [alphaOrder, setAlphaOrder] = useState<'az' | 'za'>('az')
   const [numberOrder, setNumberOrder] = useState<1 | -1>(1)
   const [showVariants, setShowVariants] = useState(false)
+  const [startNumber, setStartNumber] = useState(1)
+  const [endNumber, setEndNumber] = useState(905)
 
   const reverseAlphaOrder = useCallback(() => {
     setAlphaOrder(alphaOrder === 'az' ? 'za' : 'az')
@@ -59,6 +65,8 @@ export const FilterProvider = ({ children }) => {
     setSelectedFilter('number')
     setAlphaOrder('az')
     setNumberOrder(1)
+    setStartNumber(1)
+    setEndNumber(905)
   }, [])
 
   return (
@@ -75,6 +83,10 @@ export const FilterProvider = ({ children }) => {
         showVariants,
         setShowVariants,
         toggleShowVariants,
+        startNumber,
+        setStartNumber,
+        endNumber,
+        setEndNumber,
       }}
     >
       {children}

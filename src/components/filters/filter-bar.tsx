@@ -20,6 +20,7 @@ import {
   faArrowUpAZ,
   faDna,
   faFilterSlash,
+  faKeyboard,
   faSearch,
 } from '@fortawesome/pro-solid-svg-icons'
 import { usePagination } from '@hooks/usePagination'
@@ -39,6 +40,10 @@ const FilterBar = () => {
     alphaOrder,
     showVariants,
     toggleShowVariants,
+    setStartNumber,
+    setEndNumber,
+    startNumber,
+    endNumber,
   } = useFilters()
 
   const handleSearch = debounce(400, (search: string) => {
@@ -72,8 +77,31 @@ const FilterBar = () => {
           placeholder="Name or number"
         />
       </InputGroup>
+      <Button
+        size={['xs']}
+        variant="outline"
+        // isActive={showVariants}
+        // title={showVariants ? 'Hide Variants' : 'Show Variants'}
+      >
+        <Icon mr={[0, 1]} w="14px" h="14px" icon={faKeyboard} />
+        <Box as="span" display={['none', 'unset']}>
+          Kbd Cmds
+        </Box>
+      </Button>
       <HStack w={['135px', '175px']} alignItems="center">
-        <NumberInput defaultValue={1} min={1} max={905} size={['xs', 'sm']}>
+        <NumberInput
+          title="Start Number"
+          defaultValue={1}
+          min={1}
+          max={905}
+          size={['xs']}
+          value={startNumber}
+          keepWithinRange
+          allowMouseWheel
+          onChange={value => {
+            setStartNumber(Number(value))
+          }}
+        >
           <NumberInputField />
           <NumberInputStepper>
             <NumberIncrementStepper />
@@ -81,7 +109,18 @@ const FilterBar = () => {
           </NumberInputStepper>
         </NumberInput>
         <Box display={['none', 'unset']}>to</Box>
-        <NumberInput defaultValue={905} min={1} max={905} size={['xs', 'sm']}>
+        <NumberInput
+          title="End Number"
+          defaultValue={905}
+          min={1}
+          max={905}
+          size={['xs']}
+          value={endNumber}
+          allowMouseWheel
+          onChange={value => {
+            setEndNumber(Number(value))
+          }}
+        >
           <NumberInputField />
           <NumberInputStepper>
             <NumberIncrementStepper />
@@ -90,19 +129,19 @@ const FilterBar = () => {
         </NumberInput>
       </HStack>
       <Button
-        size={['xs', 'sm']}
+        size={['xs']}
         variant="outline"
         onClick={toggleShowVariants}
         isActive={showVariants}
-        title={showVariants ? 'Hide Variants' : 'Show Variants'}
+        title={showVariants ? 'Hide Forms' : 'Show Forms'}
       >
         <Icon mr={[0, 1]} w="14px" h="14px" icon={faDna} />
         <Box as="span" display={['none', 'unset']}>
-          Show Variants
+          Show Forms
         </Box>
       </Button>
       <Button
-        size={['xs', 'sm']}
+        size={['xs']}
         variant="outline"
         onClick={toggleNumberOrder}
         isActive={selectedFilter === 'number'}
@@ -117,7 +156,7 @@ const FilterBar = () => {
         </Box>
       </Button>
       <Button
-        size={['xs', 'sm']}
+        size={['xs']}
         variant="outline"
         onClick={toggleAlphaOrder}
         isActive={selectedFilter === 'alpha'}
@@ -146,7 +185,7 @@ const ResetFiltersButton = memo(
     const { onPageChange } = usePagination()
     return (
       <Button
-        size={['xs', 'sm']}
+        size={['xs']}
         variant="outline"
         onClick={() => {
           resetAllFilters()

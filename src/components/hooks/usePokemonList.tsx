@@ -5,8 +5,15 @@ import { useMemo } from 'react'
 import { useQuery } from 'react-query'
 
 export const usePokemonList = () => {
-  const { search, alphaOrder, numberOrder, selectedFilter, showVariants } =
-    useFilters()
+  const {
+    search,
+    alphaOrder,
+    numberOrder,
+    selectedFilter,
+    showVariants,
+    startNumber,
+    endNumber,
+  } = useFilters()
   const { selectedTypes, exactFilterEnabled, weakFilterEnabled } =
     useSelectedPokemonTypes()
   const { isLoading, data } = useQuery<PokemonList>('pokedex', () =>
@@ -76,6 +83,12 @@ export const usePokemonList = () => {
     })
   }
 
+  const filterByRange = (collection: PokemonList) => {
+    return collection.filter((pokemon: Pokemon) => {
+      return pokemon.id >= startNumber && pokemon.id <= endNumber
+    })
+  }
+
   const orderByAlpha = (collection: PokemonList) =>
     !!collection &&
     collection.sort((a, b) => {
@@ -104,7 +117,8 @@ export const usePokemonList = () => {
     }
   }
 
-  const pokemonBySearch = filterBySearch(pokemonById as any)
+  const pokemonByRange = filterByRange(pokemonById as any)
+  const pokemonBySearch = filterBySearch(pokemonByRange)
 
   const filteredCollection = weakFilterEnabled
     ? filterByWeakness(pokemonBySearch)

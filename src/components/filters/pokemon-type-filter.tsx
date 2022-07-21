@@ -73,7 +73,7 @@ const PokemonTypeFilter = () => {
           shouldWrapChildren
         >
           <Button
-            size={['xs', 'sm']}
+            size={['xs']}
             variant="outline"
             isActive={typeSummaryIsVisible}
             onClick={() => {
@@ -89,7 +89,7 @@ const PokemonTypeFilter = () => {
             </Box>
           </Button>
           <Button
-            size={['xs', 'sm']}
+            size={['xs']}
             variant="outline"
             isActive={weakFilterEnabled}
             onClick={() => {
@@ -107,7 +107,7 @@ const PokemonTypeFilter = () => {
             </Box>
           </Button>
           <Button
-            size={['xs', 'sm']}
+            size={['xs']}
             variant="outline"
             isActive={exactFilterEnabled}
             onClick={() => {
@@ -121,9 +121,8 @@ const PokemonTypeFilter = () => {
             </Box>
           </Button>
           <Button
-            size={['xs', 'sm']}
+            size={['xs']}
             onClick={clearAllSelectedTypes}
-            isActive={selectedTypes.length > 0}
             isDisabled={selectedTypes.length === 0}
             title="Clear All"
           >
@@ -133,15 +132,12 @@ const PokemonTypeFilter = () => {
             </Box>
           </Button>
           <Button
-            size={['xs', 'sm']}
+            size={['xs']}
             onClick={() => {
               selectAllTypes()
             }}
-            isActive={selectedTypes.length < totalTypes}
             isDisabled={
-              selectedTypes.length === totalTypes ||
-              exactFilterEnabled ||
-              weakFilterEnabled
+              selectedTypes.length === totalTypes 
             }
             title="Select All"
           >
@@ -153,7 +149,7 @@ const PokemonTypeFilter = () => {
         </HStack>
         <Button
           onClick={() => setIsExpanded(!isExpanded)}
-          size={['xs', 'sm']}
+          size={['xs']}
           transform={isExpanded ? 'rotate(180deg)' : undefined}
           variant="ghost"
           title={isExpanded ? 'Collapse' : 'Expand'}
