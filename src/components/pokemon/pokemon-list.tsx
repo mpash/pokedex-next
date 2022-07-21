@@ -8,9 +8,16 @@ import { pokemonTypeData } from '@data/pokemon-types'
 import { faFileSearch } from '@fortawesome/pro-solid-svg-icons'
 import { usePagination } from '@hooks/usePagination'
 import { useSelectedPokemonTypes } from '@hooks/useSelectedPokemonTypes'
-import { AnimatePresence } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 import Image from 'next/image'
-import { createRef, RefObject, useEffect, useMemo, useState } from 'react'
+import {
+  createRef,
+  forwardRef,
+  RefObject,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import { useLocalStorage } from 'react-use'
 
 const PokemonList = () => {
@@ -139,20 +146,23 @@ const PokemonList = () => {
         WebkitOverflowScrolling: 'touch',
       }}
     >
-      <TypeSummary />
-      {!!pokemon &&
-        pokemon
-          .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
-          .map((pokemon: Pokemon, index) => {
-            return (
-              <Box
-                key={`${pokemon.number}-${pokemon?.fId ?? 'f1'}`}
-                ref={refs[pokemon.id]}
-              >
-                <Pokemon pokemon={pokemon} containerRef={containerRef} />
-              </Box>
-            )
-          })}
+      <AnimatePresence>
+        <TypeSummary />
+        {!!pokemon &&
+          pokemon
+            .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+            .map((pokemon: Pokemon, index) => {
+              return (
+                <MotionBox
+                  layout
+                  key={`${pokemon.number}-${pokemon?.fId ?? 'f1'}`}
+                  ref={refs[pokemon.id]}
+                >
+                  <Pokemon pokemon={pokemon} containerRef={containerRef} />
+                </MotionBox>
+              )
+            })}
+      </AnimatePresence>
       <PaginationBar />
     </MotionBox>
   )
@@ -201,7 +211,8 @@ const TypeSummary = () => {
   if (!typeSummaryIsVisible) return null
 
   return (
-    <Flex
+    <MotionBox
+      display="flex"
       fontSize={24}
       w="100%"
       h="100%"
@@ -209,6 +220,8 @@ const TypeSummary = () => {
       overflowY="scroll"
       pos="relative"
       borderWidth={3}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
     >
       <Flex
         top={0}
@@ -251,7 +264,7 @@ const TypeSummary = () => {
           ))}
         </AnimatePresence>
       </Box>
-    </Flex>
+    </MotionBox>
   )
 }
 

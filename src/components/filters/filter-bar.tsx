@@ -1,10 +1,17 @@
 import {
   Box,
   Button,
+  Flex,
   HStack,
   Input,
   InputGroup,
   InputLeftElement,
+  NumberDecrementStepper,
+  NumberIncrementStepper,
+  NumberInput,
+  NumberInputField,
+  NumberInputStepper,
+  Stack,
 } from '@chakra-ui/react'
 import {
   faArrowDown19,
@@ -64,6 +71,23 @@ const FilterBar = () => {
           placeholder="Name or number"
         />
       </InputGroup>
+      <HStack w="175px" alignItems="center">
+        <NumberInput defaultValue={1} min={1} max={905} size="sm">
+          <NumberInputField textAlign="right" />
+          <NumberInputStepper>
+            <NumberIncrementStepper />
+            <NumberDecrementStepper />
+          </NumberInputStepper>
+        </NumberInput>
+        <Box>to</Box>
+        <NumberInput defaultValue={905} min={1} max={905} size="sm">
+          <NumberInputField textAlign="right" />
+          <NumberInputStepper>
+            <NumberIncrementStepper />
+            <NumberDecrementStepper />
+          </NumberInputStepper>
+        </NumberInput>
+      </HStack>
       <Button
         size={['xs', 'sm']}
         variant="outline"
