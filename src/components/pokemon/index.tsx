@@ -59,7 +59,6 @@ const Pokemon = memo(
         justifyContent="center"
         whileTap={{ scale: 0.95 }}
         gridTemplateRows="minmax(150px, 1fr) auto"
-        boxShadow="-2px 2px 2px rgba(0, 0, 0, 0.05)"
         onTap={handleOnTap}
         {...props}
       >
@@ -139,8 +138,7 @@ const PokemonImage = ({
       alignSelf="flex-end"
       justifyContent="center"
       pointerEvents="none"
-      // willChange="transform"
-      // maxH={150}
+      willChange="transform"
       variants={{
         hover: { scale: 1.1 },
       }}
@@ -171,7 +169,7 @@ export const PokemonTypes = memo(({ types }: { types: PokemonTypes[] }) => {
 
 PokemonTypes.displayName = 'PokemonTypes'
 
-const PokemonType = memo(({ type }: { type: PokemonTypes }) => {
+export const PokemonType = memo(({ type }: { type: PokemonTypes }) => {
   const { icon, primary, color } = pokemonTypeData[type]
   return (
     <Box

@@ -6,6 +6,7 @@ import {
   faEye,
   faEyeSlash,
   faLambda,
+  faNewspaper,
 } from '@fortawesome/pro-solid-svg-icons'
 import { memo } from 'react'
 import { pokemonTypeData } from '../../data/pokemon-types'
@@ -27,11 +28,12 @@ const PokemonTypeFilter = () => {
     setWeakFilterEnabled,
     isExpanded,
     setIsExpanded,
+    typeSummaryIsVisible,
+    setTypeSummaryIsVisible,
   } = useSelectedPokemonTypes()
 
   const handleClick = (type: PokemonTypes) => {
     if (selectedTypes.length === 2) {
-      console.log('hit')
       clearAllSelectedTypes()
     }
 
@@ -52,6 +54,7 @@ const PokemonTypeFilter = () => {
         alignItems="center"
         justifyContent="space-between"
         overflow="hidden"
+        gridTemplateColumns="auto 1fr auto"
       >
         <Text
           mr={2}
@@ -62,16 +65,31 @@ const PokemonTypeFilter = () => {
         >
           Types
         </Text>
-        <HStack shouldWrapChildren overflowX="scroll">
+        <HStack justifySelf="flex-end" shouldWrapChildren overflowX="scroll">
           <Button
-            size="xs"
+            size={['xs', 'sm']}
+            variant="outline"
+            isActive={typeSummaryIsVisible}
+            onClick={() => {
+              setTypeSummaryIsVisible(!typeSummaryIsVisible)
+            }}
+            title={
+              typeSummaryIsVisible ? 'Hide Type Summary' : 'Show Type Summary'
+            }
+          >
+            <Icon w="14px" icon={faNewspaper} />
+            <Box as="span" ml={1} display={['none', 'block']}>
+              Summary
+            </Box>
+          </Button>
+          <Button
+            size={['xs', 'sm']}
             variant="outline"
             isActive={weakFilterEnabled}
             onClick={() => {
               setWeakFilterEnabled(!weakFilterEnabled)
             }}
-            // isDisabled={exactFilterEnabled}
-            title="Weak Against"
+            title="Show types that are weak to selected types"
           >
             <Icon
               w="14px"
@@ -83,9 +101,8 @@ const PokemonTypeFilter = () => {
             </Box>
           </Button>
           <Button
-            size="xs"
+            size={['xs', 'sm']}
             variant="outline"
-            // isDisabled={weakFilterEnabled}
             isActive={exactFilterEnabled}
             onClick={() => {
               setExactFilterEnabled(!exactFilterEnabled)
@@ -98,19 +115,19 @@ const PokemonTypeFilter = () => {
             </Box>
           </Button>
           <Button
-            size="xs"
+            size={['xs', 'sm']}
             onClick={clearAllSelectedTypes}
             isActive={selectedTypes.length > 0}
             isDisabled={selectedTypes.length === 0}
             title="Clear All"
           >
-            <Icon w="14px" maxH="14px" icon={faEyeSlash} />
+            <Icon w="14px" icon={faEyeSlash} />
             <Box as="span" ml={1} display={['none', 'block']}>
               Clear All
             </Box>
           </Button>
           <Button
-            size="xs"
+            size={['xs', 'sm']}
             onClick={() => {
               selectAllTypes()
             }}
@@ -122,21 +139,21 @@ const PokemonTypeFilter = () => {
             }
             title="Select All"
           >
-            <Icon w="14px" maxH="14px" icon={faEye} />
+            <Icon w="14px" icon={faEye} />
             <Box as="span" ml={1} display={['none', 'block']}>
               Select All
             </Box>
           </Button>
-          <Button
-            onClick={() => setIsExpanded(!isExpanded)}
-            size="xs"
-            transform={isExpanded ? 'rotate(180deg)' : undefined}
-            variant="ghost"
-            title={isExpanded ? 'Collapse' : 'Expand'}
-          >
-            <Icon fixedWidth w="12px" icon={faChevronDown} />
-          </Button>
         </HStack>
+        <Button
+          onClick={() => setIsExpanded(!isExpanded)}
+          size={['xs', 'sm']}
+          transform={isExpanded ? 'rotate(180deg)' : undefined}
+          variant="ghost"
+          title={isExpanded ? 'Collapse' : 'Expand'}
+        >
+          <Icon fixedWidth w="12px" icon={faChevronDown} />
+        </Button>
       </Box>
       <Divider borderColor="gray.400" mb={3} />
       <Box
@@ -173,59 +190,41 @@ export default PokemonTypeFilter
 const TypeBadge = memo(
   ({ type, handleClick }: { type: PokemonTypes; handleClick: any }) => {
     const { icon, primary, color } = pokemonTypeData[type]
-    const {
-      isSelected,
-      exactFilterEnabled,
-      selectedTypes,
-      isExpanded,
-      weakFilterEnabled,
-    } = useSelectedPokemonTypes()
-    // const maxSelected = exactFilterEnabled && selectedTypes.length === 2
-    // const isDisabled = maxSelected && !isSelected(type)
+    const { isSelected, isExpanded } = useSelectedPokemonTypes()
     return (
       <Button
         minW="auto"
         size="xs"
-        py={0.5}
-        // p={[1, null, 0]}
-        // w={!isExpanded ? [8, 'auto'] : 'unset'}
-        // h={!isExpanded ? [8, 'auto'] : 'unset'}
-        // variant="unstyled"
-        // minW="auto"
+        py={[0, 1]}
+        m={0}
+        p="5px"
         onClick={() => handleClick(type)}
         fontSize="xs"
         fontWeight={700}
         borderRadius={25}
-        // borderRadius={isExpanded ? 10 : ['100%', 20]}
-        // display="flex"
-        // alignItems="center"
-        // justifyContent="center"
         textTransform="uppercase"
         borderWidth={2}
         borderColor="transparent"
         transition="all 0.2s ease"
-        // isDisabled={isDisabled}
         _hover={{
           borderColor: primary,
           color: isSelected(type) ? color : primary,
         }}
         bgColor={isSelected(type) ? primary : 'gray.200'}
         color={isSelected(type) ? color : 'gray.600'}
-        // textShadow="1px 1px 0px rgba(0, 0, 0, 0.1)"
       >
         {/* Supports for react-icons */}
-        {typeof icon === 'function' && (
-          <Box mr={1} minW="14px" maxH="14px" fontSize="14px">
+        {/* {typeof icon === 'function' && (
+          <Box mr={1} minW="14px" fontSize="14px">
             {(icon as any)()}
           </Box>
-        )}
+        )} */}
         {typeof icon === 'object' && (
           <Icon
-            minW="14px"
-            h="14px"
+            w="12px"
+            h="12px"
             icon={icon}
             mr={isExpanded ? 1 : [0, null, 1]}
-            // filter="drop-shadow(1px 1px 0px rgba(0, 0, 0, 0.1))"
           />
         )}
         <Box display={!isExpanded ? ['none', null, 'block'] : 'unset'}>

@@ -1,4 +1,5 @@
 import {
+  Box,
   Button,
   HStack,
   Input,
@@ -40,10 +41,15 @@ const FilterBar = () => {
   const ref = useRef<HTMLInputElement>(null)
 
   return (
-    <HStack spacing={4}>
+    <Box
+      display="grid"
+      gridGap={2}
+      gridAutoFlow="column"
+      gridTemplateColumns="1fr repeat(3, auto)"
+    >
       <InputGroup size="sm" variant="flushed">
         <InputLeftElement color="gray.400">
-          <Icon fixedWidth width="14px" icon={faSearch} />
+          <Icon w="14px" h="14px" icon={faSearch} />
         </InputLeftElement>
         <Input
           ref={ref}
@@ -59,40 +65,49 @@ const FilterBar = () => {
         />
       </InputGroup>
       <Button
-        size="sm"
+        size={['xs', 'sm']}
         variant="outline"
         onClick={toggleShowVariants}
         isActive={showVariants}
         title={showVariants ? 'Hide Variants' : 'Show Variants'}
       >
-        <Icon w="18px" fontSize="18px" icon={faDna} />
+        <Icon mr={[0, 1]} w="14px" h="14px" icon={faDna} />
+        <Box as="span" display={['none', 'unset']}>
+          Show Variants
+        </Box>
       </Button>
       <Button
-        size="sm"
+        size={['xs', 'sm']}
         variant="outline"
         onClick={toggleNumberOrder}
         isActive={selectedFilter === 'number'}
       >
         <Icon
-          w="18px"
-          fontSize="18px"
+          mr={[0, 1]}
+          w="14px"
           icon={numberOrder === 1 ? faArrowDown19 : faArrowUp19}
         />
+        <Box as="span" display={['none', 'unset']}>
+          Sort #
+        </Box>
       </Button>
       <Button
-        size="sm"
+        size={['xs', 'sm']}
         variant="outline"
         onClick={toggleAlphaOrder}
         isActive={selectedFilter === 'alpha'}
       >
         <Icon
-          w="18px"
-          fontSize="18px"
+          mr={[0, 1]}
+          w="14px"
           icon={alphaOrder === 'az' ? faArrowDownAZ : faArrowUpAZ}
         />
+        <Box as="span" display={['none', 'unset']}>
+          Sort {alphaOrder === 'za' ? 'A-Z' : 'Z-A'}
+        </Box>
       </Button>
       <ResetFiltersButton inputRef={ref} />
-    </HStack>
+    </Box>
   )
 }
 
@@ -106,7 +121,7 @@ const ResetFiltersButton = memo(
     const { onPageChange } = usePagination()
     return (
       <Button
-        size="sm"
+        size={['xs', 'sm']}
         variant="outline"
         onClick={() => {
           resetAllFilters()
@@ -118,7 +133,10 @@ const ResetFiltersButton = memo(
           inputRef.current.value = ''
         }}
       >
-        <Icon w="18px" fontSize="18px" icon={faFilterSlash} />
+        <Icon mr={[0, 1]} w="14px" icon={faFilterSlash} />
+        <Box as="span" display={['none', 'unset']}>
+          Reset Filters
+        </Box>
       </Button>
     )
   },
