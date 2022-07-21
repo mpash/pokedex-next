@@ -119,11 +119,10 @@ const PokemonList = () => {
     <MotionBox
       ref={containerRef}
       gridGap={4}
-      // gap={[3, 5]}
       pos="relative"
       display="grid"
       alignItems="flex-start"
-      gridTemplateRows="280px"
+      gridTemplateRows="300px"
       gridTemplateColumns={{
         base: 'repeat(auto-fill, minmax(170px, auto))',
         sm: 'repeat(auto-fill, minmax(220px, auto))',

@@ -45,22 +45,21 @@ const Pokemon = memo(
     return (
       <MotionBox
         layout
-        h={280}
+        h={300}
         w="100%"
         pb={4}
         zIndex={1}
-        borderWidth={5}
-        borderColor="blackAlpha.200"
         cursor="pointer"
         overflow="hidden"
         position="relative"
         display="grid"
         alignItems="center"
-        justifyContent="center"
         whileHover="hover"
-        whileTap={{ scale: 0.95 }}
         willChange="transform"
+        justifyContent="center"
+        whileTap={{ scale: 0.95 }}
         gridTemplateRows="minmax(150px, 1fr) auto"
+        boxShadow="-2px 2px 2px rgba(0, 0, 0, 0.05)"
         onTap={handleOnTap}
         {...props}
       >
