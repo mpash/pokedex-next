@@ -46,7 +46,7 @@ export const SelectedPokemonTypesProvider = ({
   const [exactFilterEnabled, setExactFilterEnabled] = useState(false)
   const [weakFilterEnabled, setWeakFilterEnabled] = useState(false)
   const [isExpanded, setIsExpanded] = useLocalStorage('expand-types', false)
-  const [typeSummaryIsVisible, setTypeSummaryIsVisible] = useState(true)
+  const [typeSummaryIsVisible, setTypeSummaryIsVisible] = useState(false)
 
   const addSelectedType = useCallback(
     (type: PokemonTypes) => {

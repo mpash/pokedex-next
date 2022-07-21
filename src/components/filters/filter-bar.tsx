@@ -53,6 +53,7 @@ const FilterBar = () => {
       gridGap={2}
       gridAutoFlow="column"
       gridTemplateColumns="1fr repeat(3, auto)"
+      alignItems="center"
     >
       <InputGroup size="sm" variant="flushed">
         <InputLeftElement color="gray.400">
@@ -71,17 +72,17 @@ const FilterBar = () => {
           placeholder="Name or number"
         />
       </InputGroup>
-      <HStack w="175px" alignItems="center">
-        <NumberInput defaultValue={1} min={1} max={905} size="sm">
-          <NumberInputField textAlign="right" />
+      <HStack w={['135px', '175px']} alignItems="center">
+        <NumberInput defaultValue={1} min={1} max={905} size={['xs', 'sm']}>
+          <NumberInputField />
           <NumberInputStepper>
             <NumberIncrementStepper />
             <NumberDecrementStepper />
           </NumberInputStepper>
         </NumberInput>
-        <Box>to</Box>
-        <NumberInput defaultValue={905} min={1} max={905} size="sm">
-          <NumberInputField textAlign="right" />
+        <Box display={['none', 'unset']}>to</Box>
+        <NumberInput defaultValue={905} min={1} max={905} size={['xs', 'sm']}>
+          <NumberInputField />
           <NumberInputStepper>
             <NumberIncrementStepper />
             <NumberDecrementStepper />

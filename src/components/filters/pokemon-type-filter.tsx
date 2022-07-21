@@ -53,7 +53,8 @@ const PokemonTypeFilter = () => {
         px={2}
         alignItems="center"
         justifyContent="space-between"
-        overflow="hidden"
+        // overflow="hidden"
+        gridGap={2}
         gridTemplateColumns="auto 1fr auto"
       >
         <Text
@@ -65,7 +66,12 @@ const PokemonTypeFilter = () => {
         >
           Types
         </Text>
-        <HStack justifySelf="flex-end" shouldWrapChildren overflowX="scroll">
+        <HStack
+          w="100%"
+          justifyContent="flex-end"
+          overflowX="scroll"
+          shouldWrapChildren
+        >
           <Button
             size={['xs', 'sm']}
             variant="outline"
