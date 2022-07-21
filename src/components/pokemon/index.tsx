@@ -5,76 +5,88 @@ import { pokemonTypeData } from '@data/pokemon-types'
 import { usePagination } from '@hooks/usePagination'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
-import { memo } from 'react'
+import { memo, MutableRefObject } from 'react'
 import { MdCatchingPokemon } from 'react-icons/md'
 import { useLocalStorage } from 'react-use'
 
-const Pokemon = memo(({ pokemon }: { pokemon: Pokemon }) => {
-  const router = useRouter()
-  const [previousPokemonId, setPreviousPokemonId] = useLocalStorage<
-    Pokemon['id'] | null
-  >('previous', null)
-  const { currentPage } = usePagination()
-  const primaryType = pokemonTypeData[pokemon.type[0]]
-  const secondaryType = pokemonTypeData[pokemon.type[1]] || null
+const Pokemon = memo(
+  ({
+    pokemon,
+    containerRef,
+  }: {
+    pokemon: Pokemon
+    containerRef: MutableRefObject<HTMLDivElement>
+  }) => {
+    const router = useRouter()
+    const [previousPokemonId, setPreviousPokemonId] = useLocalStorage<
+      Pokemon['id'] | null
+    >('previous', null)
+    const { currentPage } = usePagination()
+    const primaryType = pokemonTypeData[pokemon.type[0]]
+    const secondaryType = pokemonTypeData[pokemon.type[1]] || null
 
-  const props = !!secondaryType
-    ? {
-        bgGradient: `linear(to-bl, ${primaryType.secondary}, ${secondaryType.secondary})`,
-      }
-    : {
-        bgColor: primaryType.secondary,
-      }
+    const props = !!secondaryType
+      ? {
+          bgGradient: `linear(to-bl, ${primaryType.secondary}, ${secondaryType.secondary})`,
+        }
+      : {
+          bgColor: primaryType.secondary,
+        }
 
-  const handleOnTap = () => {
-    setPreviousPokemonId(pokemon.id)
-    if (!!pokemon?.fId && pokemon?.fId !== 'f1') {
-      router.push(`/pokemon/${pokemon.id}?fId=${pokemon.fId}`)
-    } else {
-      router.push(`/pokemon/${pokemon.id}`)
+    const handleOnTap = () => {
+      setPreviousPokemonId(pokemon.id)
+      if (!!pokemon?.fId && pokemon?.fId !== 'f1') {
+        router.push(`/pokemon/${pokemon.id}?fId=${pokemon.fId}`)
+      } else {
+        router.push(`/pokemon/${pokemon.id}`)
+      }
     }
-  }
 
-  return (
-    <MotionBox
-      layout
-      h={280}
-      w="100%"
-      pb={4}
-      zIndex={1}
-      borderWidth={5}
-      borderColor="blackAlpha.200"
-      cursor="pointer"
-      overflow="hidden"
-      position="relative"
-      display="grid"
-      alignItems="center"
-      justifyContent="center"
-      whileHover="hover"
-      whileTap={{ scale: 0.95 }}
-      willChange="transform"
-      gridTemplateRows="minmax(150px, 1fr) auto"
-      onTap={handleOnTap}
-      {...props}
-    >
-      <TopLeftAccent {...{ primaryType, secondaryType }} />
-      <BottomRightAccent {...{ primaryType }} />
-      <PokemonImage
-        image={pokemon.ThumbnailImage}
-        alt={pokemon.ThumbnailAltText}
-      />
-      <PokemonNumber number={pokemon.number} />
-      <Stack zIndex={1} alignItems="center" mt={2}>
-        <PokemonName name={pokemon.name} originalName={pokemon?.originalName} />
-        <PokemonTypes types={pokemon.type as PokemonTypes[]} />
-        {/* Weaknesses */}
-        {/* <PokemonTypes
+    return (
+      <MotionBox
+        layout
+        h={280}
+        w="100%"
+        pb={4}
+        zIndex={1}
+        borderWidth={5}
+        borderColor="blackAlpha.200"
+        cursor="pointer"
+        overflow="hidden"
+        position="relative"
+        display="grid"
+        alignItems="center"
+        justifyContent="center"
+        whileHover="hover"
+        whileTap={{ scale: 0.95 }}
+        willChange="transform"
+        gridTemplateRows="minmax(150px, 1fr) auto"
+        onTap={handleOnTap}
+        {...props}
+      >
+        <TopLeftAccent {...{ primaryType, secondaryType }} />
+        <BottomRightAccent {...{ primaryType }} />
+        <PokemonImage
+          containerRef={containerRef}
+          image={pokemon.ThumbnailImage}
+          alt={pokemon.ThumbnailAltText}
+        />
+        <PokemonNumber number={pokemon.number} />
+        <Stack zIndex={1} alignItems="center" mt={2}>
+          <PokemonName
+            name={pokemon.name}
+            originalName={pokemon?.originalName}
+          />
+          <PokemonTypes types={pokemon.type as PokemonTypes[]} />
+          {/* Weaknesses */}
+          {/* <PokemonTypes
           types={pokemon.weakness.map(w => w.toLowerCase()) as PokemonTypes[]}
         /> */}
-      </Stack>
-    </MotionBox>
-  )
-})
+        </Stack>
+      </MotionBox>
+    )
+  },
+)
 
 Pokemon.displayName = 'Pokemon'
 
@@ -112,7 +124,15 @@ const PokemonName = ({
   )
 }
 
-const PokemonImage = ({ image, alt }: { image: string; alt: string }) => {
+const PokemonImage = ({
+  image,
+  alt,
+  containerRef,
+}: {
+  image: string
+  alt: string
+  containerRef: MutableRefObject<HTMLDivElement>
+}) => {
   return (
     <MotionBox
       zIndex={1}
@@ -127,7 +147,8 @@ const PokemonImage = ({ image, alt }: { image: string; alt: string }) => {
       }}
     >
       <Image
-        priority
+        lazyRoot={containerRef}
+        // priority
         alt={alt}
         src={image}
         width={200}

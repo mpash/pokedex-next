@@ -160,7 +160,7 @@ const PokemonList = () => {
                 key={`${pokemon.number}-${pokemon?.fId ?? 'f1'}`}
                 ref={refs[pokemon.id]}
               >
-                <Pokemon pokemon={pokemon} />
+                <Pokemon pokemon={pokemon} containerRef={containerRef} />
               </Box>
             )
           })}
