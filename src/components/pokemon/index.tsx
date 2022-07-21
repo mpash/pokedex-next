@@ -1,11 +1,11 @@
-import { Box, Flex, Heading, HStack, Stack } from '@chakra-ui/react'
+import { Box, Heading, HStack, Stack } from '@chakra-ui/react'
 import Icon from '@components/icon'
 import MotionBox from '@components/motion-box'
 import { pokemonTypeData } from '@data/pokemon-types'
 import { usePagination } from '@hooks/usePagination'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
-import { memo, MutableRefObject } from 'react'
+import { memo, RefObject } from 'react'
 import { MdCatchingPokemon } from 'react-icons/md'
 import { useLocalStorage } from 'react-use'
 
@@ -15,7 +15,7 @@ const Pokemon = memo(
     containerRef,
   }: {
     pokemon: Pokemon
-    containerRef: MutableRefObject<HTMLDivElement>
+    containerRef: RefObject<HTMLDivElement>
   }) => {
     const router = useRouter()
     const [previousPokemonId, setPreviousPokemonId] = useLocalStorage<
@@ -131,7 +131,7 @@ const PokemonImage = ({
 }: {
   image: string
   alt: string
-  containerRef: MutableRefObject<HTMLDivElement>
+  containerRef: RefObject<HTMLDivElement>
 }) => {
   return (
     <MotionBox
@@ -180,17 +180,17 @@ const PokemonType = memo(({ type }: { type: PokemonTypes }) => {
       px={2}
       color={color}
       display="flex"
+      fontSize="12px"
       fontWeight={700}
       bgColor={primary}
       borderRadius={25}
       alignItems="center"
-      fontSize="10px"
       justifyContent="center"
       textTransform="uppercase"
       title={type}
     >
       {typeof icon === 'object' && (
-        <Icon mr={1} minW="14px" h="14px" icon={icon} />
+        <Icon mr={2} minW="14px" h="14px" icon={icon} />
       )}
       <Box>{type}</Box>
     </Box>
