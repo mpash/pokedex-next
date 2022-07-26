@@ -1,8 +1,12 @@
-import { Box, Button, Flex } from '@chakra-ui/react'
+import { Box, Button, Flex, HStack } from '@chakra-ui/react'
 import { usePokemonList } from '@components/hooks/usePokemonList'
 import Icon from '@components/icon'
 import MotionBox from '@components/motion-box'
-import { faFileSearch, faTimes } from '@fortawesome/pro-solid-svg-icons'
+import {
+  faDiceTwo,
+  faFileSearch,
+  faTimes,
+} from '@fortawesome/pro-solid-svg-icons'
 import { usePagination } from '@hooks/usePagination'
 import { useSelectedPokemonTypes } from '@hooks/useSelectedPokemonTypes'
 import { AnimatePresence, useMotionValue } from 'framer-motion'
@@ -47,12 +51,30 @@ const TypeSummary = () => {
       })
       return acc
     }, {})
+
     // sort the types by count
     const sortedCounts = Object.entries<number>(counts).sort(
       (a, b) => b[1] - a[1],
     )
     return sortedCounts
   }, [currentPage, itemsPerPage, pokemon, thisPageOnly])
+
+  const typeCountsByPair = useMemo(() => {
+    const typePairings = pokemon.reduce((acc, pokemonItem) => {
+      const pairId = pokemonItem.type.join('-')
+      if (acc[pairId]++) {
+        acc[pairId]++
+      } else {
+        acc[pairId] = 1
+      }
+
+      return acc
+    }, {})
+    const sortedPairings = Object.entries<number>(typePairings).sort(
+      (a, b) => b[1] - a[1],
+    )
+    return sortedPairings
+  }, [pokemon])
 
   const [localX, setLocalX] = useLocalStorage('typeSummaryX', 0)
   const [localY, setLocalY] = useLocalStorage('typeSummaryY', 0)
@@ -71,6 +93,7 @@ const TypeSummary = () => {
           top={0}
           left={0}
           drag
+          boxShadow="md"
           style={{ x, y }}
           zIndex={2}
           dragMomentum={false}
@@ -83,8 +106,8 @@ const TypeSummary = () => {
         >
           <Flex alignItems="center" justifyContent="space-between">
             <Box>Type Summary</Box>
-            <Button size="sm" onClick={() => setTypeSummaryIsVisible(false)}>
-              <Icon icon={faTimes} />
+            <Button size="xs" onClick={() => setTypeSummaryIsVisible(false)}>
+              <Icon w="14px" h="14px" icon={faTimes} />
             </Button>
           </Flex>
 
@@ -99,37 +122,70 @@ const TypeSummary = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
           >
-            <Button
-              my={4}
-              size={['xs', 'sm']}
-              title="Summarize only this page"
-              isActive={thisPageOnly}
-              onClick={() => {
-                setThisPageOnly(!thisPageOnly)
-              }}
-            >
-              <Icon w="14px" h="14px" icon={faFileSearch} />
-              Summarize This Page Only
-            </Button>
+            <HStack my={4}>
+              <Button
+                size="xs"
+                title="Show pairs of types"
+                // isActive={thisPageOnly}
+                // onClick={() => {
+                //   setThisPageOnly(!thisPageOnly)
+                // }}
+              >
+                <Icon mr={1} w="14px" h="14px" icon={faDiceTwo} />
+                Show Pairs
+              </Button>
+              <Button
+                size="xs"
+                title="Summarize only this page"
+                isActive={thisPageOnly}
+                onClick={() => {
+                  setThisPageOnly(!thisPageOnly)
+                }}
+              >
+                <Icon mr={1} w="14px" h="14px" icon={faFileSearch} />
+                This Page Only
+              </Button>
+            </HStack>
 
             <Box px={2} maxH={200} overflowY="scroll">
-              <AnimatePresence>
-                {typeCounts.map(([type, count]) => (
-                  <MotionBox
-                    layout
-                    key={type}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                  >
-                    <TypeSummaryItem
-                      type={type}
-                      count={count}
-                      max={typeCounts[0][1]}
-                    />
-                  </MotionBox>
-                ))}
-              </AnimatePresence>
+              <>
+                {/* <Box overflowY="scroll">
+                  {Object.keys(typeCountsByPair).map((pairId, index) => {
+                    // const count = typeCountsByPair[pairId]
+                    // const types = pairId.split('-')
+                    // console.log(index, count[1])
+
+                    return null
+
+                    return (
+                      <Box
+                        display="grid"
+                        gridTemplateColumns="auto 1fr"
+                        key={pairId}
+                      >
+                        <Box justifySelf="flex-end">{count}</Box>
+                      </Box>
+                    )
+                  })}
+                </Box> */}
+                <AnimatePresence>
+                  {typeCounts.map(([type, count]) => (
+                    <MotionBox
+                      layout
+                      key={type}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                    >
+                      <TypeSummaryItem
+                        type={type}
+                        count={count}
+                        max={typeCounts[0][1]}
+                      />
+                    </MotionBox>
+                  ))}
+                </AnimatePresence>
+              </>
             </Box>
           </MotionBox>
         </MotionBox>,

@@ -34,14 +34,12 @@ export const usePokemonList = () => {
               id: p.id,
               fId: `f${index + 1}`,
             }
-            if (index > 0) {
-              const fId = `f${index + 1}`
-              const path = `/img/full-trimmed/${p.number}_${fId}.png`
-              return { ...base, ThumbnailImage: path }
-            } else {
-              const path = `/img/full-trimmed/${p.number}.png`
-              return { ...base, ThumbnailImage: path }
-            }
+            const fId = `f${index + 1}`
+            const path =
+              index > 0
+                ? `/img/full-trimmed/${p.number}_${fId}.png`
+                : `/img/full-trimmed/${p.number}.png`
+            return { ...base, ThumbnailImage: path }
           }),
         )
         .flat()

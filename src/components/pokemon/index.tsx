@@ -44,7 +44,6 @@ const Pokemon = memo(
 
     return (
       <MotionBox
-        layout
         h={300}
         w="100%"
         pb={4}
