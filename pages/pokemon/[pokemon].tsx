@@ -56,7 +56,7 @@ const PokemonDetail = () => {
   return (
     <Box minH="100vh">
       <Stack spacing={6} alignItems="center">
-        <Link href="/" passHref scroll={false}>
+        <Link href="/pokedex" passHref scroll={false}>
           <Button m={4}>Back</Button>
         </Link>
         <Image
