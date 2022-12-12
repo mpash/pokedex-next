@@ -1,13 +1,11 @@
 import { Box, Flex } from '@chakra-ui/react'
 import { usePokemonList } from '@components/hooks/usePokemonList'
 import MotionBox from '@components/motion-box'
-import PaginationBar from '@components/pagination-bar'
 import Pokemon from '@components/pokemon'
 import { usePagination } from '@hooks/usePagination'
 import Image from 'next/image'
 import { createRef, RefObject, useEffect, useMemo } from 'react'
 import { useLocalStorage } from 'react-use'
-import TypeSummary from '../type-summary'
 
 const PokemonList = () => {
   const {

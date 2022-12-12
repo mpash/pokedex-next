@@ -17,6 +17,7 @@ import {
   faSnowflake,
   faSpa,
   faSparkles,
+  faWater,
 } from '@fortawesome/pro-solid-svg-icons'
 
 export const pokemonTypeData: PokemonTypeData = {

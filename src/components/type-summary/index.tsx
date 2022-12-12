@@ -80,8 +80,8 @@ const TypeSummary = () => {
   const [localY, setLocalY] = useLocalStorage('typeSummaryY', 0)
   const x = useMotionValue(localX)
   const y = useMotionValue(localY)
-  useEffect(() => x.onChange(latest => setLocalX(latest)), [])
-  useEffect(() => y.onChange(latest => setLocalY(latest)), [])
+  useEffect(() => x.onChange(latest => setLocalX(latest)), [setLocalX, x])
+  useEffect(() => y.onChange(latest => setLocalY(latest)), [setLocalY, y])
 
   return ref.current
     ? createPortal(

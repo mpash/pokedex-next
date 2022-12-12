@@ -22,6 +22,7 @@ type Pokemon = {
   }[]
   fId: string
   originalName: string
+  japaneseVariants: Pokemon[]
 }
 
 type PokemonList = Pokemon[]
@@ -50,8 +51,9 @@ type PokemonTypeDatum = {
   primary: string
   secondary: string
   color: string
-  icon: any
+  icon: IconProps
 }
+
 type PokemonTypeData = {
-  [K in PokemonTypes]: PokemonTypeDatum
+  [key in PokemonTypes]: PokemonTypeDatum
 }

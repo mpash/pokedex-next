@@ -19,4 +19,6 @@ export default async function handler(
     const id = req.query.id as string
     return res.status(200).json(findByNumber(parseInt(id)))
   }
+
+  return res.status(200).json(parsedJson)
 }

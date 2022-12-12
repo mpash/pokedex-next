@@ -1,3 +1,4 @@
+import { useLocalStorageValue } from '@react-hookz/web'
 import {
   createContext,
   ReactNode,
@@ -5,7 +6,6 @@ import {
   useContext,
   useState,
 } from 'react'
-import { useLocalStorage } from 'react-use'
 import { pokemonTypeData } from '../data/pokemon-types'
 
 const pokemonTypes = Object.keys(pokemonTypeData) as PokemonTypes[]
@@ -39,13 +39,19 @@ export const SelectedPokemonTypesProvider = ({
   children?: ReactNode
 }) => {
   const totalTypes = pokemonTypes.length
-  const [selectedTypes, setSelectedTypes] = useLocalStorage<PokemonTypes[]>(
-    'selected-types',
-    pokemonTypes,
-  )
+  const { value: selectedTypes, set: setSelectedTypes } = useLocalStorageValue<
+    PokemonTypes[]
+  >('selected-types', {
+    defaultValue: pokemonTypes,
+  })
   const [exactFilterEnabled, setExactFilterEnabled] = useState(false)
   const [weakFilterEnabled, setWeakFilterEnabled] = useState(false)
-  const [isExpanded, setIsExpanded] = useLocalStorage('expand-types', false)
+  const { value: isExpanded, set: setIsExpanded } = useLocalStorageValue(
+    'expand-types',
+    {
+      defaultValue: false,
+    },
+  )
   const [typeSummaryIsVisible, setTypeSummaryIsVisible] = useState(false)
 
   const addSelectedType = useCallback(

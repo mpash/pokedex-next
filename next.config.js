@@ -2,7 +2,6 @@
 module.exports = {
   output: 'standalone',
   reactStrictMode: true,
-  swcMinify: true,
   i18n: {
     locales: ['en'],
     defaultLocale: 'en',
@@ -10,5 +9,4 @@ module.exports = {
   images: {
     domains: ['assets.pokemon.com'],
   },
-  experimental: { images: { allowFutureImage: true } },
 }

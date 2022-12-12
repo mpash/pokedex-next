@@ -13,7 +13,7 @@ import {
   faEgg,
   faFloppyDisk,
   faMapLocationDot,
-} from '@fortawesome/pro-solid-svg-icons'
+} from '@fortawesome/pro-duotone-svg-icons'
 import { motion } from 'framer-motion'
 import type { NextPage } from 'next'
 import Head from 'next/head'
@@ -46,7 +46,7 @@ const Home: NextPage = () => {
           gridTemplateColumns="1fr 1fr"
         >
           <BigButton
-            onClick={() => router.push('/pokedex')}
+            onClick={() => router.push('/pokemon')}
             icon={MdCatchingPokemon}
             bgColor="red.500"
             _active={{
