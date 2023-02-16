@@ -1,6 +1,5 @@
 import {
   Box,
-  Divider,
   Flex,
   Heading,
   HStack,
@@ -10,13 +9,12 @@ import {
 } from '@chakra-ui/react'
 import Icon from '@components/icon'
 import { pokemonTypeData } from '@data/pokemon-types'
-import { useAsync } from '@react-hookz/web'
+import ColorThief from 'colorthief/dist/color-thief.mjs'
 import { capitalize, uniqBy } from 'lodash/fp'
 import Image from 'next/image'
 import { memo, useEffect, useMemo, useRef, useState } from 'react'
 import useSWR from 'swr'
 import colorFrequency, { getImageData } from 'utils/colorFrequency'
-import ColorThief from 'colorthief/dist/color-thief.mjs'
 
 const fetcher = async (): Promise<any[]> => {
   const res = await fetch('/api/pokemon')
