@@ -73,7 +73,7 @@ export const usePokemonList = () => {
     return collection.filter((pokemon: Pokemon) => {
       const weaknesses = pokemon.weakness.map(w =>
         w.toLowerCase(),
-      ) as PokemonTypes[]
+      ) as PokemonType[]
       if (exactFilterEnabled) {
         return selectedTypes.every(type => weaknesses.includes(type))
       }

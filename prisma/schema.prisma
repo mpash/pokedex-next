@@ -1,0 +1,87 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Pokemon {
+  id               Int              @id @default(autoincrement())
+  sourceId         Int
+  name             String
+  slug             String
+  number           String
+  weight           Float
+  height           Int
+  hp               Int?
+  attack           Int?
+  defense          Int?
+  spAttack         Int?
+  spDefense        Int?
+  speed            Int?
+  image            String
+  descriptionX     String
+  descriptionY     String
+  detailPageURL    String
+  collectiblesSlug String
+  thumbnailAltText String
+  thumbnailImage   String
+  subVariant       Int
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  // Relations
+  types            PokemonType[]
+  weaknesses       PokemonType[]    @relation("PokemonWeaknesses")
+  abilities        PokemonAbility[]
+  japaneseMeta     JapaneseMeta?
+  primaryColor     PrimaryColor?
+}
+
+model PokemonType {
+  id           Int       @id @default(autoincrement())
+  type         String    @unique
+  // Relations
+  pokemon      Pokemon[]
+  weakPokemons Pokemon[] @relation("PokemonWeaknesses")
+}
+
+model PokemonAbility {
+  id      Int       @id @default(autoincrement())
+  ability String    @unique
+  // Relations
+  pokemon Pokemon[]
+}
+
+model JapaneseMeta {
+  id         Int     @id @default(autoincrement())
+  kyodai_flg Int
+  image_s    String
+  sub_name   String
+  sub        Int
+  type_2     Int
+  image_m    String
+  no         String
+  type_1     Int
+  takasa     String
+  zukan_no   String
+  name       String
+  omosa      String
+  // Relations
+  pokemonId  Int     @unique
+  pokemon    Pokemon @relation(fields: [pokemonId], references: [id])
+}
+
+model PrimaryColor {
+  id        Int     @id @default(autoincrement())
+  r         Int
+  g         Int
+  b         Int
+  // Relations
+  pokemonId Int     @unique
+  pokemon   Pokemon @relation(fields: [pokemonId], references: [id])
+}

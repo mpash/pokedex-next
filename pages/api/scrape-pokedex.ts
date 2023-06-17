@@ -1,28 +1,55 @@
 import cheerio from 'cheerio'
-import fs from 'fs'
+import fs from 'fs/promises'
 import { map, sortBy, uniq } from 'lodash/fp'
 import { NextApiRequest, NextApiResponse } from 'next'
 import path from 'path'
+
+type PokemonWithDescription = {
+  name: string
+  number: string
+  image?: string
+  slug?: string
+  subVariant: number
+  descriptionX: string
+  descriptionY: string
+}
+
+/**
+ * Fetches a pokemon by slug from pokemon.com and retries up to 3 times if the request fails.
+ * @param slug Pokemon slug
+ * @param attempt Current attempt
+ * @returns HTML Pokemon Details
+ */
+const fetchPokemonBySlug = async (slug: string, attempt = 1) => {
+  const url = `https://www.pokemon.com/us/pokedex/${slug}`
+  const res = await fetch(url)
+
+  if (!res.ok) {
+    if (attempt > 3) {
+      throw new Error(`Error fetching ${url}`)
+    }
+    await new Promise(resolve => setTimeout(resolve, 1000))
+    return fetchPokemonBySlug(slug, attempt + 1)
+  }
+
+  return res
+}
 
 // Scrapes the Pokedex from pokemon.com and returns a list of important data.
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<any>,
 ) {
-  const listOfPokemonSlugs = await getListOfPokemon()
-  const data: {
-    name: string
-    number: string
-    image?: string
-    descriptionX: string
-    descriptionY: string
-  }[] = []
+  const uniqPokemonSlugs = await getUniqPokemonSlugs()
+  const data: PokemonWithDescription[] = []
 
   await Promise.all(
-    uniq(listOfPokemonSlugs).map(async pokemonSlug => {
-      const url = `https://www.pokemon.com/us/pokedex/${pokemonSlug}`
-      const html = await fetch(url).then(res => res.text())
+    uniqPokemonSlugs.map(async pokemonSlug => {
+      const res = await fetchPokemonBySlug(pokemonSlug)
+      const html = await res.text()
       const $ = cheerio.load(html)
+
+      const trimHtml = (selector: string) => $(selector).text().trim()
 
       const profileImages: string[] =
         $('.profile-images')
@@ -33,57 +60,65 @@ export default async function handler(
           .map(i => i.trim())
           .filter(i => i !== '') ?? []
 
-      if ($('#formes').children().length > 0) {
-        $('#formes')
-          .children()
-          .map((i, el) => ({
-            name: $(el).text(),
-            number: $('.pokedex-pokemon-pagination-title')
-              .text()
-              .trim()
-              .split('\n')[1]
-              .trim(),
-            descriptionX: $(
-              `.version-descriptions:nth-child(${i + 1}) > .version-x`,
-            )
-              .html()
-              ?.trim(),
-            descriptionY: $(
-              `.version-descriptions:nth-child(${i + 1}) > .version-y`,
-            )
-              .html()
-              ?.trim(),
-            image: $(profileImages[i]).attr('src'),
-          }))
+      const formes = $('#formes').children()
+
+      const pokemonNumber = trimHtml(
+        '.pokedex-pokemon-pagination-title .pokemon-number',
+      )
+
+      if (formes.length > 0) {
+        formes
+          .map(
+            (i, el) =>
+              ({
+                name: $(el).text().trim(),
+                number: pokemonNumber,
+                slug: pokemonSlug,
+                subVariant: i,
+                descriptionX: trimHtml(
+                  `.version-descriptions:nth-child(${i + 1}) > .version-x`,
+                ),
+                descriptionY: trimHtml(
+                  `.version-descriptions:nth-child(${i + 1}) > .version-y`,
+                ),
+                image: $(profileImages[i]).attr('src'),
+              } as PokemonWithDescription),
+          )
           .get()
           .forEach(item => {
             data.push(item)
           })
       } else {
         data.push({
-          name: $('.pokedex-pokemon-pagination-title')
-            .text()
-            .trim()
-            .split('\n')[0],
-          number: $('.pokedex-pokemon-pagination-title')
-            .text()
-            .trim()
-            .split('\n')[1]
-            .trim(),
-          descriptionX: $('.version-descriptions > .version-x').text().trim(),
-          descriptionY: $('.version-descriptions > .version-y').text().trim(),
+          name: trimHtml('.pokedex-pokemon-pagination-title > div').split(
+            '\n',
+          )[0],
+          number: pokemonNumber,
+          subVariant: 0,
+          slug: pokemonSlug,
+          descriptionX: trimHtml('.version-descriptions > .version-x'),
+          descriptionY: trimHtml('.version-descriptions > .version-y'),
           image: $(profileImages[0]).attr('src'),
         })
       }
     }),
   )
 
-  return res.status(200).json(sortBy('number', data))
+  const result = sortBy('number', data).map(pokemon => ({
+    ...pokemon,
+    number: pokemon.number.replace('#', ''),
+  }))
+
+  return res.status(200).json(result)
 }
 
-const getListOfPokemon: () => Promise<string[]> = async () => {
-  const file = path.join(process.cwd(), 'public/data', 'pokedex.json')
-  const data = await fs.readFileSync(file, 'utf-8')
-  const json = JSON.parse(data)
-  return map('slug', json)
+const getUniqPokemonSlugs: () => Promise<string[]> = async () => {
+  // fetch from pokemon.com
+  const req = await fetch('https://www.pokemon.com/us/api/pokedex/kalos')
+  const json = await req.json()
+  // write to file
+  const file = path.join(process.cwd(), 'public/data', 'pokedex-kalos.json')
+  await fs.writeFile(file, JSON.stringify(json, null, 2))
+  // return list of pokemon slugs without variants
+  return uniq(map('slug', json))
 }

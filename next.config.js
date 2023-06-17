@@ -9,4 +9,12 @@ module.exports = {
   images: {
     domains: ['assets.pokemon.com'],
   },
+  async rewrites() {
+    return [
+      {
+        source: '/api/:path*',
+        destination: 'http://localhost:3000/:path*',
+      },
+    ]
+  },
 }

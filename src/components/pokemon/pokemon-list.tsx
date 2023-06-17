@@ -137,16 +137,14 @@ const PokemonList = () => {
         {!!pokemon &&
           pokemon
             .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
-            .map((pokemon: Pokemon, index) => {
-              return (
-                <Box
-                  key={`${pokemon.number}-${pokemon?.fId ?? 'f1'}`}
-                  ref={refs[pokemon.id]}
-                >
-                  <Pokemon pokemon={pokemon} containerRef={containerRef} />
-                </Box>
-              )
-            })}
+            .map((pokemon: Pokemon) => (
+              <Box
+                key={`${pokemon.number}-${pokemon?.fId ?? 'f1'}`}
+                ref={refs[pokemon.id]}
+              >
+                <Pokemon pokemon={pokemon} />
+              </Box>
+            ))}
       </MotionBox>
     </>
   )

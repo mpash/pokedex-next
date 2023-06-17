@@ -31,7 +31,7 @@ const TypeSummary = () => {
   const typeCounts = useMemo(() => {
     type PokemonTypeCounts =
       | {
-          [k in PokemonTypes]: number
+          [k in PokemonType]: number
         }
       | {}
     const counts: PokemonTypeCounts = (
