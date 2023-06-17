@@ -16,7 +16,7 @@ export const usePokemonList = () => {
   } = useFilters()
   const { selectedTypes, exactFilterEnabled, weakFilterEnabled } =
     useSelectedPokemonTypes()
-  const { isLoading, data } = useQuery<PokemonList>('pokedex', () =>
+  const { isLoading, data } = useQuery<Archive.PokemonList>('pokedex', () =>
     fetch('/api/pokedex').then(res => res.json()),
   )
 
@@ -50,7 +50,7 @@ export const usePokemonList = () => {
     }))
   }, [data, showVariants])
 
-  const filterBySelectedType = (collection: PokemonList) =>
+  const filterBySelectedType = (collection: Archive.PokemonList) =>
     collection.filter((item: any) => {
       if (exactFilterEnabled) {
         return isEqual(selectedTypes.sort(), item.type.sort())
@@ -60,7 +60,7 @@ export const usePokemonList = () => {
         selectedTypes.some(type => item.type.includes(type))
       )
     })
-  const filterBySearch = (collection: PokemonList) =>
+  const filterBySearch = (collection: Archive.PokemonList) =>
     collection.filter(
       (item: any) =>
         search === '' ||
@@ -69,8 +69,8 @@ export const usePokemonList = () => {
         item.number.toString().includes(search),
     )
 
-  const filterByWeakness = (collection: PokemonList) => {
-    return collection.filter((pokemon: Pokemon) => {
+  const filterByWeakness = (collection: Archive.PokemonList) => {
+    return collection.filter((pokemon: Archive.Pokemon) => {
       const weaknesses = pokemon.weakness.map(w =>
         w.toLowerCase(),
       ) as PokemonType[]
@@ -81,13 +81,13 @@ export const usePokemonList = () => {
     })
   }
 
-  const filterByRange = (collection: PokemonList) => {
-    return collection.filter((pokemon: Pokemon) => {
+  const filterByRange = (collection: Archive.PokemonList) => {
+    return collection.filter((pokemon: Archive.Pokemon) => {
       return pokemon.id >= startNumber && pokemon.id <= endNumber
     })
   }
 
-  const orderByAlpha = (collection: PokemonList) =>
+  const orderByAlpha = (collection: Archive.PokemonList) =>
     !!collection &&
     collection.sort((a, b) => {
       if (alphaOrder === 'az') {
@@ -96,7 +96,7 @@ export const usePokemonList = () => {
         return b.name.localeCompare(a.name)
       }
     })
-  const orderByNumber = (collection: PokemonList) =>
+  const orderByNumber = (collection: Archive.PokemonList) =>
     !!collection &&
     collection.sort((a, b) => {
       if (numberOrder === 1) {
@@ -106,7 +106,7 @@ export const usePokemonList = () => {
       }
     })
 
-  let pokemon: PokemonList = []
+  let pokemon: Archive.PokemonList = []
 
   if (!pokemonById) {
     return {

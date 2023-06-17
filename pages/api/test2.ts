@@ -2,10 +2,6 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import fs from 'fs/promises'
 import path from 'path'
 
-const normalizeId = (number: Pokemon['number']) => {
-  return parseInt(number.split('#')[1])
-}
-
 const addSubVariantToPokemonList = (
   pokemonList: DataSources.PokemonUs[],
 ): (DataSources.PokemonUs & {

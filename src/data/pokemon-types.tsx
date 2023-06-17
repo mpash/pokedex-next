@@ -73,9 +73,7 @@ export const pokemonTypeData: PokemonTypeData = {
     primary: 'blue.800',
     secondary: 'gray.50',
     color: 'white',
-    component: (
-      <Icon transform="shrink-3" size="lg" icon={faHexagon} mask={faHexagon} />
-    ),
+    component: <Icon transform="shrink-3" icon={faHexagon} mask={faHexagon} />,
   },
   dark: {
     primary: 'gray.900',

@@ -1,3 +1,4 @@
+import type { Pokemon as TPokemon } from '@api/pokemon'
 import {
   Box,
   Button,
@@ -24,12 +25,11 @@ import Icon from '@src/components/icon'
 import MotionBox, { MotionBoxProps } from '@src/components/motion-box'
 import MotionIcon from '@src/components/motion-icon'
 import { getContrast } from '@src/utils/color'
+import { motion } from 'framer-motion'
 import { capitalize, debounce } from 'lodash/fp'
 import Image from 'next/image'
 import { memo, useEffect, useRef, useState } from 'react'
 import { QueryFunction, useInfiniteQuery } from 'react-query'
-import type { Pokemon as TPokemon } from '@api/pokemon'
-import { AnimatePresence, motion } from 'framer-motion'
 
 type ApiPokemon = {
   data: TPokemon[]
@@ -42,7 +42,7 @@ const fetchPokemon: QueryFunction<ApiPokemon, string[]> = async ({
   queryKey,
 }) => {
   const url = new URL('/api/pokemon', process.env.NEXT_PUBLIC_HOSTED_URL)
-  url.searchParams.set('pageSize', '30')
+  url.searchParams.set('pageSize', '100')
 
   const [_, query] = queryKey
 
@@ -85,7 +85,7 @@ const Pokemon = () => {
               color: 'gray.600',
               fontSize: '2xl',
             }}
-          ></Input>
+          />
         </Box>
         <div>
           <Heading
@@ -240,9 +240,9 @@ const PokemonList = ({ query = '' }) => {
                 layoutId={`pokemon-card-${pokemon.id}`}
                 variants={itemAnimation}
                 custom={index + page * 30 - numCompleteAnimations}
-                onAnimationComplete={() => {
+                onAnimationEnd={() =>
                   setNumCompleteAnimations(prev => prev + 1)
-                }}
+                }
               >
                 <PokemonCard {...{ pokemon }} />
               </motion.div>
@@ -275,7 +275,7 @@ const TypeBadge = memo(({ type }: { type: PokemonType }) => {
     <Tooltip label={capitalize(type)}>
       <>
         {component}
-        {icon && <Icon icon={icon} size="lg" />}
+        {icon && <Icon icon={icon} />}
       </>
     </Tooltip>
   )

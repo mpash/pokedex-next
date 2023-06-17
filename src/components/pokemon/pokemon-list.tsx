@@ -137,7 +137,7 @@ const PokemonList = () => {
         {!!pokemon &&
           pokemon
             .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
-            .map((pokemon: Pokemon) => (
+            .map((pokemon: Archive.Pokemon) => (
               <Box
                 key={`${pokemon.number}-${pokemon?.fId ?? 'f1'}`}
                 ref={refs[pokemon.id]}

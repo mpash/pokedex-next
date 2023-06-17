@@ -7,9 +7,9 @@ import seedColors from './seeders/seedColors'
 export const prisma = new PrismaClient()
 
 async function main() {
-  // await seedTypes()
-  // await seedPokemon()
-  // await seedStats()
+  await seedTypes()
+  await seedPokemon()
+  await seedStats()
   await seedColors()
 }
 

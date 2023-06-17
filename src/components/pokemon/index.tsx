@@ -9,10 +9,10 @@ import { memo, RefObject } from 'react'
 import { MdCatchingPokemon } from 'react-icons/md'
 import { useLocalStorage } from 'react-use'
 
-const Pokemon = memo(({ pokemon }: { pokemon: Pokemon }) => {
+const Pokemon = memo(({ pokemon }: { pokemon: Archive.Pokemon }) => {
   const router = useRouter()
   const [previousPokemonId, setPreviousPokemonId] = useLocalStorage<
-    Pokemon['id'] | null
+    Archive.Pokemon['id'] | null
   >('previous', null)
   const { currentPage } = usePagination()
   const primaryType = pokemonTypeData[pokemon.type[0]]
