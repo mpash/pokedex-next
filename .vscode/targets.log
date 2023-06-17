@@ -6,11 +6,8 @@ make all --print-data-base --no-builtin-variables --no-builtin-rules --question
 # PARTICULAR PURPOSE.
 
 # This program built for i386-apple-darwin11.3.0
- 
-make: *** No rule to make target `all'.  Stop.
 
-
-# Make data base, printed on Fri Jun 16 19:41:13 2023
+# Make data base, printed on Sat Jun 17 01:38:05 2023
 
 # Variables
 
@@ -23,25 +20,29 @@ ELECTRON_NO_ATTACH_CONSOLE = 1
 # environment
 VSCODE_CRASH_REPORTER_PROCESS_TYPE = extensionHost
 # environment
-NVM_INC = /Users/mpash/.nvm/versions/node/v19.9.0/include/node
-# environment
-vstsMavenAccessToken = putqqmpfyfx3qxmmzstuddheq65lh4ziwg5sw735bsbltwiias3q
+NVM_INC = /Users/mitch/.nvm/versions/node/v19.9.0/include/node
+# automatic
+?D = $(patsubst %/,%,$(dir $?))
 # automatic
 @D = $(patsubst %/,%,$(dir $@))
 # automatic
 @F = $(notdir $@)
 # makefile
-CURDIR := /Users/mpash/Code/GitHub/pokedex-next
+CURDIR := /Users/mitch/Code/pokedex-next
+# environment
+NEXT_PUBLIC_DATADOG_RUM_ENABLED = false
 # makefile
 SHELL = /bin/sh
+# environment
+FONTAWESOME_TOKEN = 5491F841-6503-4381-B871-08492F9EE440
 # environment
 VSCODE_NLS_CONFIG = {"locale":"en-us","osLocale":"en-us","availableLanguages":{},"_languagePackSupport":true}
 # environment
 _ = /usr/bin/make
-# automatic
-?D = $(patsubst %/,%,$(dir $?))
 # environment
 Green = \033[0;32m
+# environment
+_P9K_SSH_TTY = /dev/ttys000
 # makefile (from `Makefile', line 1)
 MAKEFILE_LIST :=  Makefile
 # environment
@@ -53,35 +54,37 @@ INFOPATH = /opt/homebrew/share/info:
 # environment
 P9K_SSH = 0
 # environment
-VSCODE_CWD = /Users/mpash/Code/GitHub/pokedex-next
+LS_COLORS = di=1;36:ln=35:so=32:pi=33:ex=31:bd=34;46:cd=34;43:su=30;41:sg=30;46:tw=30;42:ow=30;43
+# environment
+VSCODE_CWD = /Users/mitch/Code/pokedex-next
 # environment
 Red = \033[0;31m
 # environment
-PATH = /Users/mitch/Library/Python/3.9/bin:/opt/jetbrains/bin:/Users/mpash/Library/pnpm:/Users/mpash/.bun/bin:/Users/mpash/Library/Python/3.8/bin:/Users/mpash/bin:/Users/mpash/.nvm/versions/node/v19.9.0/bin:/opt/bin:/Users/mpash/bin:/usr/local/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Applications/VMware Fusion Tech Preview.app/Contents/Public:/Library/Apple/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/Users/mpash/.composer/vendor/bin
+PATH = /Users/mitch/.nvm/versions/node/v19.9.0/bin:/Users/mitch/.nvm/versions/node/v19.9.0/bin:/Users/mitch/Library/Python/3.9/bin:/opt/jetbrains/bin:/Users/mitch/Library/pnpm:/Users/mitch/.bun/bin:/Users/mitch/Library/Python/3.8/bin:/Users/mitch/bin:/Users/mitch/.nvm/versions/node/v16.19.0/bin:/opt/bin:/Users/mitch/bin:/usr/local/bin:/Users/mitch/Library/Python/3.9/bin:/opt/jetbrains/bin:/Users/mitch/Library/pnpm:/Users/mitch/.bun/bin:/Users/mitch/Library/Python/3.8/bin:/Users/mitch/bin:/Users/mitch/.nvm/versions/node/v16.19.0/bin:/opt/bin:/Users/mitch/bin:/usr/local/bin:/Users/mitch/Library/Python/3.9/bin:/opt/jetbrains/bin:/Users/mitch/Library/pnpm:/Users/mitch/.bun/bin:/Users/mitch/Library/Python/3.8/bin:/Users/mitch/bin:/Users/mitch/.nvm/versions/node/v16.19.0/bin:/opt/bin:/Users/mitch/bin:/usr/local/bin:/Users/mitch/Library/Python/3.9/bin:/opt/jetbrains/bin:/Users/mitch/Library/pnpm:/Users/mitch/.bun/bin:/Users/mitch/Library/Python/3.8/bin:/Users/mitch/bin:/Users/mitch/.nvm/versions/node/v16.19.0/bin:/opt/bin:/Users/mitch/bin:/usr/local/bin:/Users/mitch/Library/Python/3.9/bin:/opt/jetbrains/bin:/Users/mitch/Library/pnpm:/Users/mitch/.bun/bin:/Users/mitch/Library/Python/3.8/bin:/Users/mitch/bin:/Users/mitch/.nvm/versions/node/v16.19.0/bin:/opt/bin:/Users/mitch/bin:/usr/local/bin:/Users/mitch/Library/Python/3.9/bin:/opt/jetbrains/bin:/Users/mitch/Library/pnpm:/Users/mitch/.bun/bin:/Users/mitch/Library/Python/3.8/bin:/Users/mitch/bin:/Users/mitch/.nvm/versions/node/v16.19.0/bin:/opt/bin:/Users/mitch/bin:/usr/local/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Users/mitch/Library/Application Support/JetBrains/Toolbox/scripts:/Users/mitch/.composer/vendor/bin:/Users/mitch/.composer/vendor/bin:/Users/mitch/.composer/vendor/bin:/Users/mitch/.composer/vendor/bin:/Users/mitch/.composer/vendor/bin:/Users/mitch/.composer/vendor/bin
 # environment
 LSCOLORS = Gxfxcxdxbxegedabagacad
 # environment
 DOCKER_CONTAINERS = mariadb mailcatcher keydb keycloak vault
 # environment
-PNPM_HOME = /Users/mpash/Library/pnpm
+PNPM_HOME = /Users/mitch/Library/pnpm
 # environment
-NVM_BIN = /Users/mpash/.nvm/versions/node/v19.9.0/bin
+NVM_BIN = /Users/mitch/.nvm/versions/node/v19.9.0/bin
 # environment
-LaunchInstanceID = 0FFFBDC0-E8B1-4D1A-A134-6CFCF73C6CD1
+LaunchInstanceID = D8488925-85B8-4BA3-8B40-1A427372C8E5
 # environment
 ELECTRON_RUN_AS_NODE = 1
 # default
 .FEATURES := target-specific order-only second-expansion else-if archives jobserver check-symlink
 # environment
-SSH_AUTH_SOCK = /Users/mpash/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock
+NEXT_PUBLIC_FLAGR_API = https://flagr.bushelops.com
+# environment
+SSH_AUTH_SOCK = /Users/mitch/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock
 # automatic
 %F = $(notdir $%)
 # environment
 NoColor = \033[0m
 # environment
-TOKEN = ponies
-# environment
-PWD = /Users/mpash/Code/GitHub/pokedex-next
+PWD = /Users/mitch/Code/pokedex-next
 # environment
 HOMEBREW_CELLAR = /opt/homebrew/Cellar
 # environment
@@ -89,27 +92,25 @@ FORTAWESOME_TOKEN = 5491F841-6503-4381-B871-08492F9EE440
 # environment
 ORIGINAL_XDG_CURRENT_DESKTOP = undefined
 # environment
-AZDO_PERSONAL_ACCESS_TOKEN = putqqmpfyfx3qxmmzstuddheq65lh4ziwg5sw735bsbltwiias3q
-# environment
-MANPATH = /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/share/man:/Library/Developer/CommandLineTools/usr/share/man:/Library/Developer/CommandLineTools/Toolchains/XcodeDefault.xctoolchain/usr/share/man:/Users/mpash/.nvm/versions/node/v19.9.0/share/man:/opt/homebrew/share/man::
+MANPATH = /Users/mitch/.nvm/versions/node/v19.9.0/share/man:/opt/homebrew/share/man::
 # environment
 VSCODE_AMD_ENTRYPOINT = vs/workbench/api/node/extensionHostProcess
 # environment
-HOME = /Users/mpash
+HOME = /Users/mitch
 # default
 MAKEFILEPATH = $(shell /usr/bin/xcode-select -print-path 2>/dev/null || echo /Developer)/Makefiles
 # environment
 VSCODE_CLI = 1
 # environment
-VSCODE_CODE_CACHE_PATH = /Users/mpash/Library/Application Support/Code/CachedData/b380da4ef1ee00e224a15c1d4d9793e27c2b6302
+VSCODE_CODE_CACHE_PATH = /Users/mitch/Library/Application Support/Code/CachedData/b380da4ef1ee00e224a15c1d4d9793e27c2b6302
 # environment
-LOGNAME = mpash
+LOGNAME = mitch
 # environment
 APPLICATION_INSIGHTS_NO_DIAGNOSTIC_CHANNEL = 1
 # environment
 NVM_CD_FLAGS = -q
 # environment
-ZSH = /Users/mpash/.oh-my-zsh
+ZSH = /Users/mitch/.oh-my-zsh
 # environment
 VSCODE_HANDLES_UNCAUGHT_ERRORS = true
 # automatic
@@ -124,16 +125,18 @@ MAKE = $(MAKE_COMMAND)
 LC_TERMINAL = iTerm2
 # environment
 SHLVL = 3
+# environment
+NEXT_PUBLIC_MOCK_MODE = false
 # default
 MAKE_VERSION := 3.81
 # environment
-USER = mpash
+USER = mitch
 # makefile
 .DEFAULT_GOAL := start
 # default
 MAKECMDGOALS := all
 # environment
-TERM_SESSION_ID = w0t0p0:2B5CBC76-504E-4A39-A847-B305BAF9604E
+TERM_SESSION_ID = w0t0p0:42555C00-CA3D-4602-8943-3657BEE84671
 # environment
 LESS = -R
 # automatic
@@ -145,15 +148,15 @@ TERM_PROGRAM = iTerm.app
 # default
 .VARIABLES := 
 # environment
-TMPDIR = /var/folders/c3/lsctyrs12s37g91wty596rt40000gn/T/
+TMPDIR = /var/folders/lv/gqht5cgx0zqfknc5xpmt59pc0000gn/T/
 # automatic
 *F = $(notdir $*)
 # environment
-VSCODE_IPC_HOOK = /Users/mpash/Library/Application Support/Code/1.79-main.sock
+VSCODE_IPC_HOOK = /Users/mitch/Library/Application Support/Code/1.79-main.sock
 # environment
 MallocNanoZone = 0
 # environment
-BUN_INSTALL = /Users/mpash/.bun
+BUN_INSTALL = /Users/mitch/.bun
 # makefile
 MAKEFLAGS = Rrqp
 # environment
@@ -163,9 +166,9 @@ MFLAGS = -Rrqp
 # environment
 TERM_PROGRAM_VERSION = 3.4.19
 # environment
-NVM_DIR = /Users/mpash/.nvm
+NVM_DIR = /Users/mitch/.nvm
 # environment
-XPC_SERVICE_NAME = application.com.microsoft.VSCode.77650488.77650494.DACFD184-560F-425E-BED8-EC171198B944
+XPC_SERVICE_NAME = application.com.microsoft.VSCode.18606163.18606169.90F73E83-C1B7-4A69-8886-F9D51345E70E
 # environment
 LC_TERMINAL_VERSION = 3.4.19
 # environment
@@ -177,7 +180,9 @@ VSCODE_L10N_BUNDLE_LOCATION =
 # automatic
 +F = $(notdir $+)
 # environment
-ITERM_SESSION_ID = w0t0p0:2B5CBC76-504E-4A39-A847-B305BAF9604E
+NEXT_PUBLIC_REACT_QUERY_DEVTOOLS = false
+# environment
+ITERM_SESSION_ID = w0t0p0:42555C00-CA3D-4602-8943-3657BEE84671
 # environment
 HOMEBREW_REPOSITORY = /opt/homebrew
 # environment
@@ -197,6 +202,8 @@ PAGER = less
 # environment
 LC_ALL = C
 # environment
+CURRENT_PATH = /Users/mitch/Code/pokedex-next
+# environment
 SECURITYSESSIONID = 186b3
 # environment
 P9K_TTY = old
@@ -207,19 +214,23 @@ SUFFIXES :=
 # environment
 MAKELEVEL := 0
 # environment
-AUTOJUMP_ERROR_PATH = /Users/mpash/Library/autojump/errors.log
+AUTOJUMP_ERROR_PATH = /Users/mitch/Library/autojump/errors.log
 # environment
 LANG = C
 # environment
 TERM = xterm-256color
 # environment
+NEXT_PUBLIC_BUSHEL_API = https://bidl.labrador.us.dev.bushelops.com
+# environment
 _P9K_TTY = /dev/ttys000
 # environment
-VSCODE_PID = 7764
+VSCODE_PID = 75561
+# environment
+NPM_TOKEN = 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
 # environment
 VAULT_ADDR = https://vault.bushelops.com
 # variable set hash-table stats:
-# Load=102/1024=10%, Rehash=0, Collisions=5/125=4%
+# Load=109/1024=11%, Rehash=0, Collisions=5/132=4%
 
 # Pattern-specific Variable Values
 
@@ -227,9 +238,9 @@ VAULT_ADDR = https://vault.bushelops.com
 
 # Directories
 
-# . (device 16777232, inode 8505625): 35 files, no impossibilities.
+# . (device 16777229, inode 5896810): 36 files, no impossibilities.
 
-# 35 files, no impossibilities in 1 directories.
+# 36 files, no impossibilities in 1 directories.
 
 # Implicit Rules
 
@@ -242,6 +253,9 @@ stop:
 #  Modification time never checked.
 #  File has not been updated.
 #  commands to execute (from `Makefile', line 5):
+ 
+make: *** No rule to make target `all'.  Stop.
+
 	docker compose down
 	
 
@@ -271,7 +285,7 @@ all:
 # Not a target:
 Makefile:
 #  Implicit rule search has been done.
-#  Last modified 2023-06-16 03:23:32
+#  Last modified 2023-06-17 01:20:30
 #  File has been updated.
 #  Successfully updated.
 # variable set hash-table stats:
@@ -313,7 +327,6 @@ restart:
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
- 
 #  commands to execute (from `Makefile', line 8):
 	start
 	stop
@@ -341,6 +354,6 @@ restart-db:
 # strcache size: total = 4096 / max = 4096 / min = 4096 / avg = 4096
 # strcache free: total = 4087 / max = 4087 / min = 4087 / avg = 4087
 
-# Finished Make data base on Fri Jun 16 19:41:13 2023
+# Finished Make data base on Sat Jun 17 01:38:05 2023
 
  

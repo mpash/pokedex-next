@@ -1,1 +1,1 @@
-{"buildTargets":["clean-db-danager","restart","restart-db","start","start-db","stop","stop-db"],"launchTargets":[],"customConfigurationProvider":{"workspaceBrowse":{"browsePath":[],"compilerArgs":[]},"fileIndex":[]}}
+{"buildTargets":["clean-db-danager","make","restart","restart-db","start","start-db","stop","stop-db"],"launchTargets":[],"customConfigurationProvider":{"workspaceBrowse":{"browsePath":[],"compilerArgs":[]},"fileIndex":[]}}

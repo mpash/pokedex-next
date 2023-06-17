@@ -41,10 +41,7 @@ const fetchPokemon: QueryFunction<ApiPokemon, string[]> = async ({
   pageParam,
   queryKey,
 }) => {
-  const url = new URL(
-    '/api/pokemon',
-    process.env.NEXT_PUBLIC_VERCEL_URL ?? process.env.NEXT_PUBLIC_HOSTED_URL,
-  )
+  const url = new URL('/api/pokemon', window.location.origin)
   url.searchParams.set('pageSize', '100')
 
   const [_, query] = queryKey
