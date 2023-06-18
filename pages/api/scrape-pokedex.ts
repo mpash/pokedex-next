@@ -12,6 +12,7 @@ type PokemonWithDescription = {
   subVariant: number
   descriptionX: string
   descriptionY: string
+  evolutionChain: string[]
 }
 
 /**
@@ -26,7 +27,7 @@ const fetchPokemonBySlug = async (slug: string, attempt = 1) => {
 
   if (!res.ok) {
     if (attempt > 3) {
-      throw new Error(`Error fetching ${url}`)
+      throw new Error(`Max retries exceeded for ${url}`)
     }
     await new Promise(resolve => setTimeout(resolve, 1000))
     return fetchPokemonBySlug(slug, attempt + 1)
@@ -60,11 +61,16 @@ export default async function handler(
           .map(i => i.trim())
           .filter(i => i !== '') ?? []
 
-      const formes = $('#formes').children()
+      const formes = $('select#formes').children()
 
       const pokemonNumber = trimHtml(
         '.pokedex-pokemon-pagination-title .pokemon-number',
       )
+
+      const evolutionChain = $('ul.evolution-profile')
+        .children('li')
+        .map((i, el) => $(el).find('.pokemon-number').text().trim())
+        .get()
 
       if (formes.length > 0) {
         formes
@@ -82,6 +88,7 @@ export default async function handler(
                   `.version-descriptions:nth-child(${i + 1}) > .version-y`,
                 ),
                 image: $(profileImages[i]).attr('src'),
+                evolutionChain,
               } as PokemonWithDescription),
           )
           .get()
@@ -99,6 +106,7 @@ export default async function handler(
           descriptionX: trimHtml('.version-descriptions > .version-x'),
           descriptionY: trimHtml('.version-descriptions > .version-y'),
           image: $(profileImages[0]).attr('src'),
+          evolutionChain,
         })
       }
     }),
@@ -114,10 +122,14 @@ export default async function handler(
 
 const getUniqPokemonSlugs: () => Promise<string[]> = async () => {
   // fetch from pokemon.com
-  const req = await fetch('https://www.pokemon.com/us/api/pokedex/kalos')
+  const req = await fetch('https://www.pokemon.com/us/api/pokedex/paldea')
   const json = await req.json()
   // write to file
-  const file = path.join(process.cwd(), 'public/data', 'pokedex-kalos.json')
+  const file = path.join(
+    process.cwd(),
+    'public/data',
+    'pokemon-com-pokedex-paldea.json',
+  )
   await fs.writeFile(file, JSON.stringify(json, null, 2))
   // return list of pokemon slugs without variants
   return uniq(map('slug', json))

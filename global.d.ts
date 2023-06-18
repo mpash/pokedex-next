@@ -56,6 +56,7 @@ declare namespace DataSources {
     descriptionX: string // "There is a plant seed on its back right from the day this Pokémon is born. The seed slowly grows larger."
     descriptionY: string // "While it is young, it uses the nutrients that are stored in the seed on its back in order to grow."
     image: string // "https://assets.pokemon.com/assets/cms2/img/pokedex/full/001.png"
+    evolutionChain: string[] // ["bulbasaur", "ivysaur", "venusaur"]
   }
 
   type PokemonJp = {

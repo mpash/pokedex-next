@@ -1,10 +1,46 @@
 import { Prisma } from '@prisma/client'
-import pokedexUsJpKalos from '../../public/data/pokedex-us-jp-kalos.json'
+import pokedexUsJpPaldea from '../../public/data/pokedex-us-jp-paldea.json'
 import { prisma } from '../seed'
 
+const regionMap = [
+  { id: 1, name: 'Kanto' },
+  { id: 2, name: 'Johto' },
+  { id: 3, name: 'Hoenn' },
+  { id: 4, name: 'Sinnoh' },
+  { id: 5, name: 'Unova' },
+  { id: 6, name: 'Kalos' },
+  { id: 7, name: 'Alola' },
+  { id: 8, name: 'Galar' },
+  { id: 9, name: 'Paldea' },
+]
+const generationIdMarkers = [151, 251, 386, 493, 649, 721, 809, 905, 1010]
+
+const calculateGeneration = (number: string) => {
+  const num = parseInt(number)
+  for (let i = 0; i < generationIdMarkers.length; i++) {
+    if (num <= generationIdMarkers[i]) {
+      return i + 1
+    }
+  }
+  return 1
+}
+
+async function seedRegions() {
+  for (const region of regionMap) {
+    await prisma.region.create({
+      data: {
+        sourceId: region.id,
+        name: region.name,
+      },
+    })
+  }
+}
+
 export default async function seedPokemon() {
-  for (const key in pokedexUsJpKalos) {
-    const pokemon = pokedexUsJpKalos[key] as DataSources.PokemonUsJpScrape
+  await seedRegions()
+
+  for (const key in pokedexUsJpPaldea) {
+    const pokemon = pokedexUsJpPaldea[key] as DataSources.PokemonUsJpScrape
 
     const typeIds = (
       await prisma.pokemonType.findMany({
@@ -41,6 +77,8 @@ export default async function seedPokemon() {
         }
       : {}
 
+    const regionSourceId = calculateGeneration(pokemon.number)
+
     await prisma.pokemon.create({
       data: {
         sourceId: pokemon.id,
@@ -63,6 +101,7 @@ export default async function seedPokemon() {
         types: { connect: typeIds },
         weaknesses: { connect: weaknessIds },
         abilities: { connect: abilityIds },
+        region: { connect: { sourceId: regionSourceId } },
         ...japaneseMeta,
       },
       include: {

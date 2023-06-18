@@ -29,6 +29,7 @@
     "@react-hookz/web": "^20.1.0",
     "@tanstack/react-query": "^4.29.14",
     "@types/cheerio": "^0.22.31",
+    "algoliasearch": "^4.17.2",
     "cheerio": "1.0.0-rc.12",
     "color-blend": "^4.0.0",
     "colorthief": "^2.4.0",

@@ -35,8 +35,8 @@ export default async function handler(
   const pokedexUsKalos = await fileData<DataSources.PokemonUs[]>(
     'pokedex-us-kalos.json',
   )
-  const pokedexUsKalosScrape = await fileData<DataSources.PokemonUsScrape[]>(
-    'pokedex-us-kalos-scrape.json',
+  const pokedexUsPaldeaScrape = await fileData<DataSources.PokemonUsScrape[]>(
+    'pokedex-us-paldea-scrape.json',
   )
   const pokedexJpKalos = await fileData<DataSources.PokemonJp[]>(
     'pokedex-jp-kalos.json',
@@ -46,7 +46,7 @@ export default async function handler(
     const jpPokemon = pokedexJpKalos.find(
       ({ no, sub }) => no === pokemon.number && sub === pokemon.subVariant,
     )
-    const scrapedPokemon = pokedexUsKalosScrape.find(
+    const scrapedPokemon = pokedexUsPaldeaScrape.find(
       ({ number, subVariant }) =>
         number === pokemon.number && subVariant === pokemon.subVariant,
     )
