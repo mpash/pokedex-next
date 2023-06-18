@@ -11,12 +11,12 @@ import {
 } from '@chakra-ui/react'
 import { PokemonTypes } from '@components/pokemon'
 import { pokemonTypeData } from '@data/pokemon-types'
+import { useQuery } from '@tanstack/react-query'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { MdCatchingPokemon } from 'react-icons/md'
-import { useQuery } from 'react-query'
 
 const PokemonDetail = () => {
   const router = useRouter()

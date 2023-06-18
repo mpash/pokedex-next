@@ -1,8 +1,8 @@
 import { useFilters } from '@hooks/useFilters'
 import { useSelectedPokemonTypes } from '@hooks/useSelectedPokemonTypes'
+import { useQuery } from '@tanstack/react-query'
 import { isEqual, uniqBy } from 'lodash/fp'
 import { useMemo } from 'react'
-import { useQuery } from 'react-query'
 
 export const usePokemonList = () => {
   const {
@@ -16,7 +16,7 @@ export const usePokemonList = () => {
   } = useFilters()
   const { selectedTypes, exactFilterEnabled, weakFilterEnabled } =
     useSelectedPokemonTypes()
-  const { isLoading, data } = useQuery<Archive.PokemonList>('pokedex', () =>
+  const { isLoading, data } = useQuery<Archive.PokemonList>(['pokedex'], () =>
     fetch('/api/pokedex').then(res => res.json()),
   )
 

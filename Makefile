@@ -22,3 +22,6 @@ clean-db-danager:
 	docker compose down
 	docker volume rm -f pokedex-next_postgres-data
 	docker compose up -d
+
+seed-db:
+	docker compose exec app 

@@ -8,47 +8,19 @@ import {
   faCircleP,
 } from '@fortawesome/pro-solid-svg-icons'
 import { faBolt } from '@fortawesome/sharp-solid-svg-icons'
-import { useIntersectionObserver } from '@react-hookz/web'
+import usePokemonList from '@src/client/usePokemonList'
 import Icon from '@src/components/icon'
 import MotionBox from '@src/components/motion-box'
 import MotionIcon from '@src/components/motion-icon'
 import { debounce } from 'lodash/fp'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { QueryFunction, useInfiniteQuery } from 'react-query'
-import { PokemonCard } from '../src/components/pokemon-card'
 import { useRouter } from 'next/router'
+import { useEffect, useRef } from 'react'
 import { useIntersection } from 'react-use'
+import { PokemonCard } from '../src/components/pokemon-card'
 
-type ApiPokemon = {
+export type ApiPokemon = {
   data: TPokemon[]
   pagination: { nextPage: string | null }
-}
-
-const fetchPokemon: QueryFunction<ApiPokemon, (string | boolean)[]> = async ({
-  signal,
-  pageParam,
-  queryKey,
-}) => {
-  const url = new URL('/api/pokemon', window.location.origin)
-  url.searchParams.set('pageSize', '100')
-
-  const [_, query, showVariants] = queryKey
-
-  if (query !== '')
-    url.searchParams.append(
-      'q',
-      typeof query === 'string' ? query : query.toString(),
-    )
-  if (!showVariants) url.searchParams.append('hideVariants', 'true')
-
-  const res = await fetch(pageParam ?? url, {
-    signal,
-  })
-  const data = await res.json()
-
-  if (!res.ok) throw new Error((await res.json()) ?? 'Something went wrong')
-
-  return data
 }
 
 const Pokemon = () => {
@@ -218,12 +190,7 @@ const PokemonList = () => {
     isFetching,
     fetchNextPage,
     hasNextPage,
-  } = useInfiniteQuery({
-    queryKey: ['Pokemon', query, showVariants],
-    getNextPageParam: lastPage => lastPage.pagination.nextPage,
-    queryFn: fetchPokemon,
-    keepPreviousData: true,
-  })
+  } = usePokemonList({ query, showVariants })
 
   const ref = useRef<HTMLButtonElement>(null)
   const intersection = useIntersection(ref, {

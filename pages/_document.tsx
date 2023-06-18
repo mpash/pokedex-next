@@ -1,3 +1,5 @@
+import { ColorModeScript } from '@chakra-ui/react'
+import theme from '@src/theme'
 import Document, {
   DocumentContext,
   DocumentInitialProps,
@@ -20,6 +22,7 @@ class MyDocument extends Document {
       <Html>
         <Head />
         <body>
+          <ColorModeScript initialColorMode={theme.config.initialColorMode} />
           <Main />
           <div id="overlay"></div>
           <NextScript />

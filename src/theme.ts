@@ -17,6 +17,10 @@ const josefinSans = Josefin_Sans({
 })
 
 const theme = extendTheme({
+  config: {
+    initialColorMode: 'dark',
+    useSystemColorMode: true,
+  },
   fonts: {
     heading: josefinSans.style.fontFamily,
     // heading: montserrat.style.fontFamily,

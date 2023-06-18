@@ -4,8 +4,8 @@ import '@fortawesome/fontawesome-svg-core/styles.css'
 import { FilterProvider } from '@hooks/useFilters'
 import { PaginationProvider } from '@hooks/usePagination'
 import { SelectedPokemonTypesProvider } from '@hooks/useSelectedPokemonTypes'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { AppProps } from 'next/app'
-import { QueryClient, QueryClientProvider } from 'react-query'
 import theme from 'theme'
 
 config.autoAddCss = false
@@ -13,7 +13,7 @@ config.autoAddCss = false
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      retry: 3,
+      retry: 0,
       refetchOnWindowFocus: false,
     },
   },
