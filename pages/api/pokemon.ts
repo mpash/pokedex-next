@@ -221,7 +221,10 @@ export default async function handler(
   const lastPokemonId = pokemon[pokemon.length - 1]?.id
 
   const generateBaseUrl = () => {
-    const baseUrl = new URL('/api/pokemon', process.env.NEXT_PUBLIC_VERCEL_URL ?? 'http://localhost:3000')
+    const baseUrl = new URL(
+      '/api/pokemon',
+      process.env.VERCEL_URL ?? 'http://localhost:3000',
+    )
     baseUrl.searchParams.set('pageSize', pageSize.toString())
     query && baseUrl.searchParams.append('q', query)
     return baseUrl
