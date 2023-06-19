@@ -7,6 +7,7 @@ import {
   faDroplet,
   faFire,
   faFlaskPoison,
+  faGem,
   faGhost,
   faHillRockslide,
   faLeaf,
@@ -16,9 +17,7 @@ import {
   faSnowflake,
   faSparkles,
   faWind,
-} from '@fortawesome/pro-solid-svg-icons'
-import { faHexagon } from '@fortawesome/sharp-solid-svg-icons'
-import Icon from '@src/components/icon'
+} from '@fortawesome/sharp-regular-svg-icons'
 
 export const pokemonTypeData: PokemonTypeData = {
   grass: {
@@ -73,7 +72,8 @@ export const pokemonTypeData: PokemonTypeData = {
     primary: 'blue.800',
     secondary: 'gray.50',
     color: 'white',
-    component: <Icon transform="shrink-3" icon={faHexagon} mask={faHexagon} />,
+    icon: faGem,
+    // component: <Icon transform="shrink-5" icon={faGem} mask={faSquare} />,
   },
   dark: {
     primary: 'gray.900',
@@ -86,6 +86,9 @@ export const pokemonTypeData: PokemonTypeData = {
     secondary: 'purple.50',
     color: 'white',
     icon: faFlaskPoison,
+    // component: (
+    //   <Icon transform="shrink-5" icon={faFlaskPoison} mask={faSquare} />
+    // ),
   },
   psychic: {
     primary: 'purple.900',
@@ -98,6 +101,7 @@ export const pokemonTypeData: PokemonTypeData = {
     secondary: 'red.50',
     color: 'white',
     icon: faFire,
+    // component: <Icon transform="shrink-3" icon={faFire} mask={faFire} />,
   },
   electric: {
     primary: 'yellow.400',

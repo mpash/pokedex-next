@@ -7,7 +7,7 @@ make all --print-data-base --no-builtin-variables --no-builtin-rules --question
 
 # This program built for i386-apple-darwin11.3.0
 
-# Make data base, printed on Sun Jun 18 14:16:51 2023
+# Make data base, printed on Sun Jun 18 21:19:31 2023
 
 # Variables
 
@@ -60,7 +60,7 @@ VSCODE_CWD = /Users/mitch/Code/pokedex-next
 # environment
 Red = \033[0;31m
 # environment
-PATH = /Users/mitch/Library/Python/3.9/bin:/opt/jetbrains/bin:/Users/mitch/Library/pnpm:/Users/mitch/.bun/bin:/Users/mitch/Library/Python/3.8/bin:/Users/mitch/bin:/Users/mitch/.nvm/versions/node/v19.9.0/bin:/opt/bin:/Users/mitch/bin:/usr/local/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Users/mitch/Library/Application Support/JetBrains/Toolbox/scripts:/Users/mitch/.composer/vendor/bin
+PATH = /opt/homebrew/opt/libpq/bin:/usr/local/opt/libpq/bin:/Users/mitch/Library/Python/3.9/bin:/opt/jetbrains/bin:/Users/mitch/Library/pnpm:/Users/mitch/.bun/bin:/Users/mitch/Library/Python/3.8/bin:/Users/mitch/bin:/Users/mitch/.nvm/versions/node/v19.9.0/bin:/opt/bin:/Users/mitch/bin:/usr/local/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Users/mitch/Library/Application Support/JetBrains/Toolbox/scripts:/Users/mitch/.composer/vendor/bin
 # environment
 LSCOLORS = Gxfxcxdxbxegedabagacad
 # environment
@@ -168,7 +168,7 @@ TERM_PROGRAM_VERSION = 3.4.19
 # environment
 NVM_DIR = /Users/mitch/.nvm
 # environment
-XPC_SERVICE_NAME = application.com.microsoft.VSCode.20074712.20074718.EA0F0E99-F7BF-4F6C-8CC9-CDC07C5CC837
+XPC_SERVICE_NAME = application.com.microsoft.VSCode.20074712.20074718.1434B442-511D-44EB-B930-205499F7A4DD
 # environment
 LC_TERMINAL_VERSION = 3.4.19
 # environment
@@ -222,7 +222,7 @@ NEXT_PUBLIC_BUSHEL_API = https://bidl.labrador.us.dev.bushelops.com
 # environment
 _P9K_TTY = /dev/ttys001
 # environment
-VSCODE_PID = 86921
+VSCODE_PID = 51387
 # environment
 NPM_TOKEN = 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
 # environment
@@ -236,9 +236,9 @@ VAULT_ADDR = https://vault.bushelops.com
 
 # Directories
 
-# . (device 16777229, inode 5896810): 35 files, no impossibilities.
+# . (device 16777229, inode 5896810): 37 files, no impossibilities.
 
-# 35 files, no impossibilities in 1 directories.
+# 37 files, no impossibilities in 1 directories.
 
 # Implicit Rules
 
@@ -280,7 +280,7 @@ all:
 # Not a target:
 Makefile:
 #  Implicit rule search has been done.
-#  Last modified 2023-06-17 01:20:30
+#  Last modified 2023-06-18 14:20:12
 #  File has been updated.
 #  Successfully updated.
 # variable set hash-table stats:
@@ -302,9 +302,20 @@ start-db:
 	docker compose up -d db
 	
 
+seed-db:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  commands to execute (from `Makefile', line 27):
+	docker compose exec app 
+	
+
 # Not a target:
 .DEFAULT:
 #  Implicit rule search has not been done.
+ 
+make: *** No rule to make target `all'.  Stop.
+
 #  Modification time never checked.
 #  File has not been updated.
 
@@ -314,9 +325,6 @@ clean-db-danager:
 #  File has not been updated.
 #  commands to execute (from `Makefile', line 22):
 	docker compose down
- 
-make: *** No rule to make target `all'.  Stop.
-
 	docker volume rm -f pokedex-next_postgres-data
 	docker compose up -d
 	
@@ -340,7 +348,7 @@ restart-db:
 	
 
 # files hash-table stats:
-# Load=11/1024=1%, Rehash=0, Collisions=0/23=0%
+# Load=12/1024=1%, Rehash=0, Collisions=0/24=0%
 # VPATH Search Paths
 
 # No `vpath' search paths.
@@ -352,6 +360,6 @@ restart-db:
 # strcache size: total = 4096 / max = 4096 / min = 4096 / avg = 4096
 # strcache free: total = 4087 / max = 4087 / min = 4087 / avg = 4087
 
-# Finished Make data base on Sun Jun 18 14:16:51 2023
+# Finished Make data base on Sun Jun 18 21:19:31 2023
 
  

@@ -37,6 +37,11 @@
       "@pages/*": ["../pages/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "pages/api/pokemon/[pokemonId].ts"
+  ],
   "exclude": ["node_modules"]
 }

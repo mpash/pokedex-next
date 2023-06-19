@@ -7,18 +7,18 @@ generator client {
 }
 
 // Local Postgres Storage
-// datasource db {
-//   provider = "postgresql"
-//   url      = env("DATABASE_URL")
-// }
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
 
 // Vercel Postgres Storage
-datasource db {
-  provider          = "postgresql"
-  url               = env("POSTGRES_PRISMA_URL") // uses connection pooling
-  directUrl         = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
-  shadowDatabaseUrl = env("POSTGRES_URL_NON_POOLING") // used for migrations
-}
+// datasource db {
+//   provider          = "postgresql"
+//   url               = env("POSTGRES_PRISMA_URL") // uses connection pooling
+//   directUrl         = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+//   shadowDatabaseUrl = env("POSTGRES_URL_NON_POOLING") // used for migrations
+// }
 
 // Neon Postgres Storage
 // datasource db {
@@ -32,7 +32,7 @@ datasource db {
 // }
 
 model Pokemon {
-  id               Int                @id @default(autoincrement())
+  id               Int              @id @default(autoincrement())
   sourceId         Int
   name             String
   slug             String
@@ -53,18 +53,19 @@ model Pokemon {
   thumbnailAltText String
   thumbnailImage   String
   subVariant       Int
-  createdAt        DateTime           @default(now())
-  updatedAt        DateTime           @updatedAt
+  evolutionChain   String[]
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
   // Relations
   types            PokemonType[]
-  weaknesses       PokemonType[]      @relation("PokemonWeaknesses")
+  weaknesses       PokemonType[]    @relation("PokemonWeaknesses")
   abilities        PokemonAbility[]
   japaneseMeta     JapaneseMeta?
   primaryColor     PrimaryColor?
   regionId         Int?
-  region           Region?            @relation(fields: [regionId], references: [id])
-  evolvesFrom      PokemonEvolution[] @relation("EvolveFrom")
-  evolvesTo        PokemonEvolution[] @relation("EvolveTo")
+  region           Region?          @relation(fields: [regionId], references: [id])
+  evolvesTo        Pokemon[]        @relation("PokemonEvolutions")
+  evolvesFrom      Pokemon[]        @relation("PokemonEvolutions")
 }
 
 model PokemonType {
@@ -117,14 +118,4 @@ model Region {
   name     String    @unique
   // Relations
   pokemon  Pokemon[]
-}
-
-model PokemonEvolution {
-  id           Int     @id @default(autoincrement())
-  order        Int
-  // Relations
-  evolveFromId Int
-  evolveFrom   Pokemon @relation("EvolveFrom", fields: [evolveFromId], references: [id])
-  evolveToId   Int
-  evolveTo     Pokemon @relation("EvolveTo", fields: [evolveToId], references: [id])
 }

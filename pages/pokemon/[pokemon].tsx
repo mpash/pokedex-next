@@ -1,22 +1,15 @@
-import {
-  Box,
-  Button,
-  FormControl,
-  FormLabel,
-  Heading,
-  HStack,
-  Select,
-  Stack,
-  Text,
-} from '@chakra-ui/react'
+import { Box, Button, Heading, HStack, Stack, Text } from '@chakra-ui/react'
 import { PokemonTypes } from '@components/pokemon'
-import { pokemonTypeData } from '@data/pokemon-types'
+import { faArrowRight } from '@fortawesome/sharp-regular-svg-icons'
+import Icon from '@src/components/icon'
 import { useQuery } from '@tanstack/react-query'
+import { groupBy } from 'lodash/fp'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 import { MdCatchingPokemon } from 'react-icons/md'
+import { Pokemon } from '../api/pokemon'
 
 const PokemonDetail = () => {
   const router = useRouter()
@@ -24,16 +17,11 @@ const PokemonDetail = () => {
   const fId = router.query.fId as string
   const [selectedVariant, setSelectedVariant] = useState(0)
   const [xOrY, setXOrY] = useState<'x' | 'y'>('x')
-  const { isLoading, data: pokemon } = useQuery(
-    ['pokemon', { id }],
-    async () => {
-      const json = await fetch(`/api/pokemon?id=${id}`).then(res => res.json())
-      return json
-    },
-    {
-      enabled: !!id,
-    },
-  )
+  const { isLoading, data: pokemon } = useQuery(['pokemon', id], async () => {
+    const res = await fetch(`/api/pokemon/${id}`)
+    const data = await res.json()
+    return data.data as Pokemon
+  })
 
   useEffect(() => {
     if (!!fId) {
@@ -49,30 +37,30 @@ const PokemonDetail = () => {
     return <Heading>Pokemon not found</Heading>
   }
 
-  const longId = pokemon.id.toString().padStart(3, '0')
+  const url = generateImageUrl(pokemon)
 
-  const primaryType = pokemonTypeData[pokemon.type[0]]
+  const longId = pokemon.number
+
+  // const primaryType = pokemonTypeData[pokemon.type[0]]
+  const color = `rgb(${pokemon.primaryColor.r}, ${pokemon.primaryColor.g}, ${pokemon.primaryColor.b})`
+
+  const evolutionsByNumber = groupBy('number', pokemon.evolutions)
 
   return (
-    <Box minH="100vh">
-      <Stack spacing={6} alignItems="center">
-        <Link href="/pokedex" passHref scroll={false}>
+    <Box minH="100vh" bgColor={color} pb={6}>
+      <Stack spacing={4} alignItems="center">
+        <Link href="/pokemon" passHref scroll={false}>
           <Button m={4}>Back</Button>
         </Link>
         <Image
           priority
           width={300}
           height={300}
-          src={pokemon.variants[selectedVariant].image}
+          // src={pokemon.variants[selectedVariant].image}
+          src={url}
           alt={longId}
         />
-        <Heading textAlign="center" textTransform="capitalize">
-          {pokemon.name}
-          <br />
-          {pokemon.name !== pokemon.variants[selectedVariant].name && (
-            <>({pokemon.variants[selectedVariant].name})</>
-          )}
-        </Heading>
+        <Heading textTransform="capitalize">{pokemon.name}</Heading>
         <HStack>
           <Button
             onClick={() => setXOrY('x')}
@@ -82,7 +70,7 @@ const PokemonDetail = () => {
             h={8}
             size="xs"
             title="Version X"
-            variant="ghost"
+            variant="solid"
             colorScheme="blue"
             borderRadius="50%"
           >
@@ -96,19 +84,23 @@ const PokemonDetail = () => {
             h={8}
             size="xs"
             title="Version Y"
-            variant="ghost"
+            variant="solid"
             colorScheme="red"
             borderRadius="50%"
           >
             <MdCatchingPokemon fontSize={32} />
           </Button>
         </HStack>
-        <Text textAlign="center" px={5}>
-          {xOrY === 'x'
-            ? pokemon.variants[selectedVariant].descriptionX
-            : pokemon.variants[selectedVariant].descriptionY}
+        <Text
+          textAlign="center"
+          p={2}
+          maxW="500px"
+          bgColor="blackAlpha.200"
+          borderRadius="lg"
+        >
+          {xOrY === 'x' ? pokemon.descriptionX : pokemon.descriptionY}
         </Text>
-        {pokemon.variants.length > 1 && (
+        {/* {pokemon.variants.length > 1 && (
           <FormControl maxW={350}>
             <FormLabel>Variants</FormLabel>
             <Select
@@ -125,7 +117,10 @@ const PokemonDetail = () => {
               ))}
             </Select>
           </FormControl>
-        )}
+        )} */}
+        <Heading size="lg" color="white">
+          Type{pokemon.types.length > 1 && 's'}
+        </Heading>
         <Box
           p={2}
           fontSize="md"
@@ -133,24 +128,115 @@ const PokemonDetail = () => {
           bgColor="blackAlpha.200"
           borderRadius={10}
         >
-          {/* <Box mb={2}>Types</Box> */}
-          <PokemonTypes types={pokemon.type} />
+          <PokemonTypes types={pokemon.types} />
         </Box>
-
+        <Heading size="lg" color="white">
+          Weaknesses
+        </Heading>
         <Box
           p={2}
           fontSize="md"
           fontWeight={300}
           color="gray.800"
-          bgColor="red.200"
+          bgColor="blackAlpha.400"
           borderRadius={10}
         >
-          {/* <Box mb={2}>Weak Against</Box> */}
-          <PokemonTypes types={pokemon.weakness.map(i => i.toLowerCase())} />
+          <PokemonTypes types={pokemon.weaknesses} />
         </Box>
+        {Object.keys(evolutionsByNumber).length > 0 && (
+          <>
+            <Heading size="lg">Evolutions</Heading>
+            <Box
+              bgColor="blackAlpha.200"
+              p={10}
+              borderRadius="lg"
+              w="600px"
+              display="grid"
+              gridTemplateColumns={`repeat(${
+                Object.keys(evolutionsByNumber).length - 1
+              }, auto 1fr) 1fr`}
+              gridGap={4}
+              placeItems="center"
+            >
+              {Object.keys(evolutionsByNumber).map(number => {
+                const evolutions = evolutionsByNumber[number]
+                const isLast = number === Object.keys(evolutionsByNumber).pop()
+                return (
+                  <Fragment key={number}>
+                    <Box
+                      w="100%"
+                      p={4}
+                      fontSize="md"
+                      fontWeight={300}
+                      textAlign="center"
+                      borderRadius="lg"
+                      bgColor="blackAlpha.200"
+                    >
+                      <Heading
+                        pb={1}
+                        mb={2}
+                        size="sm"
+                        borderBottomWidth={1}
+                        borderBottomColor="whiteAlpha.200"
+                      >
+                        #{number}
+                      </Heading>
+                      {evolutions.map(pokemon => {
+                        const url = generateImageUrl(pokemon)
+                        return (
+                          <Box
+                            key={pokemon.id}
+                            display="flex"
+                            alignItems="center"
+                            flexDir="column"
+                            cursor="pointer"
+                            onClick={() =>
+                              router.push(`/pokemon/${pokemon.id}`)
+                            }
+                          >
+                            <Image
+                              width={80}
+                              height={80}
+                              src={url}
+                              alt={pokemon.name}
+                            />
+                            <Box fontWeight={500}>{pokemon.name}</Box>
+                          </Box>
+                        )
+                      })}
+                    </Box>
+                    {!isLast && (
+                      <Icon
+                        boxSize={8}
+                        icon={faArrowRight}
+                        color="blackAlpha.400"
+                      />
+                    )}
+                  </Fragment>
+                )
+              })}
+            </Box>
+          </>
+        )}
+        {/* <Box p={10} fontSize="xs">
+          <pre>
+            {JSON.stringify(groupBy('number', pokemon.evolutions), null, 2)}
+          </pre>
+        </Box> */}
+        {/* {pokemon.evolutions?.map(pokemon => (
+          <Box as="pre" key={pokemon.id}>
+            {JSON.stringify(pokemon, null, 2)}
+          </Box>
+        ))} */}
       </Stack>
     </Box>
   )
 }
 
 export default PokemonDetail
+
+function generateImageUrl(pokemon: Pokemon) {
+  const file = pokemon.image.split('pokedex/full/')[1].replace('.png', '')
+  const url = `/img/pokemon/webp/${file}.webp`
+  return url
+}

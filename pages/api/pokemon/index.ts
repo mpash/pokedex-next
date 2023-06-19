@@ -8,6 +8,8 @@ export type Pokemon = {
   name: string
   number: string
   japaneseName: string
+  descriptionX: string
+  descriptionY: string
   hp: number
   height: number
   weight: number
@@ -16,6 +18,17 @@ export type Pokemon = {
   types: PokemonType[]
   weaknesses: PokemonType[]
   primaryColor: Color
+  region: {
+    id: number
+    name: string
+  }
+  evolvesFrom?: Pokemon[]
+  evolvesTo?: Pokemon[]
+  evolutionChain?: string[]
+  evolutions?: Omit<
+    Pokemon[],
+    'types' | 'weaknesses' | 'primaryColor' | 'region'
+  >
 }
 
 type Color = {
@@ -39,6 +52,9 @@ export default async function handler(
         abilities: true,
         japaneseMeta: true,
         primaryColor: true,
+        region: true,
+        evolvesFrom: true,
+        evolvesTo: true,
       },
     })
     if (!pokemon) {
@@ -47,7 +63,8 @@ export default async function handler(
     return res.status(200).json({
       data: {
         ...pokemon,
-        types: pokemon.types.map(type => type.type),
+        types: pokemon.types.map(t => t.type),
+        weaknesses: pokemon.weaknesses.map(t => t.type),
       },
     })
   }
@@ -212,6 +229,7 @@ export default async function handler(
       abilities: true,
       japaneseMeta: true,
       primaryColor: true,
+      region: true,
     },
     where: whereQuery,
     take: pageSize,
@@ -246,6 +264,8 @@ export default async function handler(
           name: pokemon.name,
           number: pokemon.number,
           japaneseName: pokemon?.japaneseMeta?.name,
+          descriptionX: pokemon.descriptionX,
+          descriptionY: pokemon.descriptionY,
           hp: pokemon.hp,
           image: pokemon.image,
           height: pokemon.height,
@@ -257,6 +277,8 @@ export default async function handler(
             b: pokemon.primaryColor?.b,
           },
           types: pokemon.types.map(type => type.type),
+          weaknesses: pokemon.weaknesses.map(type => type.type),
+          region: pokemon.region,
         } as Pokemon),
     ),
     pagination: {

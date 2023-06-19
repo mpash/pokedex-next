@@ -79,13 +79,20 @@ export default async function seedPokemon() {
 
     const regionSourceId = calculateGeneration(pokemon.number)
 
+    const getName = () => {
+      if (pokemon.scrapedData.name === 'Alolan Form') {
+        return `${pokemon.name} (Alolan Form)`
+      }
+      if (!pokemon.scrapedData.name.includes(pokemon.name)) {
+        return `${pokemon.name} (${pokemon.scrapedData.name})`
+      }
+      return pokemon.scrapedData.name
+    }
+
     await prisma.pokemon.create({
       data: {
         sourceId: pokemon.id,
-        name:
-          pokemon.scrapedData.name === 'Alolan Form'
-            ? `${pokemon.name} (Alolan Form)`
-            : pokemon.scrapedData.name,
+        name: getName(),
         slug: pokemon.slug,
         number: pokemon.number,
         weight: pokemon.weight,

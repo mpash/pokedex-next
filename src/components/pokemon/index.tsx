@@ -135,9 +135,9 @@ const PokemonImage = ({ image, alt }: { image: string; alt: string }) => {
   )
 }
 
-export const PokemonTypes = memo(({ types }: { types: PokemonType[] }) => (
+export const PokemonTypes = memo(({ types }: { types?: PokemonType[] }) => (
   <HStack zIndex={2} spacing={2}>
-    {types.map(type => (
+    {types?.map(type => (
       <PokemonType key={type} type={type} />
     ))}
   </HStack>

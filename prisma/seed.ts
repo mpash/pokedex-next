@@ -8,10 +8,10 @@ import seedEvolutions from './seeders/seedEvolutions'
 export const prisma = new PrismaClient()
 
 async function main() {
-  // await seedTypes()
-  // await seedPokemon()
-  // await seedStats()
-  // await seedColors()
+  await seedTypes()
+  await seedPokemon()
+  await seedStats()
+  await seedColors()
   await seedEvolutions()
 }
 

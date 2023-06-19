@@ -1,68 +1,79 @@
 import { prisma } from '../seed'
 import pokedexUsJpPaldea from '../../public/data/pokedex-us-jp-paldea.json'
-
-// Example of evolution chain ['bulbasaur','ivysaur','venusaur']
+import { uniqBy } from 'lodash/fp'
 
 /**
  * We cannot run during pokemon seeding because all pokemon need to be defined first before we can reference them
+ * Example of evolution chain: ['bulbasaur','ivysaur','venusaur']
  * @returns
  */
 export default async function seedEvolutions() {
-  const pokemonList = pokedexUsJpPaldea.slice(0, 1).map(pokemon => ({
-    number: pokemon.number,
-    evolutions: pokemon.scrapedData.evolutionChain,
-  }))
+  const pokemonList = pokedexUsJpPaldea.map(
+    pokemon => pokemon.scrapedData.evolutionChain as string[],
+  )
 
-  // for (const pokemon of pokemonList) {
-  //   const { number, evolutions } = pokemon
-  //   // const pokemonList = await prisma.pokemon.findMany({ where: { number } })
+  const uniqChains = uniqBy(entry => entry.join(','), pokemonList)
 
-  //   const ids = await Promise.all(
-  //     evolutions.map(async evolutionSlug =>
-  //       (
-  //         await prisma.pokemon.findMany({
-  //           where: {
-  //             slug: {
-  //               equals: evolutionSlug,
-  //               mode: 'insensitive',
-  //             },
-  //           },
-  //           select: { id: true },
-  //         })
-  //       ).map(e => e.id),
-  //     ),
-  //   )
+  uniqChains.forEach(async evolutionChain => {
+    evolutionChain.forEach(async evolutionPokemonSlug => {
+      const pokemon = await prisma.pokemon.findMany({
+        where: {
+          slug: {
+            equals: evolutionPokemonSlug,
+            mode: 'insensitive',
+          },
+        },
+        select: {
+          id: true,
+        },
+      })
+      if (!pokemon.length) {
+        console.log(`Pokemon ${evolutionPokemonSlug} not found`)
+        return
+      }
 
-  //   ids.map((evolveToIds, index) => {
-      
-  //   })
+      // Update pokemon with plain text evolution chain
+      await prisma.pokemon.updateMany({
+        where: {
+          id: {
+            in: pokemon.map(p => p.id),
+          },
+        },
+        data: {
+          evolutionChain: evolutionChain.join(','),
+        },
+      })
 
-  //   // for (const evolutionSlug of evolutions) {
-  //   //   const order = evolutions.indexOf(evolutionSlug) + 1
-  //   //   const evolveToList = await prisma.pokemon.findMany({
-  //   //     where: {
-  //   //       slug: {
-  //   //         equals: evolutionSlug,
-  //   //         mode: 'insensitive',
-  //   //       },
-  //   //     },
-  //   //     select: { id: true },
-  //   //   })
-  //   //   evolveToList.forEach(evolveTo => {
-  //   //     pokemonList.forEach(async pokemon => {
-  //   //       await prisma.pokemonEvolution.create({
-  //   //         data: {
-  //   //           order,
-  //   //           evolveFrom: {
-  //   //             connect: { id: pokemon.id },
-  //   //           },
-  //   //           evolveTo: {
-  //   //             connect: { id: evolveTo.id },
-  //   //           },
-  //   //         },
-  //   //       })
-  //   //     })
-  //   //   })
-  //   // }
-  // }
+      const evolveToSlug =
+        evolutionChain[evolutionChain.indexOf(evolutionPokemonSlug) + 1]
+
+      if (!evolveToSlug) {
+        console.log(`Pokemon ${evolutionPokemonSlug} is the last evolution`)
+        return
+      }
+
+      const evolvesTo = await prisma.pokemon.findMany({
+        where: {
+          slug: {
+            equals: evolveToSlug,
+            mode: 'insensitive',
+          },
+        },
+        select: {
+          id: true,
+        },
+      })
+
+      pokemon.forEach(async pokemon => {
+        await prisma.pokemon.update({
+          where: { id: pokemon.id },
+          data: {
+            evolvesTo: {
+              connect: evolvesTo.map(e => ({ id: e.id })),
+            },
+          },
+        })
+      })
+    })
+  })
 }

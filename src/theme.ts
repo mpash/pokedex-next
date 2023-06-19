@@ -1,19 +1,25 @@
 import { extendTheme } from '@chakra-ui/react'
 import { Inter, Montserrat, Josefin_Sans } from 'next/font/google'
+import localFont from 'next/font/local'
 
 const inter = Inter({
   subsets: ['latin'],
   variable: '--font-inter',
 })
 
-const montserrat = Montserrat({
-  subsets: ['latin'],
-  variable: '--font-montserrat',
-})
+// const montserrat = Montserrat({
+//   subsets: ['latin'],
+//   variable: '--font-montserrat',
+// })
 
 const josefinSans = Josefin_Sans({
   subsets: ['latin'],
   variable: '--font-josefin-sans',
+})
+
+const pokemonFont = localFont({
+  src: './fonts/pokemon.ttf',
+  variable: '--font-pokemon',
 })
 
 const theme = extendTheme({
@@ -23,8 +29,8 @@ const theme = extendTheme({
   },
   fonts: {
     heading: josefinSans.style.fontFamily,
-    // heading: montserrat.style.fontFamily,
     body: inter.style.fontFamily,
+    pokemon: pokemonFont.style.fontFamily,
   },
 })
 

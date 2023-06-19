@@ -4,13 +4,14 @@ import '@fortawesome/fontawesome-svg-core/styles.css'
 import { FilterProvider } from '@hooks/useFilters'
 import { PaginationProvider } from '@hooks/usePagination'
 import { SelectedPokemonTypesProvider } from '@hooks/useSelectedPokemonTypes'
+import { trpc } from '@src/utils/trpc'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { AppProps } from 'next/app'
 import theme from 'theme'
 
 config.autoAddCss = false
 
-const queryClient = new QueryClient({
+export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       retry: 0,
@@ -19,7 +20,7 @@ const queryClient = new QueryClient({
   },
 })
 
-export default function App({ Component, pageProps }: AppProps) {
+function App({ Component, pageProps }: AppProps) {
   return (
     <ChakraProvider theme={theme}>
       <QueryClientProvider client={queryClient}>
@@ -34,3 +35,5 @@ export default function App({ Component, pageProps }: AppProps) {
     </ChakraProvider>
   )
 }
+
+export default trpc.withTRPC(App)
