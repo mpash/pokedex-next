@@ -25,7 +25,7 @@ export default async function handler(
   })
 
   let evolutions: Pokemon[] = []
-  if (pokemon?.evolutionChain.length) {
+  if (pokemon?.evolutionChain && pokemon?.evolutionChain.length) {
     // TODO: Fix evolution chain being a nested string array
     const evolutionChain = pokemon?.evolutionChain[0].split(',')
 
