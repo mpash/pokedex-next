@@ -9,7 +9,8 @@
     "lint": "next lint",
     "migrate:postgres": "dotenv -e .env.local -- prisma migrate deploy",
     "reset:postgres": "dotenv -e .env.local -- prisma migrate reset --force",
-    "seed:postgres": "dotenv -e .env.local -- prisma db seed"
+    "seed:postgres": "dotenv -e .env.local -- prisma db seed",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@chakra-ui/react": "^2.7.0",
