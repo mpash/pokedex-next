@@ -35,3 +35,7 @@ yarn-error.log*
 *.tsbuildinfo
 
 expressions_file
+
+# VSCode
+.vscode/*
+!.vscode/settings.json
