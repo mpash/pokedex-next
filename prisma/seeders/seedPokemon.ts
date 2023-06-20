@@ -1,6 +1,7 @@
-import { Prisma } from '@prisma/client'
+import { Prisma, PrismaClient } from '@prisma/client'
 import pokedexUsJpPaldea from '../../public/data/pokedex-us-jp-paldea.json'
-import { prisma } from '../seed'
+
+const prisma = new PrismaClient()
 
 const regionMap = [
   { id: 1, name: 'Kanto' },

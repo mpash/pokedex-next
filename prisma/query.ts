@@ -5,18 +5,19 @@ const prisma = new PrismaClient()
 async function main() {
   const pokemon = await prisma.pokemon.findFirst({
     where: {
-      number: '0005',
+      number: '0001',
     },
     include: {
-      types: true,
-      weaknesses: true,
-      abilities: true,
-      japaneseMeta: true,
-      evolvesTo: true,
-      evolvesFrom: true,
+      // types: true,
+      // weaknesses: true,
+      // abilities: true,
+      // japaneseMeta: true,
+      // evolvesTo: true,
+      // evolvesFrom: true,
+      pokemonCards: true,
     },
   })
-  console.log(pokemon)
+  console.log(pokemon?.pokemonCards.length)
 }
 
 main()

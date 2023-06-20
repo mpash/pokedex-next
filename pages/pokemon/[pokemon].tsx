@@ -10,6 +10,7 @@ import { useRouter } from 'next/router'
 import { Fragment, useEffect, useState } from 'react'
 import { MdCatchingPokemon } from 'react-icons/md'
 import { Pokemon } from '../api/pokemon'
+import { getContrast } from '@src/utils/color'
 
 const PokemonDetail = () => {
   const router = useRouter()
@@ -41,13 +42,20 @@ const PokemonDetail = () => {
 
   const longId = pokemon.number
 
-  // const primaryType = pokemonTypeData[pokemon.type[0]]
-  const color = `rgb(${pokemon.primaryColor.r}, ${pokemon.primaryColor.g}, ${pokemon.primaryColor.b})`
+  const { r, g, b } = pokemon.primaryColor
+  const color = `rgb(${r}, ${g}, ${b})`
 
   const evolutionsByNumber = groupBy('number', pokemon.evolutions)
 
+  const needsLightContrast = getContrast([r, g, b]) === 'light'
+
   return (
-    <Box minH="100vh" bgColor={color} pb={6}>
+    <Box
+      minH="100vh"
+      bgColor={color}
+      pb={6}
+      color={needsLightContrast ? 'whiteAlpha.800' : 'blackAlpha.800'}
+    >
       <Stack spacing={4} alignItems="center">
         <Link href="/pokemon" passHref scroll={false}>
           <Button m={4}>Back</Button>
@@ -61,6 +69,7 @@ const PokemonDetail = () => {
           alt={longId}
         />
         <Heading textTransform="capitalize">{pokemon.name}</Heading>
+        <PokemonTypes types={pokemon.types} />
         <HStack>
           <Button
             onClick={() => setXOrY('x')}
@@ -122,14 +131,12 @@ const PokemonDetail = () => {
           Type{pokemon.types.length > 1 && 's'}
         </Heading>
         <Box
-          p={2}
-          fontSize="md"
-          fontWeight={300}
-          bgColor="blackAlpha.200"
-          borderRadius={10}
-        >
-          <PokemonTypes types={pokemon.types} />
-        </Box>
+        // p={2}
+        // fontSize="md"
+        // fontWeight={300}
+        // bgColor="blackAlpha.200"
+        // borderRadius={10}
+        ></Box>
         <Heading size="lg" color="white">
           Weaknesses
         </Heading>

@@ -1,26 +1,30 @@
-import { prisma } from '../seed'
+import { PrismaClient } from '@prisma/client'
+
+const prisma = new PrismaClient()
+
+const types = [
+  'grass',
+  'fire',
+  'water',
+  'electric',
+  'ice',
+  'fighting',
+  'poison',
+  'ground',
+  'flying',
+  'psychic',
+  'bug',
+  'rock',
+  'ghost',
+  'dragon',
+  'dark',
+  'steel',
+  'fairy',
+  'normal',
+] as const
 
 export default async function seedTypes() {
-  return Promise.all(
-    [
-      'grass',
-      'fire',
-      'water',
-      'electric',
-      'ice',
-      'fighting',
-      'poison',
-      'ground',
-      'flying',
-      'psychic',
-      'bug',
-      'rock',
-      'ghost',
-      'dragon',
-      'dark',
-      'steel',
-      'fairy',
-      'normal',
-    ].map(async type => prisma.pokemonType.create({ data: { type } })),
-  )
+  return prisma.pokemonType.createMany({
+    data: types.map(type => ({ type })),
+  })
 }

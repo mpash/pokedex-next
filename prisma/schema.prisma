@@ -7,18 +7,18 @@ generator client {
 }
 
 // Local Postgres Storage
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-}
+// datasource db {
+//   provider = "postgresql"
+//   url      = env("DATABASE_URL")
+// }
 
 // Vercel Postgres Storage
-// datasource db {
-//   provider          = "postgresql"
-//   url               = env("POSTGRES_PRISMA_URL") // uses connection pooling
-//   directUrl         = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
-//   shadowDatabaseUrl = env("POSTGRES_URL_NON_POOLING") // used for migrations
-// }
+datasource db {
+  provider          = "postgresql"
+  url               = env("POSTGRES_PRISMA_URL") // uses connection pooling
+  directUrl         = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+  shadowDatabaseUrl = env("POSTGRES_URL_NON_POOLING") // used for migrations
+}
 
 // Neon Postgres Storage
 // datasource db {
@@ -66,6 +66,7 @@ model Pokemon {
   region           Region?          @relation(fields: [regionId], references: [id])
   evolvesTo        Pokemon[]        @relation("PokemonEvolutions")
   evolvesFrom      Pokemon[]        @relation("PokemonEvolutions")
+  pokemonCards     PokemonCard[]
 }
 
 model PokemonType {
@@ -118,4 +119,63 @@ model Region {
   name     String    @unique
   // Relations
   pokemon  Pokemon[]
+}
+
+model PokemonCard {
+  id                     Int                      @id @default(autoincrement())
+  sourceId               String                   @unique
+  data                   Json
+  imageSm                String
+  imageLg                String
+  name                   String
+  // Optional
+  rules                  String[]
+  hp                     String?
+  types                  String[]
+  abilities              Json?
+  attacks                Json?
+  weaknesses             Json?
+  retreatCost            String[]
+  convertedRetreatCost   Int?
+  flavorText             String?
+  rarity                 String?
+  artist                 String?
+  // End Optional
+  number                 String
+  // Relations
+  pokemon                Pokemon[]
+  pokemonCardSetId       Int?
+  set                    PokemonCardSet?          @relation(fields: [pokemonCardSetId], references: [id])
+  pokemonCardSuperTypeId Int?
+  superType              PokemonCardSetSuperType? @relation(fields: [pokemonCardSuperTypeId], references: [id])
+  subTypes               PokemonCardSetSubType[]
+}
+
+model PokemonCardSet {
+  id           Int           @id @default(autoincrement())
+  sourceId     String        @unique
+  name         String
+  series       String
+  printedTotal Int
+  total        Int
+  legalities   Json
+  ptcgoCode    String?
+  releaseDate  String
+  symbolUrl    String
+  logoUrl      String
+  pokemonCards PokemonCard[]
+}
+
+model PokemonCardSetSuperType {
+  id           Int           @id @default(autoincrement())
+  name         String        @unique
+  // Relations
+  pokemonCards PokemonCard[]
+}
+
+model PokemonCardSetSubType {
+  id           Int           @id @default(autoincrement())
+  name         String        @unique
+  // Relations
+  pokemonCards PokemonCard[]
 }

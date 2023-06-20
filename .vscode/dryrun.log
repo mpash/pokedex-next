@@ -1,5 +1,5 @@
 make --dry-run --always-make --keep-going --print-directory
-make: Entering directory `/Users/mitch/Code/pokedex-next'
+make: Entering directory `/Users/mpash/Code/GitHub/pokedex-next'
 docker compose up -d
-make: Leaving directory `/Users/mitch/Code/pokedex-next'
+make: Leaving directory `/Users/mpash/Code/GitHub/pokedex-next'
  

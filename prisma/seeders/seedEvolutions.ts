@@ -1,6 +1,8 @@
-import { prisma } from '../seed'
+import { PrismaClient } from '@prisma/client'
 import pokedexUsJpPaldea from '../../public/data/pokedex-us-jp-paldea.json'
 import { uniqBy } from 'lodash/fp'
+
+const prisma = new PrismaClient()
 
 /**
  * We cannot run during pokemon seeding because all pokemon need to be defined first before we can reference them
