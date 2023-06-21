@@ -128,16 +128,6 @@ const PokemonDetail = () => {
           </FormControl>
         )} */}
         <Heading size="lg" color="white">
-          Type{pokemon.types.length > 1 && 's'}
-        </Heading>
-        <Box
-        // p={2}
-        // fontSize="md"
-        // fontWeight={300}
-        // bgColor="blackAlpha.200"
-        // borderRadius={10}
-        ></Box>
-        <Heading size="lg" color="white">
           Weaknesses
         </Heading>
         <Box

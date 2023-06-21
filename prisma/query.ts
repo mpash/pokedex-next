@@ -17,7 +17,7 @@ async function main() {
       pokemonCards: true,
     },
   })
-  console.log(pokemon?.pokemonCards.length)
+  console.log(pokemon?.pokemonCards)
 }
 
 main()
