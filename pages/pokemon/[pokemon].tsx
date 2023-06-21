@@ -1,7 +1,9 @@
 import { Box, Button, Heading, HStack, Stack, Text } from '@chakra-ui/react'
 import { PokemonTypes } from '@components/pokemon'
 import { faArrowRight } from '@fortawesome/sharp-regular-svg-icons'
+import { Pokemon } from '@prisma/client'
 import Icon from '@src/components/icon'
+import { getContrast } from '@src/utils/color'
 import { useQuery } from '@tanstack/react-query'
 import { groupBy } from 'lodash/fp'
 import Image from 'next/image'
@@ -9,8 +11,6 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { Fragment, useEffect, useState } from 'react'
 import { MdCatchingPokemon } from 'react-icons/md'
-import { Pokemon } from '../api/pokemon'
-import { getContrast } from '@src/utils/color'
 
 const PokemonDetail = () => {
   const router = useRouter()
@@ -21,7 +21,7 @@ const PokemonDetail = () => {
   const { isLoading, data: pokemon } = useQuery(['pokemon', id], async () => {
     const res = await fetch(`/api/pokemon/${id}`)
     const data = await res.json()
-    return data.data as Pokemon
+    return data.data
   })
 
   useEffect(() => {
@@ -225,16 +225,6 @@ const PokemonDetail = () => {
             </Box>
           </>
         )}
-        {/* <Box p={10} fontSize="xs">
-          <pre>
-            {JSON.stringify(groupBy('number', pokemon.evolutions), null, 2)}
-          </pre>
-        </Box> */}
-        {/* {pokemon.evolutions?.map(pokemon => (
-          <Box as="pre" key={pokemon.id}>
-            {JSON.stringify(pokemon, null, 2)}
-          </Box>
-        ))} */}
       </Stack>
     </Box>
   )

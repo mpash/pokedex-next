@@ -11,6 +11,7 @@ datasource db {
   provider  = "postgresql"
   url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
+  // shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
 // Vercel Postgres Storage
@@ -19,17 +20,6 @@ datasource db {
 //   url               = env("POSTGRES_PRISMA_URL") // uses connection pooling
 //   directUrl         = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
 //   shadowDatabaseUrl = env("POSTGRES_URL_NON_POOLING") // used for migrations
-// }
-
-// Neon Postgres Storage
-// datasource db {
-//   provider          = "postgresql"
-//   url               = env("DATABASE_URL")
-//   directUrl         = env("DIRECT_URL")
-//   // If you want to use Prisma Migrate, you will need to manually create a shadow database
-//   // https://neon.tech/docs/guides/prisma-migrate#configure-a-shadow-database-for-prisma-migrate
-//   // make sure to append ?connect_timeout=10 to the connection string
-//   shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 // }
 
 model Pokemon {
@@ -68,6 +58,12 @@ model Pokemon {
   evolvesTo        Pokemon[]        @relation("PokemonEvolutions")
   evolvesFrom      Pokemon[]        @relation("PokemonEvolutions")
   pokemonCards     PokemonCard[]
+
+  // Indexes
+  @@index([name], name: "pokemon_name")
+  @@index([number], name: "pokemon_number")
+  @@index([sourceId], name: "pokemon_source_id")
+  @@index([slug], name: "pokemon_slug")
 }
 
 model PokemonType {
@@ -76,6 +72,9 @@ model PokemonType {
   // Relations
   pokemon      Pokemon[]
   weakPokemons Pokemon[] @relation("PokemonWeaknesses")
+
+  // Indexes
+  @@index([type], name: "pokemon_type")
 }
 
 model PokemonAbility {
@@ -83,6 +82,9 @@ model PokemonAbility {
   ability String    @unique
   // Relations
   pokemon Pokemon[]
+
+  // Indexes
+  @@index([ability], name: "pokemon_ability")
 }
 
 model JapaneseMeta {
@@ -102,6 +104,9 @@ model JapaneseMeta {
   // Relations
   pokemonId  Int     @unique
   pokemon    Pokemon @relation(fields: [pokemonId], references: [id])
+
+  // Indexes
+  @@index([name], name: "japanese_meta_name")
 }
 
 model PrimaryColor {
@@ -120,6 +125,9 @@ model Region {
   name     String    @unique
   // Relations
   pokemon  Pokemon[]
+
+  // Indexes
+  @@index([name], name: "region_name")
 }
 
 model PokemonCard {

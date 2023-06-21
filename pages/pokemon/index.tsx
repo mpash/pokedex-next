@@ -1,4 +1,3 @@
-import type { Pokemon as TPokemon } from '@api/pokemon'
 import {
   Box,
   Button,
@@ -25,11 +24,6 @@ import { useRouter } from 'next/router'
 import { useEffect, useRef, useState } from 'react'
 import { useIntersection } from 'react-use'
 import { PokemonCard } from '../../src/components/pokemon-card'
-
-export type ApiPokemon = {
-  data: TPokemon[]
-  pagination: { nextPage: string | null }
-}
 
 const Pokemon = () => {
   const router = useRouter()

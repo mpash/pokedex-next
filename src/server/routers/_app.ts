@@ -150,7 +150,7 @@ export const appRouter = router({
       const generateBaseUrl = () => {
         const baseUrl = new URL(
           '/api/pokemon',
-          process.env.VERCEL_URL ?? 'http://localhost:3000',
+          process.env.NEXT_PUBLIC_VERCEL_URL ?? 'http://localhost:3000',
         )
         baseUrl.searchParams.set('pageSize', pageSize.toString())
         query && baseUrl.searchParams.append('q', query)
