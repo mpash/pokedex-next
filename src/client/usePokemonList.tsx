@@ -1,8 +1,11 @@
-import { ApiPokemon } from '../../pages/pokemon'
+import { PokemonListItem } from '@/pages/api/pokemon'
 import { QueryFunction, useInfiniteQuery } from '@tanstack/react-query'
 
 const fetchPokemon: QueryFunction<
-  ApiPokemon,
+  {
+    data: PokemonListItem[]
+    pagination: { nextPage: string | null; pageSize: number }
+  },
   (string | boolean | undefined)[]
 > = async ({ signal, pageParam, queryKey }) => {
   const url = new URL('/api/pokemon', window.location.origin)

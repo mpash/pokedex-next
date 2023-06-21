@@ -1,4 +1,4 @@
-import type { Pokemon as TPokemon } from '@api/pokemon'
+import { PokemonListItem } from '@/pages/api/pokemon'
 import {
   Box,
   Flex,
@@ -31,7 +31,7 @@ import { useRouter } from 'next/router'
 import { memo, useMemo, useRef, useState } from 'react'
 
 // TODO: Starter selector pokemon minigame (like in the games), where the user picks from a generation they like (sorted by console icon and release date)
-export const PokemonCard = ({ pokemon }: { pokemon: TPokemon }) => {
+export const PokemonCard = ({ pokemon }: { pokemon: PokemonListItem }) => {
   const file = pokemon.image.split('pokedex/full/')[1].replace('.png', '')
   const url = `/img/pokemon/webp/${file}.webp`
   const imageRef = useRef<HTMLImageElement>(null)

@@ -10,7 +10,7 @@ type Color = {
   b: number
 }
 
-type PokemonListItem = {
+export type PokemonListItem = {
   id: number
   name: string
   number: string
