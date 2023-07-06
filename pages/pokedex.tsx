@@ -4,6 +4,9 @@ import PokemonTypeFilter from '@components/filters/pokemon-type-filter'
 import PaginationBar from '@components/pagination-bar'
 import PokemonList from '@components/pokemon/pokemon-list'
 import TypeSummary from '@components/type-summary'
+import { FilterProvider } from '@src/hooks/useFilters'
+import { PaginationProvider } from '@src/hooks/usePagination'
+import { SelectedPokemonTypesProvider } from '@src/hooks/useSelectedPokemonTypes'
 import Head from 'next/head'
 import { NextPage } from 'next/types'
 
@@ -32,13 +35,25 @@ const Pokedex: NextPage = () => (
           Search for a Pokémon by name or using its National Pokédex number.
         </Text>
       </Box>
-      <FilterBar />
-      <PokemonTypeFilter />
-      <PokemonList />
-      <TypeSummary />
-      <PaginationBar />
+      <SelectedPokemonTypesProvider>
+        <PaginationProvider>
+          <FilterProvider>
+            <PokedexContent />
+          </FilterProvider>
+        </PaginationProvider>
+      </SelectedPokemonTypesProvider>
     </Box>
   </Box>
 )
 
 export default Pokedex
+
+const PokedexContent = () => (
+  <>
+    <FilterBar />
+    <PokemonTypeFilter />
+    <PokemonList />
+    <TypeSummary />
+    <PaginationBar />
+  </>
+)

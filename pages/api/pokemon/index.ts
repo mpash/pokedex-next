@@ -1,8 +1,7 @@
-import { prisma } from '@src/utils/prisma-edge'
+import { prisma } from '@src/utils/prisma'
 import { Prisma, Pokemon, Region } from '@prisma/client'
-import { NextRequest } from 'next/server'
-
-export const config = { runtime: 'edge' }
+import { NextApiRequest, NextApiResponse } from 'next'
+import { get, getOr, has } from 'lodash/fp'
 
 type Color = {
   r: number
@@ -28,11 +27,16 @@ export type PokemonListItem = {
   region: Region
 }
 
-export default async function handler(req: NextRequest) {
-  const { searchParams } = new URL(req.url)
-  const id = searchParams.has('id')
-    ? parseInt(searchParams.get('id') as string)
-    : undefined
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse<any>,
+) {
+  const queryParseInt = (key: string, defaultValue: number | undefined = undefined) =>
+    has(key, req.query) ? parseInt(get(key, req.query) as string) : defaultValue
+
+  
+
+  const id = queryParseInt('id')
 
   if (id) {
     const pokemon = await prisma.pokemon.findUnique({
@@ -51,34 +55,35 @@ export default async function handler(req: NextRequest) {
     if (!pokemon) {
       throw new Error('Unable to find a Pokemon with the given ID: ' + id)
     }
-    return new Response(
-      JSON.stringify({
-        data: {
-          ...pokemon,
-          types: pokemon.types.map(t => t.type),
-          weaknesses: pokemon.weaknesses.map(t => t.type),
-        },
-      }),
-    )
+    return res.status(200).json({
+      data: {
+        ...pokemon,
+        types: pokemon.types.map(t => t.type),
+        weaknesses: pokemon.weaknesses.map(t => t.type),
+      },
+    })
   }
 
-  const pageSize = searchParams.has('pageSize')
-    ? parseInt(searchParams.get('pageSize') as string)
-    : 20
+  const pageSize = queryParseInt('pageSize', 20) as number
+  const lastId = queryParseInt('lastId')
+  let query = get('q', req.query) as string | undefined
+  const hideVariants = get('hideVariants', req.query) === 'true'
 
-  const lastId = searchParams.has('lastId')
-    ? parseInt(searchParams.get('lastId') as string)
-    : undefined
+  const queryParams = {
+    pageSize,
+    lastId,
+    query,
+    hideVariants,
+  }
 
   const lastIdCursor = lastId ? { cursor: { id: lastId }, skip: 1 } : undefined
 
-  let query = searchParams.get('q') ?? undefined
   const isWeaknessCheck = query?.startsWith('weak:')
   query = query?.replace('weak:', '')
 
   const whereQuery: Prisma.PokemonWhereInput = {}
 
-  if (searchParams.has('hideVariants')) {
+  if (hideVariants) {
     whereQuery.AND = { subVariant: 0 }
   }
 
@@ -175,14 +180,40 @@ export default async function handler(req: NextRequest) {
 
   const lastPokemonId = pokemon[pokemon.length - 1]?.id
 
-  return new Response(
-    JSON.stringify({
-      data: pokemon.map(
+  const nextPage = new URL(
+    '/api/pokemon',
+    process.env.VERCEL_URL ?? 'http://localhost:3000',
+  )
+  nextPage.searchParams.set('pageSize', pageSize.toString())
+  queryParams.query && nextPage.searchParams.set('q', queryParams.query)
+  lastPokemonId && nextPage.searchParams.set('lastId', lastPokemonId.toString())
+  hideVariants &&
+    nextPage.searchParams.set('hideVariants', hideVariants.toString())
+
+  return res.status(200).json({
+    data: pokemon.map(
+      ({
+        id,
+        name,
+        number,
+        japaneseMeta,
+        descriptionX,
+        descriptionY,
+        hp,
+        image,
+        height,
+        weight,
+        subVariant,
+        primaryColor,
+        types,
+        weaknesses,
+        region,
+      }) =>
         ({
           id,
           name,
           number,
-          japaneseMeta,
+          japaneseName: japaneseMeta?.name,
           descriptionX,
           descriptionY,
           hp,
@@ -190,70 +221,48 @@ export default async function handler(req: NextRequest) {
           height,
           weight,
           subVariant,
-          primaryColor,
-          types,
-          weaknesses,
+          primaryColor: {
+            r: primaryColor?.r,
+            g: primaryColor?.g,
+            b: primaryColor?.b,
+          },
+          types: types.map(type => type.type),
+          weaknesses: weaknesses.map(type => type.type),
           region,
-        }) =>
-          ({
-            id,
-            name,
-            number,
-            japaneseName: japaneseMeta?.name,
-            descriptionX,
-            descriptionY,
-            hp,
-            image,
-            height,
-            weight,
-            subVariant,
-            primaryColor: {
-              r: primaryColor?.r,
-              g: primaryColor?.g,
-              b: primaryColor?.b,
-            },
-            types: types.map(type => type.type),
-            weaknesses: weaknesses.map(type => type.type),
-            region,
-          } as PokemonListItem),
-      ),
-      pagination: {
-        pageSize,
-        nextPage: generateNextPageUrl(pokemon, pageSize, {
-          query,
-          lastPokemonId,
-        }),
-      },
-    }),
-  )
+        } as PokemonListItem),
+    ),
+    pagination: {
+      pageSize,
+      nextPage,
+    },
+  })
 }
 
-const generateBaseUrl = (pageSize: number, query?: string) => {
+const generateBaseUrl = (pageSize: number, queryParams: any) => {
+  const { query, hideVariants } = queryParams
   const baseUrl = new URL(
     '/api/pokemon',
     process.env.VERCEL_URL ?? 'http://localhost:3000',
   )
   baseUrl.searchParams.set('pageSize', pageSize.toString())
-  query && baseUrl.searchParams.append('q', query)
+  query && baseUrl.searchParams.set('q', query)
+  hideVariants &&
+    baseUrl.searchParams.set('hideVariants', hideVariants.toString())
   return baseUrl
 }
 
 function generateNextPageUrl(
   pokemon: Pokemon[],
   pageSize = 20,
-  params: {
-    query?: string
-    lastPokemonId?: number
-  },
+  queryParams: any,
 ) {
-  const { query, lastPokemonId } = params
-  return () => {
-    if (!pokemon.length || pokemon.length < pageSize) return null
-    const nextPage = generateBaseUrl(pageSize, query)
-    lastPokemonId &&
-      nextPage.searchParams.append('lastId', lastPokemonId.toString())
-    return nextPage
-  }
+  const { lastPokemonId } = queryParams
+  if (!pokemon.length || pokemon.length < pageSize) return null
+
+  const nextPage = generateBaseUrl(pageSize, queryParams)
+  lastPokemonId && nextPage.searchParams.set('lastId', lastPokemonId.toString())
+
+  return nextPage
 }
 
 function appendRangeQuery(range: string, whereQuery: Prisma.PokemonWhereInput) {

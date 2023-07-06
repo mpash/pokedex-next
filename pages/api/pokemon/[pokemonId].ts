@@ -1,6 +1,13 @@
-import { Pokemon } from '@prisma/client'
+import { Pokemon, Prisma } from '@prisma/client'
+import { TypeWeakness } from '@src/data/typeCalculator'
 import { prisma } from '@src/utils/prisma'
 import { NextApiRequest, NextApiResponse } from 'next'
+
+export type PokemonDetail = Partial<Prisma.PokemonSelect> & {
+  types: string[]
+  weaknesses: string[]
+  typeWeaknesses: TypeWeakness
+}
 
 export default async function handler(
   req: NextApiRequest,
@@ -21,6 +28,7 @@ export default async function handler(
       region: true,
       evolvesFrom: true,
       evolvesTo: true,
+      pokemonCards: true,
     },
   })
 
@@ -44,6 +52,7 @@ export default async function handler(
   if (!pokemon) {
     throw new Error('Unable to find a Pokemon with the given ID: ' + id)
   }
+
   const result = {
     data: {
       ...pokemon,

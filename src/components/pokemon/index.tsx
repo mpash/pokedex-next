@@ -162,9 +162,13 @@ export const PokemonType = memo(({ type }: { type: PokemonType }) => {
       textTransform="uppercase"
       title={type}
     >
-      {typeof icon === 'object' && (
-        <Icon mr={2} minW="14px" h="14px" icon={icon} />
-      )}
+      <Box mr={1} display="flex" alignItems="center">
+        {typeof icon === 'object' && icon?.icon ? (
+          <Icon minW="14px" h="14px" icon={icon} />
+        ) : (
+          icon
+        )}
+      </Box>
       <Box>{type}</Box>
     </Box>
   )

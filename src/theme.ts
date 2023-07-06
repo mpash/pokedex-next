@@ -1,16 +1,11 @@
 import { extendTheme } from '@chakra-ui/react'
-import { Inter, Montserrat, Josefin_Sans } from 'next/font/google'
+import { Inter, Josefin_Sans } from 'next/font/google'
 import localFont from 'next/font/local'
 
 const inter = Inter({
   subsets: ['latin'],
   variable: '--font-inter',
 })
-
-// const montserrat = Montserrat({
-//   subsets: ['latin'],
-//   variable: '--font-montserrat',
-// })
 
 const josefinSans = Josefin_Sans({
   subsets: ['latin'],

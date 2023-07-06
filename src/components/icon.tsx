@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { ComponentProps } from 'react'
 
 const Icon = chakra(FontAwesomeIcon, {
-  shouldForwardProp: () => true,
+  // shouldForwardProp: () => true,
 })
 
 export default Icon

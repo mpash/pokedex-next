@@ -85,6 +85,7 @@ const Home: NextPage = () => {
               bgColor: 'orange.400',
             }}
             label="Types"
+            onClick={() => router.push('/type-chart')}
           />
           <BigButton
             icon={faEgg}
