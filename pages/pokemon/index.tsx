@@ -7,6 +7,7 @@ import {
   Switch,
   Text,
 } from '@chakra-ui/react'
+import { PokemonCard } from '@components/pokemon-card'
 import { IconProp } from '@fortawesome/fontawesome-svg-core'
 import {
   faCircleG,
@@ -19,11 +20,10 @@ import usePokemonList from '@src/client/usePokemonList'
 import Icon from '@src/components/icon'
 import MotionBox from '@src/components/motion-box'
 import MotionIcon from '@src/components/motion-icon'
-import { debounce, sortBy } from 'lodash/fp'
+import { debounce } from 'lodash/fp'
 import { useRouter } from 'next/router'
 import { useEffect, useRef, useState } from 'react'
 import { useIntersection } from 'react-use'
-import { PokemonCard } from '../../src/components/pokemon-card'
 
 const Pokemon = () => {
   const router = useRouter()
@@ -231,25 +231,6 @@ const PokemonList = () => {
     isFetchingNextPage,
   ])
 
-  const containerAnimation = {
-    hidden: { opacity: 1 },
-    visible: {
-      opacity: 1,
-      transition: { staggerChildren: 0.05 },
-    },
-  }
-
-  const itemAnimation = {
-    hidden: {
-      opacity: 0,
-      y: 20,
-    },
-    visible: {
-      opacity: 1,
-      y: 0,
-    },
-  }
-
   if (isLoading) return <Box>Loading...</Box>
   if (isError) return <Box>Error...</Box>
 
@@ -260,17 +241,12 @@ const PokemonList = () => {
   return (
     <Box overflowY="scroll" h="calc(100% - 242px)" pb={6}>
       <MotionBox color="white">
-        <MotionBox
-          variants={containerAnimation}
+        <Box
           display="grid"
-          initial="hidden"
-          animate="visible"
-          // gridAutoRows="336px"
           gridAutoRows="calc(336px * 1.2)"
           justifyContent="center"
           px={['10px', null, '20px', '20px']}
           gridGap={['10px', null, '20px', '20px']}
-          // gridTemplateColumns="repeat(auto-fill, minmax(240px, 240px))"
           gridTemplateColumns="repeat(auto-fill, minmax(calc(240px * 1.2), calc(240px * 1.2)))"
         >
           {pokemon?.map(pokemon => (
@@ -279,12 +255,11 @@ const PokemonList = () => {
               cursor="pointer !important"
               userSelect="none"
               layoutId={`pokemon-card-${pokemon.id}`}
-              variants={itemAnimation}
             >
               <PokemonCard {...{ pokemon }} />
             </MotionBox>
           ))}
-        </MotionBox>
+        </Box>
         {hasNextPage && (
           <Button
             ref={ref}

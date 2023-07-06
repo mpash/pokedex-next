@@ -9,15 +9,11 @@ const fetchPokemon: QueryFunction<
   (string | boolean | undefined)[]
 > = async ({ signal, pageParam, queryKey }) => {
   const url = new URL('/api/pokemon', window.location.origin)
-  url.searchParams.set('pageSize', '100')
+  url.searchParams.set('pageSize', '200')
 
   const [_, query, showVariants] = queryKey
 
-  if (!!query && query !== '')
-    url.searchParams.append(
-      'q',
-      typeof query === 'string' ? query : query.toString(),
-    )
+  if (!!query && query !== '') url.searchParams.append('q', typeof query === 'string' ? query : query.toString())
   if (!showVariants) url.searchParams.append('hideVariants', 'true')
 
   const res = await fetch(pageParam ?? url, {
@@ -30,16 +26,11 @@ const fetchPokemon: QueryFunction<
   return data
 }
 
-export default function usePokemonList(params?: {
-  query?: string
-  showVariants?: boolean
-}) {
-  const query = useInfiniteQuery({
+export default function usePokemonList(params?: { query?: string; showVariants?: boolean }) {
+  return useInfiniteQuery({
     queryKey: ['Pokemon', params?.query, params?.showVariants],
     getNextPageParam: lastPage => lastPage.pagination.nextPage,
     queryFn: fetchPokemon,
     keepPreviousData: true,
   })
-
-  return query
 }

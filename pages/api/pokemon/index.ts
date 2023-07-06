@@ -27,14 +27,9 @@ export type PokemonListItem = {
   region: Region
 }
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<any>,
-) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse<any>) {
   const queryParseInt = (key: string, defaultValue: number | undefined = undefined) =>
     has(key, req.query) ? parseInt(get(key, req.query) as string) : defaultValue
-
-  
 
   const id = queryParseInt('id')
 
@@ -97,15 +92,11 @@ export default async function handler(
   }
 
   // Detect any comma separated criterion. ix. "fire,water" "1,2,3" "1-2,5-6"
-  const commaSeparatedCriterion = query?.includes(',')
-    ? query?.split(',').map(c => c.trim())
-    : null
+  const commaSeparatedCriterion = query?.includes(',') ? query?.split(',').map(c => c.trim()) : null
 
   if (commaSeparatedCriterion?.length) {
     const ranges = commaSeparatedCriterion.filter(c => c.includes('-'))
-    const ids = commaSeparatedCriterion.filter(
-      c => !Number.isNaN(parseInt(c)) && !ranges.includes(c),
-    )
+    const ids = commaSeparatedCriterion.filter(c => !Number.isNaN(parseInt(c)) && !ranges.includes(c))
     const queries = commaSeparatedCriterion
       .filter(c => c !== '' && !ids.includes(c) && !ranges.includes(c))
       .map(c => c.toLowerCase())
@@ -178,17 +169,18 @@ export default async function handler(
     ...lastIdCursor,
   })
 
-  const lastPokemonId = pokemon[pokemon.length - 1]?.id
+  const nextPage = (() => {
+    const lastPokemonId = pokemon[pokemon.length - 1]?.id
+    if (!lastPokemonId || pokemon.length < pageSize) return null
 
-  const nextPage = new URL(
-    '/api/pokemon',
-    process.env.VERCEL_URL ?? 'http://localhost:3000',
-  )
-  nextPage.searchParams.set('pageSize', pageSize.toString())
-  queryParams.query && nextPage.searchParams.set('q', queryParams.query)
-  lastPokemonId && nextPage.searchParams.set('lastId', lastPokemonId.toString())
-  hideVariants &&
-    nextPage.searchParams.set('hideVariants', hideVariants.toString())
+    const nextPage = new URL('/api/pokemon', process.env.VERCEL_URL ?? 'http://localhost:3000')
+    nextPage.searchParams.set('pageSize', pageSize.toString())
+    queryParams.query && nextPage.searchParams.set('q', queryParams.query)
+    lastPokemonId && nextPage.searchParams.set('lastId', lastPokemonId.toString())
+    hideVariants && nextPage.searchParams.set('hideVariants', hideVariants.toString())
+
+    return nextPage.toString()
+  })()
 
   return res.status(200).json({
     data: pokemon.map(
@@ -233,36 +225,10 @@ export default async function handler(
     ),
     pagination: {
       pageSize,
+      count: pokemon.length,
       nextPage,
     },
   })
-}
-
-const generateBaseUrl = (pageSize: number, queryParams: any) => {
-  const { query, hideVariants } = queryParams
-  const baseUrl = new URL(
-    '/api/pokemon',
-    process.env.VERCEL_URL ?? 'http://localhost:3000',
-  )
-  baseUrl.searchParams.set('pageSize', pageSize.toString())
-  query && baseUrl.searchParams.set('q', query)
-  hideVariants &&
-    baseUrl.searchParams.set('hideVariants', hideVariants.toString())
-  return baseUrl
-}
-
-function generateNextPageUrl(
-  pokemon: Pokemon[],
-  pageSize = 20,
-  queryParams: any,
-) {
-  const { lastPokemonId } = queryParams
-  if (!pokemon.length || pokemon.length < pageSize) return null
-
-  const nextPage = generateBaseUrl(pageSize, queryParams)
-  lastPokemonId && nextPage.searchParams.set('lastId', lastPokemonId.toString())
-
-  return nextPage
 }
 
 function appendRangeQuery(range: string, whereQuery: Prisma.PokemonWhereInput) {
