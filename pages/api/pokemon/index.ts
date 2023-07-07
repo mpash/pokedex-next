@@ -173,7 +173,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     const lastPokemonId = pokemon[pokemon.length - 1]?.id
     if (!lastPokemonId || pokemon.length < pageSize) return null
 
-    const nextPage = new URL('/api/pokemon', process.env.VERCEL_URL ?? 'http://localhost:3000')
+    const nextPage = new URL(
+      '/api/pokemon',
+      process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000',
+    )
     nextPage.searchParams.set('pageSize', pageSize.toString())
     queryParams.query && nextPage.searchParams.set('q', queryParams.query)
     lastPokemonId && nextPage.searchParams.set('lastId', lastPokemonId.toString())
