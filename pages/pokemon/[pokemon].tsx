@@ -18,11 +18,7 @@ import { Pokemon } from '@prisma/client'
 import Icon from '@src/components/icon'
 import MotionBox from '@src/components/motion-box'
 import { pokemonTypeData } from '@src/data/pokemon-types'
-import {
-  typeStrengths,
-  TypeWeakness,
-  typeWeaknesses,
-} from '@src/data/typeCalculator'
+import { typeStrengths, TypeWeakness, typeWeaknesses } from '@src/data/typeCalculator'
 import { dehydrate, QueryClient, useQuery } from '@tanstack/react-query'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -42,7 +38,10 @@ type PokemonDetail = Pokemon & {
 
 const fetchPokemonDetails = async (id: string) => {
   const res = await fetch(
-    new URL(`/api/pokemon/${id}`, process.env.NEXT_PUBLIC_HOSTED_URL),
+    new URL(
+      `/api/pokemon/${id}`,
+      process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000',
+    ),
   )
   const data = await res.json()
   return data.data as PokemonDetail
@@ -50,9 +49,7 @@ const fetchPokemonDetails = async (id: string) => {
 
 export const getServerSideProps = async ({ params }) => {
   // const queryClient = new QueryClient()
-  await queryClient.prefetchQuery(['pokemon', params.pokemon], () =>
-    fetchPokemonDetails(params.pokemon),
-  )
+  await queryClient.prefetchQuery(['pokemon', params.pokemon], () => fetchPokemonDetails(params.pokemon))
 
   return {
     props: {
@@ -135,18 +132,10 @@ const PokemonDetail = () => {
           <Image priority width={300} height={300} src={url} alt={longId} />
         </div>
         <Heading>{pokemon.name}</Heading>
-        <Tabs
-          isFitted
-          w="500px"
-          variant="unstyled"
-          defaultIndex={tab ? parseInt(tab) : 0}
-        >
+        <Tabs isFitted w="500px" variant="unstyled" defaultIndex={tab ? parseInt(tab) : 0}>
           <TabList>
             <Tab
-              hidden={
-                pokemon.evolutions.filter(e => e.sourceId === pokemon.sourceId)
-                  .length === 1
-              }
+              hidden={pokemon.evolutions.filter(e => e.sourceId === pokemon.sourceId).length === 1}
               {...{ ...tabProps, _selected }}
             >
               Forms
@@ -164,27 +153,13 @@ const PokemonDetail = () => {
                 {pokemon.evolutions
                   .filter(e => e.sourceId === pokemon.sourceId)
                   .map(evolution => (
-                    <Link
-                      key={`form-${evolution.id}`}
-                      href={`/pokemon/${evolution.id}`}
-                      passHref
-                    >
-                      <Image
-                        width={100}
-                        height={100}
-                        src={generateImageUrl(evolution)}
-                        alt={evolution.name}
-                      />
+                    <Link key={`form-${evolution.id}`} href={`/pokemon/${evolution.id}`} passHref>
+                      <Image width={100} height={100} src={generateImageUrl(evolution)} alt={evolution.name} />
                     </Link>
                   ))}
               </HStack>
             </TabPanel>
-            <TabPanel
-              display="flex"
-              textAlign="center"
-              flexDir="column"
-              alignItems="center"
-            >
+            <TabPanel display="flex" textAlign="center" flexDir="column" alignItems="center">
               <HStack mb={2}>
                 <Button
                   onClick={() => setXOrY('x')}
@@ -215,9 +190,7 @@ const PokemonDetail = () => {
                   <Box as={MdCatchingPokemon} fontSize={26} />
                 </Button>
               </HStack>
-              <p>
-                {xOrY === 'x' ? pokemon.descriptionX : pokemon.descriptionY}
-              </p>
+              <p>{xOrY === 'x' ? pokemon.descriptionX : pokemon.descriptionY}</p>
             </TabPanel>
             <TabPanel display="flex" justifyContent="center">
               <PokemonTypes types={pokemon.types} />
@@ -233,17 +206,8 @@ const PokemonDetail = () => {
             <TabPanel>
               <HStack display="flex" justifyContent="center">
                 {uniqBy('sourceId', pokemon.evolutions).map(evolution => (
-                  <Link
-                    passHref
-                    key={`evolution-${evolution.number}`}
-                    href={`/pokemon/${evolution.id}?tab=5`}
-                  >
-                    <Image
-                      width={100}
-                      height={100}
-                      src={generateImageUrl(evolution)}
-                      alt={evolution.number}
-                    />
+                  <Link passHref key={`evolution-${evolution.number}`} href={`/pokemon/${evolution.id}?tab=5`}>
+                    <Image width={100} height={100} src={generateImageUrl(evolution)} alt={evolution.number} />
                   </Link>
                 ))}
               </HStack>
@@ -342,19 +306,8 @@ function generateImageUrl(pokemon: Pokemon) {
 // }
 
 const PokemonStats = ({ pokemon }: { pokemon: PokemonDetail }) => {
-  const {
-    hp,
-    attack,
-    defense,
-    spAttack,
-    spDefense,
-    speed,
-    weaknessesMap,
-    types,
-  } = pokemon
-  const topStats = [hp, attack, defense, spAttack, spDefense, speed]
-    .sort((a, b) => (b ?? 0) - (a ?? 0))
-    .slice(0, 2)
+  const { hp, attack, defense, spAttack, spDefense, speed, weaknessesMap, types } = pokemon
+  const topStats = [hp, attack, defense, spAttack, spDefense, speed].sort((a, b) => (b ?? 0) - (a ?? 0)).slice(0, 2)
   const stats = [
     { label: 'HP', value: hp, max: 255 },
     { label: 'Attack', value: attack, max: 181 },
@@ -397,12 +350,7 @@ const PokemonStats = ({ pokemon }: { pokemon: PokemonDetail }) => {
           )
         })}
       </Box>
-      <Heading
-        pb={2}
-        size="lg"
-        borderBottomWidth={1}
-        borderBottomColor="whiteAlpha.400"
-      >
+      <Heading pb={2} size="lg" borderBottomWidth={1} borderBottomColor="whiteAlpha.400">
         Type Weaknesses
       </Heading>
       <p>The effectiveness of each type on {pokemon.name}.</p>
@@ -445,11 +393,7 @@ const PokemonStat = ({
 }) => {
   return (
     <>
-      <Box
-        color={isTopStat ? 'white' : 'whiteAlpha.800'}
-        fontWeight={isTopStat ? 500 : 300}
-        fontSize="sm"
-      >
+      <Box color={isTopStat ? 'white' : 'whiteAlpha.800'} fontWeight={isTopStat ? 500 : 300} fontSize="sm">
         {label}
       </Box>
       <Heading size="sm">{value}</Heading>
@@ -468,13 +412,7 @@ const PokemonStat = ({
   )
 }
 
-const PokemonWeaknessType = ({
-  type,
-  value,
-}: {
-  type: PokemonType
-  value: number | null
-}) => {
+const PokemonWeaknessType = ({ type, value }: { type: PokemonType; value: number | null }) => {
   const { icon, primary, color } = pokemonTypeData[type]
   return (
     <HStack
@@ -493,11 +431,7 @@ const PokemonWeaknessType = ({
       spacing={1}
     >
       <Box display="flex" alignItems="center">
-        {typeof icon === 'object' && icon?.icon ? (
-          <Icon minW="14px" h="14px" icon={icon} />
-        ) : (
-          icon
-        )}
+        {typeof icon === 'object' && icon?.icon ? <Icon minW="14px" h="14px" icon={icon} /> : icon}
       </Box>
       <Icon boxSize={2.5} icon={faTimes} />
       <div>
