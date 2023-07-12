@@ -44,15 +44,11 @@ export const appRouter = router({
       }
 
       // Detect any comma separated criterion. ix. "fire,water" "1,2,3" "1-2,5-6"
-      const commaSeparatedCriterion = query?.includes(',')
-        ? query?.split(',').map(c => c.trim())
-        : null
+      const commaSeparatedCriterion = query?.includes(',') ? query?.split(',').map(c => c.trim()) : null
 
       if (commaSeparatedCriterion?.length) {
         const ranges = commaSeparatedCriterion.filter(c => c.includes('-'))
-        const ids = commaSeparatedCriterion.filter(
-          c => !Number.isNaN(parseInt(c)) && !ranges.includes(c),
-        )
+        const ids = commaSeparatedCriterion.filter(c => !Number.isNaN(parseInt(c)) && !ranges.includes(c))
         const queries = commaSeparatedCriterion
           .filter(c => c !== '' && !ids.includes(c) && !ranges.includes(c))
           .map(c => c.toLowerCase())
@@ -67,7 +63,7 @@ export const appRouter = router({
         }
 
         if (queries.length) {
-          const typesQuery: Prisma.PokemonWhereInput['OR'] = {
+          const typesQuery: Prisma.PokemonWhereInput = {
             types: {
               some: {
                 type: {
@@ -76,7 +72,7 @@ export const appRouter = router({
               },
             },
           }
-          const weaknessQuery: Prisma.PokemonWhereInput['OR'] = {
+          const weaknessQuery: Prisma.PokemonWhereInput = {
             weaknesses: {
               some: {
                 type: {
@@ -86,7 +82,7 @@ export const appRouter = router({
             },
           }
 
-          const nameSearchQuery: Prisma.PokemonWhereInput['OR'] = {
+          const nameSearchQuery: Prisma.PokemonWhereInput = {
             name: {
               search: queries.join(' | '),
             },
@@ -118,7 +114,7 @@ export const appRouter = router({
         }
 
         if (isWeaknessCheck) {
-          const weaknessQuery: Prisma.PokemonWhereInput['OR'] = {
+          const weaknessQuery: Prisma.PokemonWhereInput = {
             weaknesses: {
               some: {
                 type: {
@@ -148,10 +144,7 @@ export const appRouter = router({
       const lastPokemonId = pokemon[pokemon.length - 1]?.id
 
       const generateBaseUrl = () => {
-        const baseUrl = new URL(
-          '/api/pokemon',
-          process.env.NEXT_PUBLIC_VERCEL_URL ?? 'http://localhost:3000',
-        )
+        const baseUrl = new URL('/api/pokemon', process.env.NEXT_PUBLIC_VERCEL_URL ?? 'http://localhost:3000')
         baseUrl.searchParams.set('pageSize', pageSize.toString())
         query && baseUrl.searchParams.append('q', query)
         return baseUrl
@@ -160,8 +153,7 @@ export const appRouter = router({
       const generateNextPageUrl = () => {
         if (!pokemon.length || pokemon.length < pageSize) return null
         const nextPage = generateBaseUrl()
-        lastPokemonId &&
-          nextPage.searchParams.append('lastId', lastPokemonId.toString())
+        lastPokemonId && nextPage.searchParams.append('lastId', lastPokemonId.toString())
         return nextPage
       }
 
@@ -226,9 +218,7 @@ export const appRouter = router({
 // NOT the router itself.
 export type AppRouter = typeof appRouter
 
-function generateSearchQuery(
-  query: string | undefined,
-): Prisma.Enumerable<Prisma.PokemonWhereInput> | undefined {
+function generateSearchQuery(query: string | undefined): Prisma.PokemonWhereInput[] {
   return [
     {
       name: {
@@ -281,8 +271,5 @@ function appendRangeQuery(range: string, whereQuery: Prisma.PokemonWhereInput) {
     rangeQuery.sourceId.lte = endId
   }
 
-  whereQuery.OR = [
-    ...((whereQuery.OR as Prisma.PokemonWhereInput['OR'][]) ?? []),
-    rangeQuery,
-  ]
+  whereQuery.OR = [...((whereQuery.OR as Prisma.PokemonWhereInput['OR'][]) ?? []), rangeQuery]
 }

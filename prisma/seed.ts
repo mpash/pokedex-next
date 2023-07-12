@@ -9,11 +9,11 @@ import seedPokemonCards from './seeders/seedPokemonCards'
 export const prisma = new PrismaClient()
 
 async function main() {
-  await seedTypes()
-  await seedPokemon()
-  await seedStats()
-  await seedColors()
-  await seedEvolutions()
+  // await seedTypes()
+  // await seedPokemon()
+  // await seedStats()
+  // await seedColors()
+  // await seedEvolutions()
   await seedPokemonCards()
 }
 

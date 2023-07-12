@@ -8,9 +8,9 @@ generator client {
 
 // Local Postgres Storage
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+  provider          = "postgresql"
+  url               = env("DATABASE_URL")
+  directUrl         = env("DIRECT_URL")
   shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
@@ -44,7 +44,7 @@ model Pokemon {
   thumbnailAltText String
   thumbnailImage   String
   subVariant       Int
-  evolutionChain   String[]
+  evolutionChain   String?
   createdAt        DateTime         @default(now())
   updatedAt        DateTime         @updatedAt
   // Relations
@@ -132,8 +132,8 @@ model Region {
 
 model PokemonCard {
   id                     Int                      @id @default(autoincrement())
-  sourceId               String                   @unique
-  data                   Json
+  sourceId               String?
+  data                   Json?
   imageSm                String
   imageLg                String
   name                   String
@@ -162,7 +162,7 @@ model PokemonCard {
 
 model PokemonCardSet {
   id           Int           @id @default(autoincrement())
-  sourceId     String        @unique
+  sourceId     String?
   name         String
   series       String
   printedTotal Int

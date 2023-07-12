@@ -111,14 +111,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     }
 
     if (queries.length) {
-      const typesQuery: Prisma.PokemonWhereInput['OR'] = {
+      const typesQuery: Prisma.PokemonWhereInput = {
         types: { some: { type: { in: queries } } },
       }
-      const weaknessQuery: Prisma.PokemonWhereInput['OR'] = {
+      const weaknessQuery: Prisma.PokemonWhereInput = {
         weaknesses: { some: { type: { in: queries } } },
       }
 
-      const nameSearchQuery: Prisma.PokemonWhereInput['OR'] = {
+      const nameSearchQuery: Prisma.PokemonWhereInput = {
         name: { search: queries.join(' | ') },
       }
 
@@ -148,7 +148,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     }
 
     if (isWeaknessCheck) {
-      const weaknessQuery: Prisma.PokemonWhereInput['OR'] = {
+      const weaknessQuery: Prisma.PokemonWhereInput = {
         weaknesses: { some: { type: { search: query } } },
       }
       whereQuery.OR = [...(whereQuery.OR as any[]), weaknessQuery]
@@ -238,7 +238,7 @@ function appendRangeQuery(range: string, whereQuery: Prisma.PokemonWhereInput) {
   const [start, end] = range.split('-')
   const startId = parseInt(start)
 
-  const rangeQuery: Prisma.PokemonWhereInput['OR'] = {
+  const rangeQuery: Prisma.PokemonWhereInput = {
     sourceId: {
       gte: startId,
       ...(end ? { lte: parseInt(end) } : {}),

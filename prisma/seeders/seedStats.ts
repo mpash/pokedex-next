@@ -1,15 +1,11 @@
 import { PrismaClient } from '@prisma/client'
+import { fetchBuilder, FileSystemCache } from 'node-fetch-cache'
+
+const fetch = fetchBuilder.withCache(new FileSystemCache({}))
 
 const prisma = new PrismaClient()
 
-const columnOrder = [
-  'hp',
-  'attack',
-  'defense',
-  'spAttack',
-  'spDefense',
-  'speed',
-] as const
+const columnOrder = ['hp', 'attack', 'defense', 'spAttack', 'spDefense', 'speed'] as const
 
 type StatName = (typeof columnOrder)[number]
 
@@ -21,23 +17,22 @@ const transformStatName = (name: string): StatName => {
 }
 
 const fetchPokemonDetails = async (sourceId: number, attempt = 1) => {
-  const pokemonRes = await fetch(
-    `https://pokeapi.co/api/v2/pokemon/${sourceId}`,
-  )
-  const pokemon: any = await pokemonRes.json()
+  try {
+    const pokemonRes = await fetch(`https://pokeapi.co/api/v2/pokemon/${sourceId}`)
+    const pokemon: any = await pokemonRes.json()
 
-  if (!pokemonRes.ok) {
-    if (attempt > 3)
-      throw new Error(
-        'Failed to fetch pokemon details for sourceId: ' + sourceId,
-      )
+    if (!pokemonRes.ok) {
+      throw new Error('Failed to fetch pokemon details for sourceId: ' + sourceId)
+    }
+
+    return pokemon
+  } catch (e) {
+    if (attempt > 3) throw new Error('Max retries exceeded')
     console.log(`Retrying fetch for pokemon ${sourceId}`)
     // Exponential back-off
-    await new Promise(resolve => setTimeout(resolve, 1000 * attempt * attempt))
+    await new Promise(resolve => setTimeout(resolve, 1000 * attempt))
     return fetchPokemonDetails(sourceId, attempt + 1)
   }
-
-  return pokemon
 }
 
 export default async function seedStats() {
