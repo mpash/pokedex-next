@@ -1,26 +1,15 @@
-import {
-  Box,
-  Button,
-  HStack,
-  Heading,
-  Input,
-  Switch,
-  Text,
-} from '@chakra-ui/react'
+import { Box, Button, HStack, Heading, Input, Stack, Switch, Text } from '@chakra-ui/react'
 import { PokemonCard } from '@components/pokemon-card'
 import { IconProp } from '@fortawesome/fontawesome-svg-core'
-import {
-  faCircleG,
-  faCircleH,
-  faCircleM,
-  faCircleP,
-} from '@fortawesome/pro-solid-svg-icons'
+import { faCircleG, faCircleH, faCircleM, faCircleP } from '@fortawesome/pro-solid-svg-icons'
 import { faBolt, faChevronDown } from '@fortawesome/sharp-solid-svg-icons'
 import usePokemonList from '@src/client/usePokemonList'
 import Icon from '@src/components/icon'
 import MotionBox from '@src/components/motion-box'
 import MotionIcon from '@src/components/motion-icon'
+import { AnimatePresence } from 'framer-motion'
 import { debounce } from 'lodash/fp'
+import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useEffect, useRef, useState } from 'react'
 import { useIntersection } from 'react-use'
@@ -70,7 +59,8 @@ const Pokemon = () => {
             borderColor="gray.400"
           />
         </div>
-        <div>
+        <Stack>
+          <VersionOneLink />
           <HStack
             bgColor="gray.700"
             cursor="pointer"
@@ -105,11 +95,7 @@ const Pokemon = () => {
             // @ts-ignore
             transition={{ duration: 0.4 }}
           >
-            <LegendItem
-              icon={faCircleM}
-              label="Gigantamax/Mega"
-              isDisabled={hideVariants}
-            />
+            <LegendItem icon={faCircleM} label="Gigantamax/Mega" isDisabled={hideVariants} />
             <LegendItem label="Variant Form" isDisabled={hideVariants}>
               <MotionIcon
                 mt={2}
@@ -131,21 +117,9 @@ const Pokemon = () => {
                 }}
               />
             </LegendItem>
-            <LegendItem
-              icon={faCircleG}
-              label="Galarian"
-              isDisabled={hideVariants}
-            />
-            <LegendItem
-              icon={faCircleH}
-              label="Hisuian"
-              isDisabled={hideVariants}
-            />
-            <LegendItem
-              icon={faCircleP}
-              label="Paldean"
-              isDisabled={hideVariants}
-            />
+            <LegendItem icon={faCircleG} label="Galarian" isDisabled={hideVariants} />
+            <LegendItem icon={faCircleH} label="Hisuian" isDisabled={hideVariants} />
+            <LegendItem icon={faCircleP} label="Paldean" isDisabled={hideVariants} />
             <LegendItem label="Show Variants">
               <Switch
                 size="sm"
@@ -165,7 +139,7 @@ const Pokemon = () => {
               />
             </LegendItem>
           </MotionBox>
-        </div>
+        </Stack>
       </Box>
       <PokemonList />
     </Box>
@@ -188,11 +162,7 @@ const LegendItem = ({
   const color = isDisabled ? 'whiteAlpha.300' : 'inherit'
   return (
     <>
-      {icon ? (
-        <Icon icon={icon} size="lg" color={color} />
-      ) : (
-        <Box color={color}>{children}</Box>
-      )}
+      {icon ? <Icon icon={icon} size="lg" color={color} /> : <Box color={color}>{children}</Box>}
       <Text fontSize="sm" fontWeight={500} color={color}>
         {label}
       </Text>
@@ -204,15 +174,10 @@ const PokemonList = () => {
   const router = useRouter()
   const query = (router.query.q as string) ?? ''
   const showVariants = router.query.hideVariants === 'true' ? false : true
-  const {
-    data,
-    isLoading,
-    isError,
-    isFetchingNextPage,
-    isFetching,
-    fetchNextPage,
-    hasNextPage,
-  } = usePokemonList({ query, showVariants })
+  const { data, isLoading, isError, isFetchingNextPage, isFetching, fetchNextPage, hasNextPage } = usePokemonList({
+    query,
+    showVariants,
+  })
 
   const ref = useRef<HTMLButtonElement>(null)
   const intersection = useIntersection(ref, {
@@ -224,14 +189,9 @@ const PokemonList = () => {
     if (intersection?.intersectionRatio ?? 1 < 1) {
       fetchNextPage()
     }
-  }, [
-    fetchNextPage,
-    hasNextPage,
-    intersection?.intersectionRatio,
-    isFetchingNextPage,
-  ])
+  }, [fetchNextPage, hasNextPage, intersection?.intersectionRatio, isFetchingNextPage])
 
-  if (isLoading) return <Box>Loading...</Box>
+  // if (isLoading) return <Box>Loading...</Box>
   if (isError) return <Box>Error...</Box>
 
   const pokemon = data?.pages.flatMap(({ data }) => data) ?? []
@@ -249,16 +209,43 @@ const PokemonList = () => {
           gridGap={['10px', null, '20px', '20px']}
           gridTemplateColumns="repeat(auto-fill, minmax(calc(240px * 1.2), calc(240px * 1.2)))"
         >
-          {pokemon?.map(pokemon => (
-            <MotionBox
-              key={`pokemon-card-${pokemon.id}`}
-              cursor="pointer !important"
-              userSelect="none"
-              layoutId={`pokemon-card-${pokemon.id}`}
-            >
-              <PokemonCard {...{ pokemon }} />
-            </MotionBox>
-          ))}
+          <AnimatePresence initial={false}>
+            {isLoading &&
+              Array.from({ length: 10 }).map((_, i) => (
+                <MotionBox
+                  key={`pokemon-card-loading-${i}`}
+                  bgGradient="linear(135deg, blackAlpha.100,blackAlpha.100,blackAlpha.100, blackAlpha.500)"
+                  borderRadius="calc(336px/30)"
+                  borderWidth={8}
+                  borderColor="blackAlpha.200"
+                  backgroundSize="200% 200%"
+                  animate={{
+                    opacity: 2,
+                    backgroundPosition: ['0% 0%', '0% 90%'],
+                    transition: {
+                      duration: 1,
+                      repeat: Infinity,
+                      repeatType: 'reverse',
+                      ease: 'easeInOut',
+                    },
+                  }}
+                  exit={{ opacity: 0 }}
+                />
+              ))}
+            {pokemon?.map(pokemon => (
+              <MotionBox
+                key={`pokemon-card-${pokemon.id}`}
+                cursor="pointer !important"
+                userSelect="none"
+                layoutId={`pokemon-card-${pokemon.id}`}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+              >
+                <PokemonCard {...{ pokemon }} />
+              </MotionBox>
+            ))}
+          </AnimatePresence>
         </Box>
         {hasNextPage && (
           <Button
@@ -282,3 +269,13 @@ const PokemonList = () => {
     </Box>
   )
 }
+
+const VersionOneLink = () => (
+  <Button as={Link} colorScheme="blue" size="xs" href="/pokedex">
+    Looking for{' '}
+    <Box as="code" ml={1}>
+      v1
+    </Box>
+    ?
+  </Button>
+)

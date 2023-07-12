@@ -11,9 +11,7 @@ import { useLocalStorage } from 'react-use'
 
 const Pokemon = memo(({ pokemon }: { pokemon: Archive.Pokemon }) => {
   const router = useRouter()
-  const [previousPokemonId, setPreviousPokemonId] = useLocalStorage<
-    Archive.Pokemon['id'] | null
-  >('previous', null)
+  const [previousPokemonId, setPreviousPokemonId] = useLocalStorage<Archive.Pokemon['id'] | null>('previous', null)
   const { currentPage } = usePagination()
   const primaryType = pokemonTypeData[pokemon.type[0]]
   const secondaryType = pokemonTypeData[pokemon.type[1]] || null
@@ -28,12 +26,10 @@ const Pokemon = memo(({ pokemon }: { pokemon: Archive.Pokemon }) => {
 
   const handleOnTap = () => {
     setPreviousPokemonId(pokemon.id)
-    if (!!pokemon?.fId && pokemon?.fId !== 'f1') {
-      router.push(`/pokemon/${pokemon.id}?fId=${pokemon.fId}`)
-    } else {
-      router.push(`/pokemon/${pokemon.id}`)
-    }
+    router.push(`/pokemon?q=${pokemon.id},`)
   }
+  const imageFileName = pokemon.ThumbnailImage.replace('/img/full-trimmed/', '').replace('.png', '')
+  const imagePath = `/img/pokemon/webp/${imageFileName}.webp`
 
   return (
     <MotionBox
@@ -56,10 +52,7 @@ const Pokemon = memo(({ pokemon }: { pokemon: Archive.Pokemon }) => {
     >
       <TopLeftAccent {...{ primaryType, secondaryType }} />
       <BottomRightAccent {...{ primaryType }} />
-      <PokemonImage
-        image={pokemon.ThumbnailImage}
-        alt={pokemon.ThumbnailAltText}
-      />
+      <PokemonImage image={imagePath} alt={pokemon.ThumbnailAltText} />
       <PokemonNumber number={pokemon.number} />
       <Stack zIndex={1} alignItems="center" mt={2}>
         <PokemonName name={pokemon.name} originalName={pokemon?.originalName} />
@@ -77,13 +70,7 @@ Pokemon.displayName = 'Pokemon'
 
 export default Pokemon
 
-const PokemonName = ({
-  name,
-  originalName,
-}: {
-  name: string
-  originalName: string
-}) => {
+const PokemonName = ({ name, originalName }: { name: string; originalName: string }) => {
   return (
     <Heading w="100%" textAlign="center" size="md" color="gray.700" maxW={210}>
       {originalName && !name.includes(originalName) ? (
@@ -163,11 +150,7 @@ export const PokemonType = memo(({ type }: { type: PokemonType }) => {
       title={type}
     >
       <Box mr={1} display="flex" alignItems="center">
-        {typeof icon === 'object' && icon?.icon ? (
-          <Icon minW="14px" h="14px" icon={icon} />
-        ) : (
-          icon
-        )}
+        {typeof icon === 'object' && icon?.icon ? <Icon minW="14px" h="14px" icon={icon} /> : icon}
       </Box>
       <Box>{type}</Box>
     </Box>
@@ -197,45 +180,19 @@ const PokemonNumber = ({ number }: { number: string }) => {
 }
 
 const TopLeftAccent = memo(
-  ({
-    primaryType,
-    secondaryType,
-  }: {
-    primaryType: PokemonTypeDatum
-    secondaryType: PokemonTypeDatum | null
-  }) => (
-    <Box
-      top={-190}
-      left={-190}
-      zIndex={-1}
-      opacity={0.2}
-      fontSize={350}
-      position="absolute"
-      transform="rotate(180deg)"
-    >
-      <Box
-        as={MdCatchingPokemon}
-        fill={secondaryType?.primary ?? primaryType.secondary}
-      />
+  ({ primaryType, secondaryType }: { primaryType: PokemonTypeDatum; secondaryType: PokemonTypeDatum | null }) => (
+    <Box top={-190} left={-190} zIndex={-1} opacity={0.2} fontSize={350} position="absolute" transform="rotate(180deg)">
+      <Box as={MdCatchingPokemon} fill={secondaryType?.primary ?? primaryType.secondary} />
     </Box>
   ),
 )
 
 TopLeftAccent.displayName = 'TopLeftAccent'
 
-const BottomRightAccent = memo(
-  ({ primaryType }: { primaryType: PokemonTypeDatum }) => (
-    <Box
-      zIndex={-1}
-      right={-190}
-      opacity={0.2}
-      bottom={-190}
-      fontSize={350}
-      position="absolute"
-    >
-      <Box as={MdCatchingPokemon} fill={primaryType.primary} />
-    </Box>
-  ),
-)
+const BottomRightAccent = memo(({ primaryType }: { primaryType: PokemonTypeDatum }) => (
+  <Box zIndex={-1} right={-190} opacity={0.2} bottom={-190} fontSize={350} position="absolute">
+    <Box as={MdCatchingPokemon} fill={primaryType.primary} />
+  </Box>
+))
 
 BottomRightAccent.displayName = 'BottomRightAccent'
