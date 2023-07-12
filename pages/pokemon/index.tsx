@@ -271,7 +271,7 @@ const PokemonList = () => {
 }
 
 const VersionOneLink = () => (
-  <Button as={Link} colorScheme="blue" size="xs" href="/pokedex">
+  <Button as={Link} colorScheme="blue" size="xs" href="/type-calculator">
     Looking for{' '}
     <Box as="code" ml={1}>
       v1
