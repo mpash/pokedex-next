@@ -12,21 +12,20 @@ import {
   TabProps,
   Tabs,
 } from '@chakra-ui/react'
-import { PokemonType, PokemonTypes } from '@components/pokemon'
+import { PokemonTypes } from '@components/pokemon'
 import { faArrowLeft, faTimes } from '@fortawesome/pro-solid-svg-icons'
 import { Pokemon } from '@prisma/client'
 import Icon from '@src/components/icon'
 import MotionBox from '@src/components/motion-box'
 import { pokemonTypeData } from '@src/data/pokemon-types'
 import { typeStrengths, TypeWeakness, typeWeaknesses } from '@src/data/typeCalculator'
-import { dehydrate, QueryClient, useQuery } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
+import { uniqBy } from 'lodash/fp'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
 import { MdCatchingPokemon } from 'react-icons/md'
-import { queryClient } from '../_app'
-import { uniqBy } from 'lodash/fp'
 
 type PokemonDetail = Pokemon & {
   weaknessesMap: TypeWeakness
@@ -37,25 +36,9 @@ type PokemonDetail = Pokemon & {
 }
 
 const fetchPokemonDetails = async (id: string) => {
-  const res = await fetch(
-    new URL(
-      `/api/pokemon/${id}`,
-      process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000',
-    ),
-  )
+  const res = await fetch(new URL(`/api/pokemon/${id}`, window.location.origin))
   const data = await res.json()
   return data.data as PokemonDetail
-}
-
-export const getServerSideProps = async ({ params }) => {
-  // const queryClient = new QueryClient()
-  await queryClient.prefetchQuery(['pokemon', params.pokemon], () => fetchPokemonDetails(params.pokemon))
-
-  return {
-    props: {
-      dehydratedState: dehydrate(queryClient),
-    },
-  }
 }
 
 const PokemonDetail = () => {
