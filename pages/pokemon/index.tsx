@@ -8,7 +8,7 @@ import Icon from '@src/components/icon'
 import MotionBox from '@src/components/motion-box'
 import MotionIcon from '@src/components/motion-icon'
 import { AnimatePresence } from 'framer-motion'
-import { debounce } from 'lodash/fp'
+import { debounce, isEmpty } from 'lodash/fp'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useEffect, useRef, useState } from 'react'
@@ -209,45 +209,45 @@ const PokemonList = () => {
           gridGap={['10px', null, '20px', '20px']}
           gridTemplateColumns="repeat(auto-fill, minmax(calc(240px * 1.2), calc(240px * 1.2)))"
         >
-          <AnimatePresence initial={false}>
-            {isLoading &&
-              Array.from({ length: 10 }).map((_, i) => (
-                <MotionBox
-                  key={`pokemon-card-loading-${i}`}
-                  bgGradient="linear(135deg, blackAlpha.100,blackAlpha.100,blackAlpha.100, blackAlpha.500)"
-                  borderRadius="calc(336px/30)"
-                  borderWidth={8}
-                  borderColor="blackAlpha.200"
-                  backgroundSize="200% 200%"
-                  animate={{
-                    opacity: 2,
-                    backgroundPosition: ['0% 0%', '0% 90%'],
-                    transition: {
-                      duration: 1,
-                      repeat: Infinity,
-                      repeatType: 'reverse',
-                      ease: 'easeInOut',
-                    },
-                  }}
-                  exit={{ opacity: 0 }}
-                />
-              ))}
-            {pokemon?.map(pokemon => (
-              <MotionBox
-                key={`pokemon-card-${pokemon.id}`}
-                cursor="pointer !important"
-                userSelect="none"
-                layoutId={`pokemon-card-${pokemon.id}`}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-              >
-                <PokemonCard {...{ pokemon }} />
-              </MotionBox>
-            ))}
+          <AnimatePresence initial={false} mode="wait">
+            {isLoading
+              ? Array.from({ length: 3 }).map((_, i) => (
+                  <MotionBox
+                    key={`pokemon-card-loading-${i}`}
+                    bgGradient="linear(135deg, blackAlpha.100,blackAlpha.100,blackAlpha.100, blackAlpha.500)"
+                    borderRadius="calc(336px/30)"
+                    borderWidth={8}
+                    borderColor="blackAlpha.200"
+                    backgroundSize="200% 200%"
+                    animate={{
+                      opacity: 2,
+                      backgroundPosition: ['0% 0%', '0% 90%'],
+                      transition: {
+                        duration: 1,
+                        repeat: Infinity,
+                        repeatType: 'reverse',
+                        ease: 'easeInOut',
+                      },
+                    }}
+                    exit={{ opacity: 0 }}
+                  />
+                ))
+              : pokemon?.map(pokemon => (
+                  <MotionBox
+                    key={`pokemon-card-${pokemon.id}`}
+                    cursor="pointer !important"
+                    userSelect="none"
+                    layoutId={`pokemon-card-${pokemon.id}`}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                  >
+                    <PokemonCard {...{ pokemon }} />
+                  </MotionBox>
+                ))}
           </AnimatePresence>
         </Box>
-        {hasNextPage && (
+        {!isLoading && hasNextPage && !isEmpty(pokemon) && (
           <Button
             ref={ref}
             w="calc(100% - var(--chakra-space-6) * 2)"
@@ -259,7 +259,7 @@ const PokemonList = () => {
             borderRadius="calc(336px / 30)"
             colorScheme="whiteAlpha"
             variant="ghost"
-            isLoading={isFetching || isLoading}
+            isLoading={isFetching}
             onClick={() => fetchNextPage()}
           >
             Load More

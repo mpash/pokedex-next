@@ -2,11 +2,13 @@ version: '3.9'
 
 services:
   app:
+    environment:
+      - DATABASE_URL="postgresql://postgres:WF3btJ11d5vTkO7QFdXB@containers-us-west-109.railway.app:7240/railway?connection_timeout=10&connection_limit=1"
     build:
       context: .
       dockerfile: Dockerfile
       args:
-        - FORTAWESOME_TOKEN=${FORTAWESOME_TOKEN}
+        - FORTAWESOME_TOKEN=${FORTAWESOME_TOKEN} 
     ports:
       - 3000:3000
     depends_on:

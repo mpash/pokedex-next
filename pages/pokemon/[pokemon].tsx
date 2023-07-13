@@ -4,6 +4,7 @@ import {
   Flex,
   Heading,
   HStack,
+  Spinner,
   Stack,
   Tab,
   TabList,
@@ -12,21 +13,20 @@ import {
   TabProps,
   Tabs,
 } from '@chakra-ui/react'
-import { PokemonType, PokemonTypes } from '@components/pokemon'
+import { PokemonTypes } from '@components/pokemon'
 import { faArrowLeft, faTimes } from '@fortawesome/pro-solid-svg-icons'
 import { Pokemon } from '@prisma/client'
 import Icon from '@src/components/icon'
 import MotionBox from '@src/components/motion-box'
 import { pokemonTypeData } from '@src/data/pokemon-types'
 import { typeStrengths, TypeWeakness, typeWeaknesses } from '@src/data/typeCalculator'
-import { dehydrate, QueryClient, useQuery } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
+import { uniqBy } from 'lodash/fp'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
 import { MdCatchingPokemon } from 'react-icons/md'
-import { queryClient } from '../_app'
-import { uniqBy } from 'lodash/fp'
 
 type PokemonDetail = Pokemon & {
   weaknessesMap: TypeWeakness
@@ -42,47 +42,28 @@ const fetchPokemonDetails = async (id: string) => {
       `/api/pokemon/${id}`,
       process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000',
     ),
+    { cache: 'force-cache' },
   )
   const data = await res.json()
   return data.data as PokemonDetail
 }
 
-export const getServerSideProps = async ({ params }) => {
-  // const queryClient = new QueryClient()
-  await queryClient.prefetchQuery(['pokemon', params.pokemon], () => fetchPokemonDetails(params.pokemon))
-
-  return {
-    props: {
-      dehydratedState: dehydrate(queryClient),
-    },
-  }
-}
-
 const PokemonDetail = () => {
   const router = useRouter()
   const id = router.query.pokemon as string
-  const fId = router.query.fId as string
   const tab = router.query.tab as string
-  // const [selectedVariant, setSelectedVariant] = useState(0)
   const [xOrY, setXOrY] = useState<'x' | 'y'>('x')
   const { isLoading, data: pokemon } = useQuery({
     queryKey: ['pokemon', id],
     queryFn: async () => fetchPokemonDetails(id),
+    enabled: !!id,
   })
 
-  if (isLoading) {
-    return <Heading>Loading...</Heading>
-  }
+  const url = pokemon ? generateImageUrl(pokemon) : undefined
 
-  if (!pokemon) {
-    return <Heading>Pokemon not found</Heading>
-  }
+  const longId = pokemon?.number
 
-  const url = generateImageUrl(pokemon)
-
-  const longId = pokemon.number
-
-  const { r, g, b } = pokemon.primaryColor
+  const { r, g, b } = pokemon ? pokemon.primaryColor : { r: 0, g: 0, b: 0 }
   const color = `rgb(${r}, ${g}, ${b})`
 
   const tabProps: TabProps = {
@@ -107,114 +88,124 @@ const PokemonDetail = () => {
     _after: { bgColor: 'white' },
   }
 
-  console.log(pokemon.evolutions)
-
   return (
     <Box
       p={10}
       minH="100svh"
       bgColor="black"
-      bgGradient={`radial(${color}, black 50%)`}
+      color="whiteAlpha.900"
       backgroundSize="200% 200%"
       backgroundPosition="20% 80%"
-      color="whiteAlpha.900"
+      transition="all 2s ease-in-out"
+      bgGradient={`radial(${color}, black 50%)`}
     >
-      <Stack spacing={4} alignItems="center">
-        <HStack alignItems="center">
-          <Link href="/pokemon" passHref>
-            <Icon icon={faArrowLeft} />
-          </Link>
-          <Flex flexDir="column" alignItems="center">
-            <div>{pokemon.number}</div>
-          </Flex>
-        </HStack>
-        <div>
-          <Image priority width={300} height={300} src={url} alt={longId} />
-        </div>
-        <Heading>{pokemon.name}</Heading>
-        <Tabs isFitted w="500px" variant="unstyled" defaultIndex={tab ? parseInt(tab) : 0}>
-          <TabList>
-            <Tab
-              hidden={pokemon.evolutions.filter(e => e.sourceId === pokemon.sourceId).length === 1}
-              {...{ ...tabProps, _selected }}
-            >
-              Forms
-            </Tab>
-            <Tab {...{ ...tabProps, _selected }}>Details</Tab>
-            <Tab {...{ ...tabProps, _selected }}>Types</Tab>
-            <Tab {...{ ...tabProps, _selected }}>Stats</Tab>
-            <Tab {...{ ...tabProps, _selected }}>Weaknesses</Tab>
-            <Tab {...{ ...tabProps, _selected }}>Evolutions</Tab>
-          </TabList>
+      {isLoading ? (
+        <Box h="100svh" display="grid" placeItems="center">
+          <Spinner />
+        </Box>
+      ) : (
+        pokemon && (
+          <Stack spacing={4} alignItems="center">
+            <HStack alignItems="center">
+              <Link href="/pokemon" passHref>
+                <Icon icon={faArrowLeft} />
+              </Link>
+              <Flex flexDir="column" alignItems="center">
+                <div>{pokemon.number}</div>
+              </Flex>
+            </HStack>
+            <div>{url && longId && <Image priority width={300} height={300} src={url} alt={longId} />}</div>
+            <Heading>{pokemon.name}</Heading>
+            <Tabs isFitted w="500px" variant="unstyled" defaultIndex={tab ? parseInt(tab) : 0}>
+              <TabList>
+                <Tab
+                  hidden={pokemon.evolutions.filter(e => e.sourceId === pokemon.sourceId).length === 1}
+                  {...{ ...tabProps, _selected }}
+                >
+                  Forms
+                </Tab>
+                <Tab {...{ ...tabProps, _selected }}>Details</Tab>
+                <Tab {...{ ...tabProps, _selected }}>Types</Tab>
+                <Tab {...{ ...tabProps, _selected }}>Stats</Tab>
+                <Tab {...{ ...tabProps, _selected }}>Weaknesses</Tab>
+                <Tab {...{ ...tabProps, _selected }}>Evolutions</Tab>
+              </TabList>
 
-          <TabPanels>
-            <TabPanel display="flex" justifyContent="center">
-              <HStack>
-                {pokemon.evolutions
-                  .filter(e => e.sourceId === pokemon.sourceId)
-                  .map(evolution => (
-                    <Link key={`form-${evolution.id}`} href={`/pokemon/${evolution.id}`} passHref>
-                      <Image width={100} height={100} src={generateImageUrl(evolution)} alt={evolution.name} />
-                    </Link>
-                  ))}
-              </HStack>
-            </TabPanel>
-            <TabPanel display="flex" textAlign="center" flexDir="column" alignItems="center">
-              <HStack mb={2}>
-                <Button
-                  onClick={() => setXOrY('x')}
-                  isActive={xOrY === 'x'}
-                  p={0}
-                  w={8}
-                  h={8}
-                  size="xs"
-                  title="Version X"
-                  variant="ghost"
-                  colorScheme="blue"
-                  borderRadius="50%"
-                >
-                  <Box as={MdCatchingPokemon} fontSize={26} />
-                </Button>
-                <Button
-                  onClick={() => setXOrY('y')}
-                  isActive={xOrY === 'y'}
-                  p={0}
-                  w={8}
-                  h={8}
-                  size="xs"
-                  title="Version Y"
-                  variant="ghost"
-                  colorScheme="red"
-                  borderRadius="50%"
-                >
-                  <Box as={MdCatchingPokemon} fontSize={26} />
-                </Button>
-              </HStack>
-              <p>{xOrY === 'x' ? pokemon.descriptionX : pokemon.descriptionY}</p>
-            </TabPanel>
-            <TabPanel display="flex" justifyContent="center">
-              <PokemonTypes types={pokemon.types} />
-            </TabPanel>
-            <TabPanel display="flex" justifyContent="center">
-              <TabPanel display="flex" justifyContent="center" w="100%">
-                <PokemonStats pokemon={pokemon} />
-              </TabPanel>
-            </TabPanel>
-            <TabPanel display="flex" justifyContent="center">
-              <PokemonTypes types={pokemon.weaknesses} />
-            </TabPanel>
-            <TabPanel>
-              <HStack display="flex" justifyContent="center">
-                {uniqBy('sourceId', pokemon.evolutions).map(evolution => (
-                  <Link passHref key={`evolution-${evolution.number}`} href={`/pokemon/${evolution.id}?tab=5`}>
-                    <Image width={100} height={100} src={generateImageUrl(evolution)} alt={evolution.number} />
-                  </Link>
-                ))}
-              </HStack>
-            </TabPanel>
-          </TabPanels>
-        </Tabs>
-      </Stack>
+              <TabPanels>
+                <TabPanel display="flex" justifyContent="center">
+                  <HStack>
+                    {pokemon.evolutions
+                      .filter(e => e.sourceId === pokemon.sourceId)
+                      .map(evolution => (
+                        <Link key={`form-${evolution.id}`} href={`/pokemon/${evolution.id}`} passHref>
+                          <Image width={100} height={100} src={generateImageUrl(evolution)} alt={evolution.name} />
+                        </Link>
+                      ))}
+                  </HStack>
+                </TabPanel>
+                <TabPanel display="flex" textAlign="center" flexDir="column" alignItems="center">
+                  <HStack mb={2}>
+                    <Button
+                      onClick={() => setXOrY('x')}
+                      isActive={xOrY === 'x'}
+                      p={0}
+                      w={8}
+                      h={8}
+                      size="xs"
+                      title="Version X"
+                      variant="ghost"
+                      colorScheme="blue"
+                      borderRadius="50%"
+                    >
+                      <Box as={MdCatchingPokemon} fontSize={26} />
+                    </Button>
+                    <Button
+                      onClick={() => setXOrY('y')}
+                      isActive={xOrY === 'y'}
+                      p={0}
+                      w={8}
+                      h={8}
+                      size="xs"
+                      title="Version Y"
+                      variant="ghost"
+                      colorScheme="red"
+                      borderRadius="50%"
+                    >
+                      <Box as={MdCatchingPokemon} fontSize={26} />
+                    </Button>
+                  </HStack>
+                  <p>{xOrY === 'x' ? pokemon.descriptionX : pokemon.descriptionY}</p>
+                </TabPanel>
+                <TabPanel display="flex" justifyContent="center">
+                  <PokemonTypes types={pokemon.types} />
+                </TabPanel>
+                <TabPanel display="flex" justifyContent="center">
+                  <TabPanel display="flex" justifyContent="center" w="100%">
+                    <PokemonStats pokemon={pokemon} />
+                  </TabPanel>
+                </TabPanel>
+                <TabPanel display="flex" justifyContent="center">
+                  <PokemonTypes types={pokemon.weaknesses} />
+                </TabPanel>
+                <TabPanel>
+                  <HStack display="flex" justifyContent="center">
+                    {uniqBy('sourceId', pokemon.evolutions).map(evolution => (
+                      <Link
+                        key={`evolution-${evolution.number}`}
+                        href={`/pokemon/${evolution.id}?tab=5`}
+                        shallow
+                        prefetch
+                      >
+                        <Image width={100} height={100} src={generateImageUrl(evolution)} alt={evolution.number} />
+                      </Link>
+                    ))}
+                  </HStack>
+                </TabPanel>
+              </TabPanels>
+            </Tabs>
+          </Stack>
+        )
+      )}
     </Box>
   )
 }

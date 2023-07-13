@@ -3,14 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { motion } from 'framer-motion'
 import { ComponentProps } from 'react'
 
-const MotionIcon = motion(
-  chakra(FontAwesomeIcon, {
-    shouldForwardProp: () => true,
-  }),
-  {
-    forwardMotionProps: true,
-  },
-)
+const MotionIcon = motion(chakra(FontAwesomeIcon))
 
 export default MotionIcon
 

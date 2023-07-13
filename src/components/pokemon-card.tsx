@@ -1,21 +1,6 @@
 import { PokemonListItem } from '@/pages/api/pokemon'
-import {
-  Box,
-  Flex,
-  Heading,
-  HStack,
-  Stack,
-  Text,
-  Tooltip,
-  usePrevious,
-} from '@chakra-ui/react'
-import {
-  faCircleA,
-  faCircleG,
-  faCircleH,
-  faCircleM,
-  faCircleP,
-} from '@fortawesome/pro-solid-svg-icons'
+import { Box, Flex, Heading, HStack, Stack, Text, Tooltip, usePrevious } from '@chakra-ui/react'
+import { faCircleA, faCircleG, faCircleH, faCircleM, faCircleP } from '@fortawesome/pro-solid-svg-icons'
 import { faBolt } from '@fortawesome/sharp-solid-svg-icons'
 import pokeballIcon from '@public/img/pokeball.png'
 import pokemonLogo from '@public/img/pokemon-logo.svg'
@@ -66,11 +51,9 @@ export const PokemonCard = ({ pokemon }: { pokemon: PokemonListItem }) => {
 
     if (result.startsWith('♀ ')) return `${result.replace('♀ ', '')} ♀`
 
-    if (result.startsWith('Two-Segment'))
-      return `${result.replace('Two-Segment ', '')} (2-Segment)`
+    if (result.startsWith('Two-Segment')) return `${result.replace('Two-Segment ', '')} (2-Segment)`
 
-    if (result.startsWith('Three-Segment'))
-      return `${result.replace('Three-Segment ', '')} (3-Segment)`
+    if (result.startsWith('Three-Segment')) return `${result.replace('Three-Segment ', '')} (3-Segment)`
 
     return result
   }, [pokemon.name])
@@ -90,8 +73,8 @@ export const PokemonCard = ({ pokemon }: { pokemon: PokemonListItem }) => {
       whileTap="tap"
       borderColor={color}
       borderRadius="calc(336px/30)" // Radius from: https://twitter.com/ENDESGA/status/1094893284554502147/photo/1
-      onClick={() => {
-        router.push(`/pokemon/${pokemon.id}`)
+      onTap={() => {
+        router.push(`/pokemon/${pokemon.id}`, undefined, { shallow: true })
       }}
       color={needsLightContrast ? 'whiteAlpha.800' : 'blackAlpha.800'}
       animate={flipped ? 'flipped' : 'default'}
@@ -113,8 +96,7 @@ export const PokemonCard = ({ pokemon }: { pokemon: PokemonListItem }) => {
           rotateY: 180,
           scale: [1, 1.1, 1],
           zIndex: 10,
-          boxShadow:
-            'rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px',
+          boxShadow: 'rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px',
           transition: { duration: 0.3 },
           borderColor: [color, '#001d79'],
           backgroundColor: [color, '#1b3d94'],
@@ -145,22 +127,13 @@ export const PokemonCard = ({ pokemon }: { pokemon: PokemonListItem }) => {
                     </Box>
                   )}
 
-                  {(pokemon.name.includes('Gigantamax') ||
-                    pokemon.name.includes('Mega')) && (
+                  {(pokemon.name.includes('Gigantamax') || pokemon.name.includes('Mega')) && (
                     <Icon icon={faCircleM} ml={1} size="xs" />
                   )}
-                  {pokemon.name.includes('Alolan') && (
-                    <MotionIcon ml={1} size="xs" icon={faCircleA} />
-                  )}
-                  {pokemon.name.includes('Galarian') && (
-                    <MotionIcon ml={1} size="xs" icon={faCircleG} />
-                  )}
-                  {pokemon.name.includes('Hisuian') && (
-                    <MotionIcon ml={1} size="xs" icon={faCircleH} />
-                  )}
-                  {pokemon.name.includes('Paldean') && (
-                    <MotionIcon ml={1} size="xs" icon={faCircleP} />
-                  )}
+                  {pokemon.name.includes('Alolan') && <MotionIcon ml={1} size="xs" icon={faCircleA} />}
+                  {pokemon.name.includes('Galarian') && <MotionIcon ml={1} size="xs" icon={faCircleG} />}
+                  {pokemon.name.includes('Hisuian') && <MotionIcon ml={1} size="xs" icon={faCircleH} />}
+                  {pokemon.name.includes('Paldean') && <MotionIcon ml={1} size="xs" icon={faCircleP} />}
                 </Heading>
                 <Heading
                   borderRadius="md"
@@ -171,13 +144,7 @@ export const PokemonCard = ({ pokemon }: { pokemon: PokemonListItem }) => {
                   lineHeight={1.5}
                 >
                   HP
-                  <Box
-                    as="span"
-                    fontSize="2xl"
-                    fontWeight={500}
-                    ml={1}
-                    lineHeight={1}
-                  >
+                  <Box as="span" fontSize="2xl" fontWeight={500} ml={1} lineHeight={1}>
                     {pokemon.hp}
                   </Box>
                 </Heading>
@@ -191,9 +158,7 @@ export const PokemonCard = ({ pokemon }: { pokemon: PokemonListItem }) => {
                 borderWidth={1}
                 borderColor="blackAlpha.50"
                 overflow="hidden"
-                bgGradient={[
-                  `linear(-135deg, whiteAlpha.300 0%, blackAlpha.300 90%)`,
-                ]}
+                bgGradient={[`linear(-135deg, whiteAlpha.300 0%, blackAlpha.300 90%)`]}
                 bgSize="200% 200%"
                 whileHover={{ backgroundPosition: '50% 0%' }}
                 boxShadow="inset 1px -1px 4px 2px rgba(0,0,0,0.1)"
@@ -210,13 +175,7 @@ export const PokemonCard = ({ pokemon }: { pokemon: PokemonListItem }) => {
                     textOrientation: 'upright',
                   }}
                 >
-                  <Box
-                    fontSize={14}
-                    fontWeight={900}
-                    color={
-                      needsLightContrast ? 'whiteAlpha.400' : 'blackAlpha.400'
-                    }
-                  >
+                  <Box fontSize={14} fontWeight={900} color={needsLightContrast ? 'whiteAlpha.400' : 'blackAlpha.400'}>
                     数
                   </Box>
                   <Box fontSize={20} fontWeight={400} letterSpacing={-2}>
@@ -226,18 +185,12 @@ export const PokemonCard = ({ pokemon }: { pokemon: PokemonListItem }) => {
                 <Heading
                   mt={2}
                   fontSize="sm"
-                  color={
-                    needsLightContrast ? 'whiteAlpha.500' : 'blackAlpha.500'
-                  }
+                  color={needsLightContrast ? 'whiteAlpha.500' : 'blackAlpha.500'}
                   textAlign="center"
                 >
                   {pokemon.japaneseName}
                 </Heading>
-                <MotionBox
-                  variants={{ hover: { scale: 1.03 } }}
-                  mx="auto"
-                  mt={3}
-                >
+                <MotionBox variants={{ hover: { scale: 1.03 } }} mx="auto" mt={3}>
                   <Image
                     ref={imageRef}
                     style={{
@@ -262,11 +215,7 @@ export const PokemonCard = ({ pokemon }: { pokemon: PokemonListItem }) => {
                   color="whiteAlpha.800"
                   lineHeight={1}
                 >
-                  <Heading
-                    size="sm"
-                    textTransform="capitalize"
-                    textAlign="center"
-                  >
+                  <Heading size="sm" textTransform="capitalize" textAlign="center">
                     {pokemon.types[0]} Pokémon
                   </Heading>
                   <Text fontSize="xs" textAlign="center" noOfLines={1}>
@@ -274,19 +223,11 @@ export const PokemonCard = ({ pokemon }: { pokemon: PokemonListItem }) => {
                   </Text>
                   <HStack mt={1} spacing={3} color="blackAlpha.500">
                     {pokemon?.types?.map(type => (
-                      <TypeBadge
-                        type={type as PokemonType}
-                        key={`type-badge-${pokemon.id}-${type}`}
-                      />
+                      <TypeBadge type={type as PokemonType} key={`type-badge-${pokemon.id}-${type}`} />
                     ))}
                   </HStack>
                 </Stack>
-                <Stack
-                  alignItems="center"
-                  pos="absolute"
-                  top="120px"
-                  right={3.5}
-                >
+                <Stack alignItems="center" pos="absolute" top="120px" right={3.5}>
                   {pokemon.subVariant > 0 && (
                     <MotionIcon
                       boxSize="18px"
@@ -315,26 +256,16 @@ export const PokemonCard = ({ pokemon }: { pokemon: PokemonListItem }) => {
 }
 
 const TypeBadge = ({ type }: { type: PokemonType }) => {
-  const { icon, component } = pokemonTypeData[type]
-
+  const { icon } = pokemonTypeData[type]
   return (
     <Tooltip label={capitalize(type)}>
-      <>
-        {component}
-        {icon && <Icon icon={icon} size="lg" />}
-      </>
+      <div>{icon}</div>
     </Tooltip>
   )
 }
 
 const PokemonCardBack = memo(() => (
-  <Box
-    py={5}
-    h="100%"
-    display="grid"
-    placeItems="center"
-    transform="rotateY(180deg)"
-  >
+  <Box py={5} h="100%" display="grid" placeItems="center" transform="rotateY(180deg)">
     <Box w="75%">
       <Image src={pokemonLogo} alt="Pokemon Logo" />
     </Box>
