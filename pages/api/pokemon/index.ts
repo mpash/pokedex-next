@@ -31,34 +31,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
   const queryParseInt = (key: string, defaultValue: number | undefined = undefined) =>
     has(key, req.query) ? parseInt(get(key, req.query) as string) : defaultValue
 
-  const id = queryParseInt('id')
-
-  if (id) {
-    const pokemon = await prisma.pokemon.findUnique({
-      where: { id },
-      include: {
-        types: true,
-        weaknesses: true,
-        abilities: true,
-        japaneseMeta: true,
-        primaryColor: true,
-        region: true,
-        evolvesFrom: true,
-        evolvesTo: true,
-      },
-    })
-    if (!pokemon) {
-      throw new Error('Unable to find a Pokemon with the given ID: ' + id)
-    }
-    return res.status(200).json({
-      data: {
-        ...pokemon,
-        types: pokemon.types.map(t => t.type),
-        weaknesses: pokemon.weaknesses.map(t => t.type),
-      },
-    })
-  }
-
   const pageSize = queryParseInt('pageSize', 20) as number
   const lastId = queryParseInt('lastId')
   let query = get('q', req.query) as string | undefined
@@ -126,9 +98,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         ...(whereQuery.OR as any[]),
         typesQuery,
         nameSearchQuery,
-        {
-          japaneseMeta: nameSearchQuery,
-        },
+        { japaneseMeta: nameSearchQuery },
       ]
 
       if (isWeaknessCheck) {
@@ -156,17 +126,34 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
   }
 
   const pokemon = await prisma.pokemon.findMany({
-    include: {
-      types: true,
-      weaknesses: true,
-      abilities: true,
-      japaneseMeta: true,
-      primaryColor: true,
-      region: true,
-    },
+    // include: {
+    //   types: true,
+    //   weaknesses: true,
+    //   abilities: true,
+    //   japaneseMeta: true,
+    //   primaryColor: true,
+    //   region: true,
+    // },
     where: whereQuery,
     take: pageSize,
     ...lastIdCursor,
+    select: {
+      id: true,
+      name: true,
+      number: true,
+      japaneseMeta: { select: { name: true } },
+      descriptionX: true,
+      descriptionY: true,
+      hp: true,
+      image: true,
+      height: true,
+      weight: true,
+      subVariant: true,
+      primaryColor: { select: { r: true, g: true, b: true } },
+      types: { select: { type: true } },
+      weaknesses: { select: { type: true } },
+      region: true,
+    },
   })
 
   const nextPage = (() => {

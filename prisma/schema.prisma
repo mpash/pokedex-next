@@ -1,26 +1,12 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider        = "prisma-client-js"
   previewFeatures = ["fullTextSearch"]
 }
 
-// Local Postgres Storage
 datasource db {
-  provider          = "postgresql"
-  url               = env("DATABASE_URL")
-  directUrl         = env("DIRECT_URL")
-  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
-
-// Vercel Postgres Storage
-// datasource db {
-//   provider          = "postgresql"
-//   url               = env("POSTGRES_PRISMA_URL") // uses connection pooling
-//   directUrl         = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
-//   shadowDatabaseUrl = env("POSTGRES_URL_NON_POOLING") // used for migrations
-// }
 
 model Pokemon {
   id               Int              @id @default(autoincrement())
@@ -47,7 +33,6 @@ model Pokemon {
   evolutionChain   String?
   createdAt        DateTime         @default(now())
   updatedAt        DateTime         @updatedAt
-  // Relations
   types            PokemonType[]
   weaknesses       PokemonType[]    @relation("PokemonWeaknesses")
   abilities        PokemonAbility[]
@@ -59,7 +44,6 @@ model Pokemon {
   evolvesFrom      Pokemon[]        @relation("PokemonEvolutions")
   pokemonCards     PokemonCard[]
 
-  // Indexes
   @@index([name], name: "pokemon_name")
   @@index([number], name: "pokemon_number")
   @@index([sourceId], name: "pokemon_source_id")
@@ -69,21 +53,17 @@ model Pokemon {
 model PokemonType {
   id           Int       @id @default(autoincrement())
   type         String    @unique
-  // Relations
   pokemon      Pokemon[]
   weakPokemons Pokemon[] @relation("PokemonWeaknesses")
 
-  // Indexes
   @@index([type], name: "pokemon_type")
 }
 
 model PokemonAbility {
   id      Int       @id @default(autoincrement())
   ability String    @unique
-  // Relations
   pokemon Pokemon[]
 
-  // Indexes
   @@index([ability], name: "pokemon_ability")
 }
 
@@ -101,11 +81,9 @@ model JapaneseMeta {
   zukan_no   String
   name       String
   omosa      String
-  // Relations
   pokemonId  Int     @unique
   pokemon    Pokemon @relation(fields: [pokemonId], references: [id])
 
-  // Indexes
   @@index([name], name: "japanese_meta_name")
 }
 
@@ -114,7 +92,6 @@ model PrimaryColor {
   r         Int
   g         Int
   b         Int
-  // Relations
   pokemonId Int     @unique
   pokemon   Pokemon @relation(fields: [pokemonId], references: [id])
 }
@@ -123,10 +100,8 @@ model Region {
   id       Int       @id @default(autoincrement())
   sourceId Int       @unique
   name     String    @unique
-  // Relations
   pokemon  Pokemon[]
 
-  // Indexes
   @@index([name], name: "region_name")
 }
 
@@ -137,7 +112,6 @@ model PokemonCard {
   imageSm                String
   imageLg                String
   name                   String
-  // Optional
   rules                  String[]
   hp                     String?
   types                  String[]
@@ -149,9 +123,7 @@ model PokemonCard {
   flavorText             String?
   rarity                 String?
   artist                 String?
-  // End Optional
   number                 String
-  // Relations
   pokemon                Pokemon[]
   pokemonCardSetId       Int?
   set                    PokemonCardSet?          @relation(fields: [pokemonCardSetId], references: [id])
@@ -178,13 +150,11 @@ model PokemonCardSet {
 model PokemonCardSetSuperType {
   id           Int           @id @default(autoincrement())
   name         String        @unique
-  // Relations
   pokemonCards PokemonCard[]
 }
 
 model PokemonCardSetSubType {
   id           Int           @id @default(autoincrement())
   name         String        @unique
-  // Relations
   pokemonCards PokemonCard[]
 }
