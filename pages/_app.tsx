@@ -1,6 +1,7 @@
 import { ChakraProvider, useColorMode } from '@chakra-ui/react'
 import { config } from '@fortawesome/fontawesome-svg-core'
 import '@fortawesome/fontawesome-svg-core/styles.css'
+import { trpc } from '@src/utils/trpc'
 import { Hydrate, QueryClient, QueryClientConfig, QueryClientProvider } from '@tanstack/react-query'
 import { SessionProvider } from 'next-auth/react'
 import { AppProps } from 'next/app'
@@ -37,8 +38,7 @@ function App({ Component, pageProps: { session, dehydratedState, ...pageProps } 
   )
 }
 
-// export default trpc.withTRPC(App)
-export default App
+export default trpc.withTRPC(App)
 
 const AppClient = ({ children }: { children?: React.ReactNode }) => {
   const { setColorMode } = useColorMode()

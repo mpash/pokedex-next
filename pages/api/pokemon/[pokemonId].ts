@@ -1,4 +1,5 @@
 import { Pokemon, Prisma } from '@prisma/client'
+import withNextCors from '@src/client/withNextCors'
 import { TypeWeakness } from '@src/data/typeCalculator'
 import { prisma } from '@src/utils/prisma'
 import { NextApiRequest, NextApiResponse } from 'next'
@@ -9,7 +10,7 @@ export type PokemonDetail = Partial<Prisma.PokemonSelect> & {
   typeWeaknesses: TypeWeakness
 }
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse<any>) {
+const handler = async (req: NextApiRequest, res: NextApiResponse<any>) => {
   const id = req.query.pokemonId ? parseInt(req.query.pokemonId as string) : undefined
 
   const pokemon = await prisma.pokemon.findUnique({
@@ -51,3 +52,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     },
   })
 }
+
+export default withNextCors(handler)

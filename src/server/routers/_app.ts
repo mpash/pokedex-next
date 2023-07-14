@@ -2,6 +2,7 @@ import { prisma } from '@/prisma/seed'
 import { Prisma } from '@prisma/client'
 import { z } from 'zod'
 import { publicProcedure, router } from '../trpc'
+import { baseApiUrl } from '@src/utils'
 
 export const appRouter = router({
   pokemonList: publicProcedure
@@ -143,10 +144,10 @@ export const appRouter = router({
       const lastPokemonId = pokemon[pokemon.length - 1]?.id
 
       const generateBaseUrl = () => {
-        const baseUrl = new URL('/api/pokemon', process.env.NEXT_PUBLIC_VERCEL_URL ?? 'http://localhost:3000')
-        baseUrl.searchParams.set('pageSize', pageSize.toString())
-        query && baseUrl.searchParams.append('q', query)
-        return baseUrl
+        const url = new URL('/api/pokemon', baseApiUrl)
+        url.searchParams.set('pageSize', pageSize.toString())
+        query && url.searchParams.append('q', query)
+        return url
       }
 
       const generateNextPageUrl = () => {

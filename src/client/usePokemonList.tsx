@@ -1,4 +1,5 @@
 import { PokemonListItem } from '@/pages/api/pokemon'
+import { baseApiUrl } from '@src/utils'
 import { QueryFunction, useInfiniteQuery } from '@tanstack/react-query'
 
 const fetchPokemon: QueryFunction<
@@ -8,12 +9,13 @@ const fetchPokemon: QueryFunction<
   },
   (string | boolean | undefined)[]
 > = async ({ signal, pageParam, queryKey }) => {
-  const url = new URL('/api/pokemon', window.location.origin)
+  const url = new URL('/api/pokemon', baseApiUrl)
   url.searchParams.set('pageSize', '100')
 
   const [_, query, showVariants] = queryKey
 
-  if (!!query && query !== '') url.searchParams.append('q', typeof query === 'string' ? query : query.toString())
+  if (!!query && query !== '')
+    url.searchParams.append('q', typeof query === 'string' ? query : query.toString())
   if (!showVariants) url.searchParams.append('hideVariants', 'true')
 
   const res = await fetch(pageParam ?? url, {

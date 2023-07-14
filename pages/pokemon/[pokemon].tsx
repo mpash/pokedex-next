@@ -20,6 +20,7 @@ import Icon from '@src/components/icon'
 import MotionBox from '@src/components/motion-box'
 import { pokemonTypeData } from '@src/data/pokemon-types'
 import { typeStrengths, TypeWeakness, typeWeaknesses } from '@src/data/typeCalculator'
+import { baseApiUrl } from '@src/utils'
 import { useQuery } from '@tanstack/react-query'
 import { groupBy, uniqBy } from 'lodash/fp'
 import Image from 'next/image'
@@ -38,7 +39,7 @@ type IPokemonDetail = Pokemon & {
 }
 
 const fetchPokemonDetails = async (id: string) => {
-  const res = await fetch(new URL(`/api/pokemon/${id}`, window.location.origin), { cache: 'force-cache' })
+  const res = await fetch(new URL(`/api/pokemon/${id}`, baseApiUrl))
   const data = await res.json()
   return data.data as IPokemonDetail
 }
