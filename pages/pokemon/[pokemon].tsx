@@ -14,14 +14,15 @@ import {
   Tabs,
   Text,
 } from '@chakra-ui/react'
-import { faArrowLeft, faArrowRight, faTimes } from '@fortawesome/pro-solid-svg-icons'
+import { faArrowLeft, faArrowRight, faStar, faTimes } from '@fortawesome/pro-solid-svg-icons'
 import { Pokemon } from '@prisma/client'
 import Icon from '@src/components/icon'
 import MotionBox from '@src/components/motion-box'
 import { pokemonTypeData } from '@src/data/pokemon-types'
 import { typeStrengths, TypeWeakness, typeWeaknesses } from '@src/data/typeCalculator'
+import { baseApiUrl } from '@src/utils'
 import { useQuery } from '@tanstack/react-query'
-import { uniqBy } from 'lodash/fp'
+import { groupBy, uniqBy } from 'lodash/fp'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
@@ -38,7 +39,7 @@ type IPokemonDetail = Pokemon & {
 }
 
 const fetchPokemonDetails = async (id: string) => {
-  const res = await fetch(new URL(`/api/pokemon/${id}`, window.location.origin), { cache: 'force-cache' })
+  const res = await fetch(new URL(`/api/pokemon/${id}`, baseApiUrl))
   const data = await res.json()
   return data.data as IPokemonDetail
 }
@@ -89,7 +90,7 @@ const PokemonDetail = () => {
     return forms.length > 1
   }, [pokemon])
 
-  console.log(pokemon?.pokemonCards)
+  const pokemonCardsByRarity = groupBy('rarity', pokemon?.pokemonCards)
 
   return (
     <Box
@@ -222,11 +223,76 @@ const PokemonDetail = () => {
                 </TabPanel>
                 {/* Cards */}
                 <TabPanel>
-                  <Box overflowX="auto" display="grid" gridTemplateColumns="repeat(3, 1fr)" gridGap={4}>
-                    {pokemon?.pokemonCards.map(card => (
-                      <PokemonTCGCard key={card.id} {...{ card }} />
-                    ))}
-                  </Box>
+                  <Stack w="100%" overflowY="auto" maxH="700px" spacing={6}>
+                    {Object.keys(pokemonCardsByRarity)
+                      .sort((a, b) => {
+                        if (a.toLowerCase() === 'null') {
+                          return 1
+                        }
+                        if (b.toLowerCase() === 'null') {
+                          return -1
+                        }
+                        if (a.toLowerCase() > b.toLowerCase()) return 1
+                        if (a.toLowerCase() < b.toLowerCase()) return -1
+                        return 0
+                      })
+                      .map(rarity => {
+                        const cards = pokemonCardsByRarity[rarity]
+                        return (
+                          <Box key={rarity} borderWidth={2} mb={4} py={4} borderRadius="md">
+                            <Heading
+                              size="md"
+                              borderBottomWidth={2}
+                              pl={4}
+                              mb={4}
+                              display="flex"
+                              alignItems="center"
+                            >
+                              {rarity !== 'null' ? rarity : 'Unknown'}
+                              <Box as="span" ml={1} fontSize="sm">
+                                {rarity.includes('Rare') && <Icon icon={faStar} />}
+                                {rarity.includes('Promo') && <Icon icon={faStar} />}
+                                {rarity.includes('Secret') && <Icon icon={faStar} />}
+                                {rarity.includes('V') && <Icon icon={faStar} />}
+                                {rarity.includes('Star') && (
+                                  <>
+                                    <Icon icon={faStar} />
+                                    <Icon icon={faStar} />
+                                    <Icon icon={faStar} />
+                                  </>
+                                )}
+                                {rarity.includes('LEGEND') && (
+                                  <>
+                                    <Icon icon={faStar} />
+                                    <Icon icon={faStar} />
+                                    <Icon icon={faStar} />
+                                  </>
+                                )}
+                                {rarity.includes('Holo') && <Icon icon={faStar} />}
+                                {rarity.includes('Rainbow') && (
+                                  <>
+                                    <Icon icon={faStar} />
+                                    <Icon icon={faStar} />
+                                  </>
+                                )}
+                                {rarity.includes('Ultra') && (
+                                  <>
+                                    <Icon icon={faStar} />
+                                    <Icon icon={faStar} />
+                                    <Icon icon={faStar} />
+                                  </>
+                                )}
+                              </Box>
+                            </Heading>
+                            <Box display="grid" gridTemplateColumns="repeat(3, 1fr)" gridGap={4} px={4}>
+                              {cards.map(card => (
+                                <PokemonTCGCard key={card.id} {...{ card }} />
+                              ))}
+                            </Box>
+                          </Box>
+                        )
+                      })}
+                  </Stack>
                 </TabPanel>
                 {/* Forms */}
                 <TabPanel hidden={!hasMultipleForms}>
@@ -444,9 +510,5 @@ const PokemonStatType = ({ type, value }: { type: PokemonType; value: number | n
 
 const PokemonTCGCard = ({ card }: { card?: any }) => {
   if (!card) return null
-  return (
-    <MotionBox>
-      <Image height={100} width={250} src={card.imageLg} alt={card.id} />
-    </MotionBox>
-  )
+  return <Image height={100} width={250} src={card.imageLg} alt={card.id} />
 }

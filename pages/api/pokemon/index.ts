@@ -1,7 +1,9 @@
+import { Prisma, Region } from '@prisma/client'
+import withNextCors from '@src/client/withNextCors'
+import { baseApiUrl } from '@src/utils'
 import { prisma } from '@src/utils/prisma'
-import { Prisma, Pokemon, Region } from '@prisma/client'
+import { get, has } from 'lodash/fp'
 import { NextApiRequest, NextApiResponse } from 'next'
-import { get, getOr, has } from 'lodash/fp'
 
 type Color = {
   r: number
@@ -27,7 +29,7 @@ export type PokemonListItem = {
   region: Region
 }
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse<any>) {
+const handler = async (req: NextApiRequest, res: NextApiResponse<any>) => {
   const queryParseInt = (key: string, defaultValue: number | undefined = undefined) =>
     has(key, req.query) ? parseInt(get(key, req.query) as string) : defaultValue
 
@@ -126,14 +128,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
   }
 
   const pokemon = await prisma.pokemon.findMany({
-    // include: {
-    //   types: true,
-    //   weaknesses: true,
-    //   abilities: true,
-    //   japaneseMeta: true,
-    //   primaryColor: true,
-    //   region: true,
-    // },
     where: whereQuery,
     take: pageSize,
     ...lastIdCursor,
@@ -160,10 +154,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     const lastPokemonId = pokemon[pokemon.length - 1]?.id
     if (!lastPokemonId || pokemon.length < pageSize) return null
 
-    const nextPage = new URL(
-      '/api/pokemon',
-      process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000',
-    )
+    const nextPage = new URL('/api/pokemon', baseApiUrl)
     nextPage.searchParams.set('pageSize', pageSize.toString())
     queryParams.query && nextPage.searchParams.set('q', queryParams.query)
     lastPokemonId && nextPage.searchParams.set('lastId', lastPokemonId.toString())
@@ -220,6 +211,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     },
   })
 }
+
+export default withNextCors(handler)
 
 function appendRangeQuery(range: string, whereQuery: Prisma.PokemonWhereInput) {
   const [start, end] = range.split('-')
