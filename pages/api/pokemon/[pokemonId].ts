@@ -1,4 +1,4 @@
-import { Pokemon, Prisma } from '@prisma/client'
+import { Prisma } from '@prisma/client'
 import withNextCors from '@src/client/withNextCors'
 import { TypeWeakness } from '@src/data/typeCalculator'
 import { prisma } from '@src/utils/prisma'
@@ -11,7 +11,7 @@ export type PokemonDetail = Partial<Prisma.PokemonSelect> & {
 }
 
 const handler = async (req: NextApiRequest, res: NextApiResponse<any>) => {
-  const id = req.query.pokemonId ? parseInt(req.query.pokemonId as string) : undefined
+  const id = parseInt(req.query.pokemonId as string)
 
   const pokemon = await prisma.pokemon.findUnique({
     where: { id },
@@ -24,20 +24,16 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<any>) => {
     },
   })
 
-  let evolutions: Pokemon[] = []
-  if (pokemon?.evolutionChain) {
-    evolutions = await prisma.pokemon.findMany({
-      where: {
-        slug: {
-          in: pokemon?.evolutionChain.split(','),
-          mode: 'insensitive',
+  const evolutions = pokemon?.evolutionChain
+    ? await prisma.pokemon.findMany({
+        where: {
+          slug: {
+            in: pokemon?.evolutionChain.split(','),
+            mode: 'insensitive',
+          },
         },
-      },
-      orderBy: {
-        id: 'asc',
-      },
-    })
-  }
+      })
+    : []
 
   if (!pokemon) {
     throw new Error('Unable to find a Pokemon with the given ID: ' + id)
