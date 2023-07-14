@@ -1,24 +1,20 @@
-import { Box, HStack, Heading } from '@chakra-ui/react'
+import { Box, HStack } from '@chakra-ui/react'
 import { PokemonType } from '@src/components/pokemon'
 import { typeMatrix2 } from '@src/data/typeCalculator'
 
 const TypeChartPage = () => {
   return (
-    <>
-      <Heading>Type Chart</Heading>
+    <Box ml="calc(50% - 1146px/2)" mt={20}>
       <Box display="grid">
         <HStack>
           <Box w="82px" h="82px" mr={0}></Box>
           {Object.keys(typeMatrix2).map((type, index) => (
             <Box
               key={type}
-              transform={`rotate(-45deg) translateX(-${
-                index * 22.8
-              }px) translateY(-${index * 22.8}px)`}
               w="82px"
-              // h="82px"
               fontWeight={600}
               fontSize="sm"
+              transform={`rotate(-45deg) translateX(-${index * 22.8}px) translateY(-${index * 22.8}px)`}
             >
               <PokemonType type={type as PokemonType} />
             </Box>
@@ -91,7 +87,7 @@ const TypeChartPage = () => {
           )
         })}
       </Box>
-    </>
+    </Box>
   )
 }
 

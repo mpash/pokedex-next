@@ -1,18 +1,19 @@
 import { Box, Button, HStack, Heading, Input, Stack, Switch, Text } from '@chakra-ui/react'
 import { PokemonCard } from '@components/pokemon-card'
 import { IconProp } from '@fortawesome/fontawesome-svg-core'
-import { faCircleG, faCircleH, faCircleM, faCircleP } from '@fortawesome/pro-solid-svg-icons'
+import { faArrowLeft, faCircleG, faCircleH, faCircleM, faCircleP } from '@fortawesome/pro-solid-svg-icons'
 import { faBolt, faChevronDown } from '@fortawesome/sharp-solid-svg-icons'
+import pikachuLoading from '@public/img/pikachu-loading.gif'
 import usePokemonList from '@src/client/usePokemonList'
-import Icon from '@src/components/icon'
-import MotionBox from '@src/components/motion-box'
-import MotionIcon from '@src/components/motion-icon'
-import { AnimatePresence } from 'framer-motion'
-import { debounce, isEmpty } from 'lodash/fp'
-import Link from 'next/link'
+import Icon from '@components/icon'
+import MotionBox from '@components/motion-box'
+import MotionIcon from '@components/motion-icon'
+import { debounce } from 'lodash/fp'
+import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { useEffect, useRef, useState } from 'react'
 import { useIntersection } from 'react-use'
+import PokedexV2Logo from '@components/PokedexV2Logo'
 
 const Pokemon = () => {
   const router = useRouter()
@@ -46,9 +47,15 @@ const Pokemon = () => {
         p={['20px', '20px', '30px', '40px', '50px']}
       >
         <div>
-          <Heading size="2xl" mr={6}>
-            Pokédex
-          </Heading>
+          <Button
+            variant="link"
+            onClick={() => {
+              router.push('/')
+            }}
+          >
+            <Icon icon={faArrowLeft} fontSize="2xl" color="whiteAlpha.700" />
+          </Button>
+          <PokedexV2Logo />
           <Input
             size="lg"
             defaultValue={router.query.q as string}
@@ -60,7 +67,6 @@ const Pokemon = () => {
           />
         </div>
         <Stack>
-          <VersionOneLink />
           <HStack
             bgColor="gray.700"
             cursor="pointer"
@@ -73,11 +79,9 @@ const Pokemon = () => {
             <Heading size="sm">Legend</Heading>
             <MotionIcon
               icon={faChevronDown}
-              animate={{
-                rotate: legendCollapsed ? 0 : 180,
-                originX: 0.5,
-                originY: 0.5,
-              }}
+              mb={0.5}
+              animate={{ rotate: legendCollapsed ? 180 : 0, originX: 0.5, originY: 0.5 }}
+              transition={{ duration: 0.5 }}
             />
           </HStack>
           <MotionBox
@@ -86,14 +90,14 @@ const Pokemon = () => {
             gridColumnGap={2}
             alignItems="center"
             overflow="hidden"
-            gridTemplateColumns="repeat(2, auto auto)"
-            initial={{ opacity: 0, height: 0 }}
+            gridTemplateColumns="repeat(3, auto auto)"
+            // initial={{ opacity: 0, height: 0 }}
             animate={{
               opacity: legendCollapsed ? 0 : 1,
               height: legendCollapsed ? 0 : 'auto',
             }}
             // @ts-ignore
-            transition={{ duration: 0.4 }}
+            transition={{ duration: 0.5 }}
           >
             <LegendItem icon={faCircleM} label="Gigantamax/Mega" isDisabled={hideVariants} />
             <LegendItem label="Variant Form" isDisabled={hideVariants}>
@@ -174,10 +178,11 @@ const PokemonList = () => {
   const router = useRouter()
   const query = (router.query.q as string) ?? ''
   const showVariants = router.query.hideVariants === 'true' ? false : true
-  const { data, isLoading, isError, isFetchingNextPage, isFetching, fetchNextPage, hasNextPage } = usePokemonList({
-    query,
-    showVariants,
-  })
+  const { data, isLoading, isError, isFetchingNextPage, isFetching, fetchNextPage, hasNextPage } =
+    usePokemonList({
+      query,
+      showVariants,
+    })
 
   const ref = useRef<HTMLButtonElement>(null)
   const intersection = useIntersection(ref, {
@@ -185,13 +190,10 @@ const PokemonList = () => {
   })
 
   useEffect(() => {
-    if (!hasNextPage || isFetchingNextPage) return
-    if (intersection?.intersectionRatio ?? 1 < 1) {
-      fetchNextPage()
-    }
-  }, [fetchNextPage, hasNextPage, intersection?.intersectionRatio, isFetchingNextPage])
+    if (!intersection?.intersectionRatio || isFetchingNextPage) return
+    if (intersection?.intersectionRatio < 1) fetchNextPage()
+  }, [fetchNextPage, intersection?.intersectionRatio, isFetchingNextPage])
 
-  // if (isLoading) return <Box>Loading...</Box>
   if (isError) return <Box>Error...</Box>
 
   const pokemon = data?.pages.flatMap(({ data }) => data) ?? []
@@ -199,83 +201,50 @@ const PokemonList = () => {
   // Card size is 2.5 x 3.5 inches or 240 x 336 pixels
   // 216 x 302 pixels
   return (
-    <Box overflowY="scroll" h="calc(100% - 242px)" pb={6}>
-      <MotionBox color="white">
-        <Box
-          display="grid"
-          gridAutoRows="calc(336px * 1.2)"
-          justifyContent="center"
-          px={['10px', null, '20px', '20px']}
-          gridGap={['10px', null, '20px', '20px']}
-          gridTemplateColumns="repeat(auto-fill, minmax(calc(240px * 1.2), calc(240px * 1.2)))"
-        >
-          <AnimatePresence initial={false} mode="wait">
-            {isLoading
-              ? Array.from({ length: 3 }).map((_, i) => (
-                  <MotionBox
-                    key={`pokemon-card-loading-${i}`}
-                    bgGradient="linear(135deg, blackAlpha.100,blackAlpha.100,blackAlpha.100, blackAlpha.500)"
-                    borderRadius="calc(336px/30)"
-                    borderWidth={8}
-                    borderColor="blackAlpha.200"
-                    backgroundSize="200% 200%"
-                    animate={{
-                      opacity: 2,
-                      backgroundPosition: ['0% 0%', '0% 90%'],
-                      transition: {
-                        duration: 1,
-                        repeat: Infinity,
-                        repeatType: 'reverse',
-                        ease: 'easeInOut',
-                      },
-                    }}
-                    exit={{ opacity: 0 }}
-                  />
-                ))
-              : pokemon?.map(pokemon => (
-                  <MotionBox
-                    key={`pokemon-card-${pokemon.id}`}
-                    cursor="pointer !important"
-                    userSelect="none"
-                    layoutId={`pokemon-card-${pokemon.id}`}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                  >
-                    <PokemonCard {...{ pokemon }} />
-                  </MotionBox>
-                ))}
-          </AnimatePresence>
-        </Box>
-        {!isLoading && hasNextPage && !isEmpty(pokemon) && (
-          <Button
-            ref={ref}
-            w="calc(100% - var(--chakra-space-6) * 2)"
-            mt={6}
-            mx={6}
-            size="lg"
-            display="grid"
-            placeItems="center"
-            borderRadius="calc(336px / 30)"
-            colorScheme="whiteAlpha"
-            variant="ghost"
-            isLoading={isFetching}
-            onClick={() => fetchNextPage()}
-          >
-            Load More
-          </Button>
+    <Box overflowY="scroll" pb={6}>
+      <Box color="white">
+        {isLoading ? (
+          <Box pos="fixed" top="calc(50% + 75px / 2)" left="calc(50% - 75px / 2)">
+            <Image alt="Loading" src={pikachuLoading} height={75} />
+          </Box>
+        ) : (
+          <>
+            <Box
+              display="grid"
+              gridAutoRows="calc(336px * 1.2)"
+              justifyContent="center"
+              px={['10px', null, '20px', '20px']}
+              gridGap={['10px', null, '20px', '20px']}
+              gridTemplateColumns="repeat(auto-fill, minmax(calc(240px * 1.2), calc(240px * 1.2)))"
+            >
+              {pokemon?.map(pokemon => (
+                <Box key={`pokemon-card-${pokemon.id}`} cursor="pointer !important" userSelect="none">
+                  <PokemonCard {...{ pokemon }} />
+                </Box>
+              ))}
+            </Box>
+            {hasNextPage && (
+              <Button
+                ref={ref}
+                w="calc(100% - var(--chakra-space-6) * 2)"
+                mt={6}
+                mx={6}
+                size="lg"
+                display="grid"
+                placeItems="center"
+                borderRadius="calc(336px / 30)"
+                colorScheme="white"
+                color="white"
+                variant="ghost"
+                isLoading={isFetching}
+                onClick={() => fetchNextPage()}
+              >
+                Load More
+              </Button>
+            )}
+          </>
         )}
-      </MotionBox>
+      </Box>
     </Box>
   )
 }
-
-const VersionOneLink = () => (
-  <Button as={Link} colorScheme="blue" size="xs" href="/type-calculator">
-    Looking for{' '}
-    <Box as="code" ml={1}>
-      v1
-    </Box>
-    ?
-  </Button>
-)

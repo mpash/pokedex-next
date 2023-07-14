@@ -391,42 +391,28 @@ function combineTypes(type1: string, type2?: string): TypeModifier {
   return combinedType
 }
 
-export function typeStrengths(
-  type1: string,
-  type2?: string,
-): TypeStrengthWeakness | undefined {
-  if (typeMatrix2[type1]) {
-    const combinedType = combineTypes(type1, type2)
-    let strengths: TypeStrengthWeakness = {}
+export function typeStrengths(type1: string, type2?: string) {
+  const combinedType = combineTypes(type1, type2)
+  let strengths: TypeStrengthWeakness = {}
 
-    for (const key in combinedType) {
-      if (combinedType[key] > 1) {
-        strengths[key] = { modifier: combinedType[key] }
-      }
+  for (const key in combinedType) {
+    if (combinedType[key] > 1) {
+      strengths[key] = { modifier: combinedType[key] }
     }
-
-    return strengths
-  } else {
-    return undefined
   }
+
+  return strengths
 }
 
-export function typeWeaknesses(
-  type1: string,
-  type2?: string,
-): TypeStrengthWeakness | undefined {
-  if (typeMatrix2[type1]) {
-    const combinedType = combineTypes(type1, type2)
-    let weaknesses: TypeStrengthWeakness = {}
+export function typeWeaknesses(type1: string, type2?: string) {
+  const combinedType = combineTypes(type1, type2)
+  let weaknesses: TypeStrengthWeakness = {}
 
-    for (const key in combinedType) {
-      if (combinedType[key] < 1) {
-        weaknesses[key] = { modifier: combinedType[key] }
-      }
+  for (const key in combinedType) {
+    if (combinedType[key] < 1) {
+      weaknesses[key] = { modifier: combinedType[key] }
     }
-
-    return weaknesses
-  } else {
-    return undefined
   }
+
+  return weaknesses
 }

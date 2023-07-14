@@ -20,7 +20,7 @@ const pokemonFont = localFont({
 const theme = extendTheme({
   config: {
     initialColorMode: 'dark',
-    useSystemColorMode: true,
+    useSystemColorMode: false,
   },
   fonts: {
     heading: josefinSans.style.fontFamily,

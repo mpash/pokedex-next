@@ -1,8 +1,7 @@
 import { prisma } from '@/prisma/seed'
-import { publicProcedure, router } from '../trpc'
-import { z } from 'zod'
 import { Prisma } from '@prisma/client'
-import { isEmpty } from 'lodash/fp'
+import { z } from 'zod'
+import { publicProcedure, router } from '../trpc'
 
 export const appRouter = router({
   pokemonList: publicProcedure

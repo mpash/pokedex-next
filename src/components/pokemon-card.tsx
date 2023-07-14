@@ -114,12 +114,7 @@ export const PokemonCard = ({ pokemon }: { pokemon: PokemonListItem }) => {
           ) : (
             <>
               <Flex justifyContent="space-between" mx={1} alignItems="flex-end">
-                <Heading
-                  fontSize="lg"
-                  fontWeight={700}
-                  noOfLines={1}
-                  // minH="50px"
-                >
+                <Heading fontSize="lg" fontWeight={700} noOfLines={1}>
                   {mainName}
                   {subText && (
                     <Box as="span" fontSize="xs">
@@ -175,7 +170,11 @@ export const PokemonCard = ({ pokemon }: { pokemon: PokemonListItem }) => {
                     textOrientation: 'upright',
                   }}
                 >
-                  <Box fontSize={14} fontWeight={900} color={needsLightContrast ? 'whiteAlpha.400' : 'blackAlpha.400'}>
+                  <Box
+                    fontSize={14}
+                    fontWeight={900}
+                    color={needsLightContrast ? 'whiteAlpha.400' : 'blackAlpha.400'}
+                  >
                     数
                   </Box>
                   <Box fontSize={20} fontWeight={400} letterSpacing={-2}>
@@ -205,27 +204,26 @@ export const PokemonCard = ({ pokemon }: { pokemon: PokemonListItem }) => {
                   />
                 </MotionBox>
                 <Stack
-                  mt={1}
                   alignItems="center"
-                  spacing={2}
+                  // spacing={1}
                   bgColor="blackAlpha.300"
                   mx={[1, null, 3]}
-                  p={[1, null, 2]}
+                  p={[1, null, 3]}
                   borderRadius="md"
                   color="whiteAlpha.800"
                   lineHeight={1}
                 >
+                  <HStack spacing={2}>
+                    {pokemon?.types?.map(type => (
+                      <TypeBadge type={type as PokemonType} key={`type-badge-${pokemon.id}-${type}`} />
+                    ))}
+                  </HStack>
                   <Heading size="sm" textTransform="capitalize" textAlign="center">
                     {pokemon.types[0]} Pokémon
                   </Heading>
                   <Text fontSize="xs" textAlign="center" noOfLines={1}>
                     Height: {pokemon.height}cm. Weight: {pokemon.weight}kg.
                   </Text>
-                  <HStack mt={1} spacing={3} color="blackAlpha.500">
-                    {pokemon?.types?.map(type => (
-                      <TypeBadge type={type as PokemonType} key={`type-badge-${pokemon.id}-${type}`} />
-                    ))}
-                  </HStack>
                 </Stack>
                 <Stack alignItems="center" pos="absolute" top="120px" right={3.5}>
                   {pokemon.subVariant > 0 && (
@@ -255,14 +253,11 @@ export const PokemonCard = ({ pokemon }: { pokemon: PokemonListItem }) => {
   )
 }
 
-const TypeBadge = ({ type }: { type: PokemonType }) => {
-  const { icon } = pokemonTypeData[type]
-  return (
-    <Tooltip label={capitalize(type)}>
-      <div>{icon}</div>
-    </Tooltip>
-  )
-}
+const TypeBadge = ({ type }: { type: PokemonType }) => (
+  <Tooltip label={capitalize(type)}>
+    <div>{pokemonTypeData[type].icon}</div>
+  </Tooltip>
+)
 
 const PokemonCardBack = memo(() => (
   <Box py={5} h="100%" display="grid" placeItems="center" transform="rotateY(180deg)">

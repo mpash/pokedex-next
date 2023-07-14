@@ -12,9 +12,9 @@ import {
   TabPanels,
   TabProps,
   Tabs,
+  Text,
 } from '@chakra-ui/react'
-import { PokemonTypes } from '@components/pokemon'
-import { faArrowLeft, faTimes } from '@fortawesome/pro-solid-svg-icons'
+import { faArrowLeft, faArrowRight, faTimes } from '@fortawesome/pro-solid-svg-icons'
 import { Pokemon } from '@prisma/client'
 import Icon from '@src/components/icon'
 import MotionBox from '@src/components/motion-box'
@@ -25,10 +25,10 @@ import { uniqBy } from 'lodash/fp'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { MdCatchingPokemon } from 'react-icons/md'
 
-type PokemonDetail = Pokemon & {
+type IPokemonDetail = Pokemon & {
   weaknessesMap: TypeWeakness
   evolutions: Pokemon[]
   types: PokemonType[]
@@ -39,7 +39,7 @@ type PokemonDetail = Pokemon & {
 const fetchPokemonDetails = async (id: string) => {
   const res = await fetch(new URL(`/api/pokemon/${id}`, window.location.origin), { cache: 'force-cache' })
   const data = await res.json()
-  return data.data as PokemonDetail
+  return data.data as IPokemonDetail
 }
 
 const PokemonDetail = () => {
@@ -82,15 +82,20 @@ const PokemonDetail = () => {
     _after: { bgColor: 'white' },
   }
 
+  const hasMultipleForms = useMemo(() => {
+    const forms = pokemon?.evolutions.filter(e => e.sourceId === pokemon.sourceId)
+    if (!forms) return false
+    return forms.length > 1
+  }, [pokemon])
+
   return (
     <Box
-      p={10}
+      py={[2, null, 10]}
       minH="100svh"
       bgColor="black"
       color="whiteAlpha.900"
       backgroundSize="200% 200%"
       backgroundPosition="20% 80%"
-      transition="all 2s ease-in-out"
       bgGradient={`radial(${color}, black 50%)`}
     >
       {isLoading ? (
@@ -99,9 +104,9 @@ const PokemonDetail = () => {
         </Box>
       ) : (
         pokemon && (
-          <Stack spacing={4} alignItems="center">
+          <Stack spacing={4} alignItems="center" overflow="hidden">
             <HStack alignItems="center">
-              <Link href="/pokemon" passHref>
+              <Link href="/pokemon" shallow>
                 <Icon icon={faArrowLeft} />
               </Link>
               <Flex flexDir="column" alignItems="center">
@@ -110,35 +115,19 @@ const PokemonDetail = () => {
             </HStack>
             <div>{url && longId && <Image priority width={300} height={300} src={url} alt={longId} />}</div>
             <Heading>{pokemon.name}</Heading>
-            <Tabs isFitted w="500px" variant="unstyled" defaultIndex={tab ? parseInt(tab) : 0}>
+            <Tabs isFitted variant="unstyled" defaultIndex={tab ? parseInt(tab) : 1} w="500px">
               <TabList>
-                <Tab
-                  hidden={pokemon.evolutions.filter(e => e.sourceId === pokemon.sourceId).length === 1}
-                  {...{ ...tabProps, _selected }}
-                >
+                <Tab {...{ ...tabProps, _selected }}>Details</Tab>
+                <Tab {...{ ...tabProps, _selected }}>Stats</Tab>
+                <Tab {...{ ...tabProps, _selected }}>Evolutions</Tab>
+                <Tab hidden={!hasMultipleForms} {...{ ...tabProps, _selected }}>
                   Forms
                 </Tab>
-                <Tab {...{ ...tabProps, _selected }}>Details</Tab>
-                <Tab {...{ ...tabProps, _selected }}>Types</Tab>
-                <Tab {...{ ...tabProps, _selected }}>Stats</Tab>
-                <Tab {...{ ...tabProps, _selected }}>Weaknesses</Tab>
-                <Tab {...{ ...tabProps, _selected }}>Evolutions</Tab>
               </TabList>
-
               <TabPanels>
-                <TabPanel display="flex" justifyContent="center">
-                  <HStack>
-                    {pokemon.evolutions
-                      .filter(e => e.sourceId === pokemon.sourceId)
-                      .map(evolution => (
-                        <Link key={`form-${evolution.id}`} href={`/pokemon/${evolution.id}`} passHref>
-                          <Image width={100} height={100} src={generateImageUrl(evolution)} alt={evolution.name} />
-                        </Link>
-                      ))}
-                  </HStack>
-                </TabPanel>
-                <TabPanel display="flex" textAlign="center" flexDir="column" alignItems="center">
-                  <HStack mb={2}>
+                {/* Details */}
+                <TabPanel>
+                  <HStack display="flex" justifyContent="center" mb={4}>
                     <Button
                       onClick={() => setXOrY('x')}
                       isActive={xOrY === 'x'}
@@ -168,31 +157,97 @@ const PokemonDetail = () => {
                       <Box as={MdCatchingPokemon} fontSize={26} />
                     </Button>
                   </HStack>
-                  <p>{xOrY === 'x' ? pokemon.descriptionX : pokemon.descriptionY}</p>
+                  <Text textAlign="center">{xOrY === 'x' ? pokemon.descriptionX : pokemon.descriptionY}</Text>
                 </TabPanel>
-                <TabPanel display="flex" justifyContent="center">
-                  <PokemonTypes types={pokemon.types} />
+                {/* Stats */}
+                <TabPanel>
+                  <PokemonStats pokemon={pokemon} />
                 </TabPanel>
-                <TabPanel display="flex" justifyContent="center">
-                  <TabPanel display="flex" justifyContent="center" w="100%">
-                    <PokemonStats pokemon={pokemon} />
-                  </TabPanel>
-                </TabPanel>
-                <TabPanel display="flex" justifyContent="center">
-                  <PokemonTypes types={pokemon.weaknesses} />
-                </TabPanel>
+                {/* Evolutions */}
                 <TabPanel>
                   <HStack display="flex" justifyContent="center">
-                    {uniqBy('sourceId', pokemon.evolutions).map(evolution => (
-                      <Link
-                        key={`evolution-${evolution.number}`}
-                        href={`/pokemon/${evolution.id}?tab=5`}
-                        shallow
-                        prefetch
-                      >
-                        <Image width={100} height={100} src={generateImageUrl(evolution)} alt={evolution.number} />
-                      </Link>
-                    ))}
+                    {uniqBy('sourceId', pokemon.evolutions).map((evolution, index) => {
+                      return (
+                        <MotionBox
+                          key={`evolution-${evolution.number}`}
+                          display="flex"
+                          alignItems="center"
+                          _last={{ '.evolution-divider': { display: 'none' } }}
+                          whileInView="whileInView"
+                        >
+                          <MotionBox
+                            whileHover={{ scale: 1.05 }}
+                            initial={{ opacity: index === 0 ? 1 : 0 }}
+                            variants={{
+                              whileInView: {
+                                opacity: 1,
+                                transition: { duration: 0.25, delay: index * 0.25 + 0.25 },
+                              },
+                            }}
+                          >
+                            <Link shallow prefetch href={`/pokemon/${evolution.id}?tab=2`}>
+                              <Image
+                                width={150}
+                                height={150}
+                                alt={evolution.number}
+                                src={generateImageUrl(evolution)}
+                              />
+                              <Heading size="sm" mt={2} textAlign="center">
+                                {evolution.name}
+                                <Box as="span" fontWeight={400} color="whiteAlpha.600" ml={0.5}>
+                                  #{evolution.sourceId}
+                                </Box>
+                              </Heading>
+                            </Link>
+                          </MotionBox>
+                          <MotionBox
+                            initial={{ opacity: 0 }}
+                            variants={{
+                              whileInView: {
+                                opacity: 1,
+                                transition: { duration: 0.25, delay: index * 0.25 + 0.25 },
+                              },
+                            }}
+                          >
+                            <Icon border="none" icon={faArrowRight} className="evolution-divider" />
+                          </MotionBox>
+                        </MotionBox>
+                      )
+                    })}
+                  </HStack>
+                </TabPanel>
+                {/* Forms */}
+                <TabPanel hidden={!hasMultipleForms}>
+                  <HStack justifyContent="center" spacing={5}>
+                    {pokemon.evolutions
+                      .filter(e => e.sourceId === pokemon.sourceId)
+                      .map(evolution => (
+                        <Box key={`form-${evolution.id}`}>
+                          <Link
+                            href={`/pokemon/${evolution.id}?tab=3`}
+                            passHref
+                            shallow
+                            style={{
+                              display: 'flex',
+                              flexDirection: 'column',
+                              alignItems: 'center',
+                            }}
+                          >
+                            <Image
+                              width={100}
+                              height={100}
+                              alt={evolution.name}
+                              src={generateImageUrl(evolution)}
+                            />
+                            <Heading size="xs" mt={2} textAlign="center">
+                              {evolution.name}
+                              <Box as="span" fontWeight={400} color="whiteAlpha.600" ml={0.5}>
+                                #{evolution.sourceId}
+                              </Box>
+                            </Heading>
+                          </Link>
+                        </Box>
+                      ))}
                   </HStack>
                 </TabPanel>
               </TabPanels>
@@ -212,87 +267,11 @@ function generateImageUrl(pokemon: Pokemon) {
   return url
 }
 
-// const EvolutionsByNumber = () => {
-//   {
-//     Object.keys(evolutionsByNumber).length > 0 && (
-//       <>
-//         <Heading size="lg">Evolutions</Heading>
-//         <Box
-//           bgColor="blackAlpha.200"
-//           p={10}
-//           borderRadius="lg"
-//           w="600px"
-//           display="grid"
-//           gridTemplateColumns={`repeat(${
-//             Object.keys(evolutionsByNumber).length - 1
-//           }, auto 1fr) 1fr`}
-//           gridGap={4}
-//           placeItems="center"
-//         >
-//           {Object.keys(evolutionsByNumber).map(number => {
-//             const evolutions = evolutionsByNumber[number]
-//             const isLast = number === Object.keys(evolutionsByNumber).pop()
-//             return (
-//               <Fragment key={number}>
-//                 <Box
-//                   w="100%"
-//                   p={4}
-//                   fontSize="md"
-//                   fontWeight={300}
-//                   textAlign="center"
-//                   borderRadius="lg"
-//                   bgColor="blackAlpha.200"
-//                 >
-//                   <Heading
-//                     pb={1}
-//                     mb={2}
-//                     size="sm"
-//                     borderBottomWidth={1}
-//                     borderBottomColor="whiteAlpha.200"
-//                   >
-//                     #{number}
-//                   </Heading>
-//                   {evolutions.map(pokemon => {
-//                     const url = generateImageUrl(pokemon)
-//                     return (
-//                       <Box
-//                         key={pokemon.id}
-//                         display="flex"
-//                         alignItems="center"
-//                         flexDir="column"
-//                         cursor="pointer"
-//                         onClick={() => router.push(`/pokemon/${pokemon.id}`)}
-//                       >
-//                         <Image
-//                           width={80}
-//                           height={80}
-//                           src={url}
-//                           alt={pokemon.name}
-//                         />
-//                         <Box fontWeight={500}>{pokemon.name}</Box>
-//                       </Box>
-//                     )
-//                   })}
-//                 </Box>
-//                 {!isLast && (
-//                   <Icon
-//                     boxSize={8}
-//                     icon={faArrowRight}
-//                     color="blackAlpha.400"
-//                   />
-//                 )}
-//               </Fragment>
-//             )
-//           })}
-//         </Box>
-//       </>
-//     )
-//   }
-// }
-
-const PokemonStats = ({ pokemon }: { pokemon: PokemonDetail }) => {
-  const { hp, attack, defense, spAttack, spDefense, speed, weaknessesMap, types } = pokemon
-  const topStats = [hp, attack, defense, spAttack, spDefense, speed].sort((a, b) => (b ?? 0) - (a ?? 0)).slice(0, 2)
+const PokemonStats = ({ pokemon }: { pokemon: IPokemonDetail }) => {
+  const { hp, attack, defense, spAttack, spDefense, speed, types } = pokemon
+  const topStats = [hp, attack, defense, spAttack, spDefense, speed]
+    .sort((a, b) => (b ?? 0) - (a ?? 0))
+    .slice(0, 2)
   const stats = [
     { label: 'HP', value: hp, max: 255 },
     { label: 'Attack', value: attack, max: 181 },
@@ -304,15 +283,18 @@ const PokemonStats = ({ pokemon }: { pokemon: PokemonDetail }) => {
   const { r, g, b } = pokemon.primaryColor
   const color = `rgb(${r}, ${g}, ${b})`
 
-  console.log(typeWeaknesses(types[0], types[1]))
-  console.log(typeStrengths(types[0], types[1]))
+  const weaknesses = typeWeaknesses(types[0], types[1])
+  const orderedWeaknesses = Object.keys(weaknesses).sort(
+    (a, b) => weaknesses[a].modifier - weaknesses[b].modifier,
+  )
 
-  // const orderedWeaknesses = Object.keys(weaknessesMap)
-  //   .sort((a, b) => weaknessesMap[b] - weaknessesMap[a])
-  //   .filter(type => weaknessesMap[type] > 0)
+  const strengths = typeStrengths(types[0], types[1])
+  const orderedStrengths = Object.keys(strengths).sort(
+    (a, b) => strengths[a].modifier - strengths[b].modifier,
+  )
 
   return (
-    <Stack w="full" spacing={6}>
+    <Stack spacing={6}>
       <Box
         display="grid"
         gridTemplateColumns="auto auto 1fr"
@@ -335,30 +317,49 @@ const PokemonStats = ({ pokemon }: { pokemon: PokemonDetail }) => {
           )
         })}
       </Box>
-      <Heading pb={2} size="lg" borderBottomWidth={1} borderBottomColor="whiteAlpha.400">
-        Type Weaknesses
-      </Heading>
-      <p>The effectiveness of each type on {pokemon.name}.</p>
-      {/* <pre>{JSON.stringify(weaknessesMap, null, 2)}</pre> */}
-      {/* <Box
-        w="100%"
-        gridGap={2}
-        display="grid"
-        justifyItems="center"
-        gridTemplateColumns="repeat(auto-fill, minmax(70px, 1fr))"
-      >
-        {orderedWeaknesses.map(type => {
-          const weaknesses = weaknessesMap[type as PokemonType]
-          return (
-            <Box key={type} display="flex" alignItems="center">
-              <PokemonWeaknessType
-                type={type as PokemonType}
-                value={weaknesses}
-              />
-            </Box>
-          )
-        })}
-      </Box> */}
+      <Stack spacing={4}>
+        <Box textAlign="center">
+          <Heading pb={1} mb={1} size="lg" borderBottomWidth={1} borderBottomColor="whiteAlpha.400">
+            Type Weaknesses
+          </Heading>
+          <p>The effectiveness of each type on {pokemon.name}.</p>
+        </Box>
+        <HStack mx="auto">
+          {orderedWeaknesses.map(type => {
+            const values = weaknesses[type as PokemonType]
+            return (
+              <Box key={type} display="flex" alignItems="center">
+                <PokemonStatType type={type as PokemonType} value={values.modifier} />
+              </Box>
+            )
+          })}
+        </HStack>
+      </Stack>
+      <Stack spacing={4}>
+        <Box textAlign="center">
+          <Heading
+            pb={1}
+            mb={1}
+            size="lg"
+            textAlign="center"
+            borderBottomWidth={1}
+            borderBottomColor="whiteAlpha.400"
+          >
+            Type Strengths
+          </Heading>
+          <p>{pokemon.name}&apos;s effectiveness on each type.</p>
+        </Box>
+        <HStack mx="auto">
+          {orderedStrengths.map(type => {
+            const values = strengths[type as PokemonType]
+            return (
+              <Box key={type} display="flex" alignItems="center">
+                <PokemonStatType type={type as PokemonType} value={values.modifier} />
+              </Box>
+            )
+          })}
+        </HStack>
+      </Stack>
     </Stack>
   )
 }
@@ -397,7 +398,7 @@ const PokemonStat = ({
   )
 }
 
-const PokemonWeaknessType = ({ type, value }: { type: PokemonType; value: number | null }) => {
+const PokemonStatType = ({ type, value }: { type: PokemonType; value: number | null }) => {
   const { icon, primary, color } = pokemonTypeData[type]
   return (
     <HStack
@@ -413,7 +414,7 @@ const PokemonWeaknessType = ({ type, value }: { type: PokemonType; value: number
       justifyContent="center"
       textTransform="uppercase"
       title={type}
-      spacing={1}
+      spacing={0.25}
     >
       <Box display="flex" alignItems="center">
         {typeof icon === 'object' && icon?.icon ? <Icon minW="14px" h="14px" icon={icon} /> : icon}

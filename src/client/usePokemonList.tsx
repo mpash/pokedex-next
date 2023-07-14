@@ -9,7 +9,7 @@ const fetchPokemon: QueryFunction<
   (string | boolean | undefined)[]
 > = async ({ signal, pageParam, queryKey }) => {
   const url = new URL('/api/pokemon', window.location.origin)
-  url.searchParams.set('pageSize', '200')
+  url.searchParams.set('pageSize', '100')
 
   const [_, query, showVariants] = queryKey
 
@@ -18,6 +18,7 @@ const fetchPokemon: QueryFunction<
 
   const res = await fetch(pageParam ?? url, {
     signal,
+    cache: 'force-cache',
   })
   const data = await res.json()
 
