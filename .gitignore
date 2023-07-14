@@ -33,3 +33,12 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
+
+expressions_file
+
+# VSCode
+.vscode/*
+!.vscode/settings.json
+
+# misc
+.cache/

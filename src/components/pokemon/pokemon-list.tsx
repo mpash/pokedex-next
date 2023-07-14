@@ -1,5 +1,5 @@
 import { Box, Flex } from '@chakra-ui/react'
-import { usePokemonList } from '@components/hooks/usePokemonList'
+import { usePokemonList } from '@src/components/hooks/usePokemonList_DEPRECATED'
 import MotionBox from '@components/motion-box'
 import Pokemon from '@components/pokemon'
 import { usePagination } from '@hooks/usePagination'
@@ -137,16 +137,14 @@ const PokemonList = () => {
         {!!pokemon &&
           pokemon
             .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
-            .map((pokemon: Pokemon, index) => {
-              return (
-                <Box
-                  key={`${pokemon.number}-${pokemon?.fId ?? 'f1'}`}
-                  ref={refs[pokemon.id]}
-                >
-                  <Pokemon pokemon={pokemon} containerRef={containerRef} />
-                </Box>
-              )
-            })}
+            .map((pokemon: Archive.Pokemon) => (
+              <Box
+                key={`${pokemon.number}-${pokemon?.fId ?? 'f1'}`}
+                ref={refs[pokemon.id]}
+              >
+                <Pokemon pokemon={pokemon} />
+              </Box>
+            ))}
       </MotionBox>
     </>
   )

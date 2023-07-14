@@ -1,27 +1,51 @@
-// pages/_app.js
-import { ChakraProvider } from '@chakra-ui/react'
-import { FilterProvider } from '@hooks/useFilters'
-import { PaginationProvider } from '@hooks/usePagination'
-import { SelectedPokemonTypesProvider } from '@hooks/useSelectedPokemonTypes'
+import { ChakraProvider, useColorMode } from '@chakra-ui/react'
+import { config } from '@fortawesome/fontawesome-svg-core'
+import '@fortawesome/fontawesome-svg-core/styles.css'
+import { Hydrate, QueryClient, QueryClientConfig, QueryClientProvider } from '@tanstack/react-query'
+import { SessionProvider } from 'next-auth/react'
 import { AppProps } from 'next/app'
-import { QueryClient, QueryClientProvider } from 'react-query'
+import { useEffect, useRef } from 'react'
+import theme from 'theme'
 
-const queryClient = new QueryClient()
+config.autoAddCss = false
 
-function MyApp({ Component, pageProps }: AppProps) {
+export const queryClientOptions: QueryClientConfig = {
+  defaultOptions: {
+    queries: {
+      retry: 0,
+      refetchOnWindowFocus: false,
+      cacheTime: 1000 * 60 * 60 * 24 * 7, // 1 week
+    },
+  },
+}
+
+function App({ Component, pageProps: { session, dehydratedState, ...pageProps } }: AppProps) {
+  const queryClientRef = useRef<QueryClient>(new QueryClient(queryClientOptions))
+
   return (
-    <ChakraProvider>
-      <QueryClientProvider client={queryClient}>
-        <SelectedPokemonTypesProvider>
-          <PaginationProvider>
-            <FilterProvider>
+    <SessionProvider session={session}>
+      <ChakraProvider theme={theme}>
+        <QueryClientProvider client={queryClientRef.current}>
+          <Hydrate state={dehydratedState}>
+            <AppClient>
               <Component {...pageProps} />
-            </FilterProvider>
-          </PaginationProvider>
-        </SelectedPokemonTypesProvider>
-      </QueryClientProvider>
-    </ChakraProvider>
+            </AppClient>
+          </Hydrate>
+        </QueryClientProvider>
+      </ChakraProvider>
+    </SessionProvider>
   )
 }
 
-export default MyApp
+// export default trpc.withTRPC(App)
+export default App
+
+const AppClient = ({ children }: { children?: React.ReactNode }) => {
+  const { setColorMode } = useColorMode()
+
+  useEffect(() => {
+    setColorMode('dark')
+  }, [setColorMode])
+
+  return <>{children}</>
+}

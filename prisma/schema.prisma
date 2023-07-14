@@ -1,0 +1,160 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Pokemon {
+  id               Int              @id @default(autoincrement())
+  sourceId         Int
+  name             String
+  slug             String
+  number           String
+  weight           Float
+  height           Int
+  hp               Int?
+  attack           Int?
+  defense          Int?
+  spAttack         Int?
+  spDefense        Int?
+  speed            Int?
+  image            String
+  descriptionX     String
+  descriptionY     String
+  detailPageURL    String
+  collectiblesSlug String
+  thumbnailAltText String
+  thumbnailImage   String
+  subVariant       Int
+  evolutionChain   String?
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  types            PokemonType[]
+  weaknesses       PokemonType[]    @relation("PokemonWeaknesses")
+  abilities        PokemonAbility[]
+  japaneseMeta     JapaneseMeta?
+  primaryColor     PrimaryColor?
+  regionId         Int?
+  region           Region?          @relation(fields: [regionId], references: [id])
+  evolvesTo        Pokemon[]        @relation("PokemonEvolutions")
+  evolvesFrom      Pokemon[]        @relation("PokemonEvolutions")
+  pokemonCards     PokemonCard[]
+
+  @@index([name], name: "pokemon_name")
+  @@index([number], name: "pokemon_number")
+  @@index([sourceId], name: "pokemon_source_id")
+  @@index([slug], name: "pokemon_slug")
+}
+
+model PokemonType {
+  id           Int       @id @default(autoincrement())
+  type         String    @unique
+  pokemon      Pokemon[]
+  weakPokemons Pokemon[] @relation("PokemonWeaknesses")
+
+  @@index([type], name: "pokemon_type")
+}
+
+model PokemonAbility {
+  id      Int       @id @default(autoincrement())
+  ability String    @unique
+  pokemon Pokemon[]
+
+  @@index([ability], name: "pokemon_ability")
+}
+
+model JapaneseMeta {
+  id         Int     @id @default(autoincrement())
+  kyodai_flg Int
+  image_s    String
+  sub_name   String
+  sub        Int
+  type_2     Int
+  image_m    String
+  no         String
+  type_1     Int
+  takasa     String
+  zukan_no   String
+  name       String
+  omosa      String
+  pokemonId  Int     @unique
+  pokemon    Pokemon @relation(fields: [pokemonId], references: [id])
+
+  @@index([name], name: "japanese_meta_name")
+}
+
+model PrimaryColor {
+  id        Int     @id @default(autoincrement())
+  r         Int
+  g         Int
+  b         Int
+  pokemonId Int     @unique
+  pokemon   Pokemon @relation(fields: [pokemonId], references: [id])
+}
+
+model Region {
+  id       Int       @id @default(autoincrement())
+  sourceId Int       @unique
+  name     String    @unique
+  pokemon  Pokemon[]
+
+  @@index([name], name: "region_name")
+}
+
+model PokemonCard {
+  id                     Int                      @id @default(autoincrement())
+  sourceId               String?
+  data                   Json?
+  imageSm                String
+  imageLg                String
+  name                   String
+  rules                  String[]
+  hp                     String?
+  types                  String[]
+  abilities              Json?
+  attacks                Json?
+  weaknesses             Json?
+  retreatCost            String[]
+  convertedRetreatCost   Int?
+  flavorText             String?
+  rarity                 String?
+  artist                 String?
+  number                 String
+  pokemon                Pokemon[]
+  pokemonCardSetId       Int?
+  set                    PokemonCardSet?          @relation(fields: [pokemonCardSetId], references: [id])
+  pokemonCardSuperTypeId Int?
+  superType              PokemonCardSetSuperType? @relation(fields: [pokemonCardSuperTypeId], references: [id])
+  subTypes               PokemonCardSetSubType[]
+}
+
+model PokemonCardSet {
+  id           Int           @id @default(autoincrement())
+  sourceId     String?
+  name         String
+  series       String
+  printedTotal Int
+  total        Int
+  legalities   Json
+  ptcgoCode    String?
+  releaseDate  String
+  symbolUrl    String
+  logoUrl      String
+  pokemonCards PokemonCard[]
+}
+
+model PokemonCardSetSuperType {
+  id           Int           @id @default(autoincrement())
+  name         String        @unique
+  pokemonCards PokemonCard[]
+}
+
+model PokemonCardSetSubType {
+  id           Int           @id @default(autoincrement())
+  name         String        @unique
+  pokemonCards PokemonCard[]
+}

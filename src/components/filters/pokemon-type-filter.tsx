@@ -32,7 +32,7 @@ const PokemonTypeFilter = () => {
     setTypeSummaryIsVisible,
   } = useSelectedPokemonTypes()
 
-  const handleClick = (type: PokemonTypes) => {
+  const handleClick = (type: PokemonType) => {
     if (selectedTypes.length === 2) {
       clearAllSelectedTypes()
     }
@@ -179,7 +179,7 @@ const PokemonTypeFilter = () => {
         }
         overflowX="scroll"
       >
-        {(Object.keys(pokemonTypeData) as PokemonTypes[]).map(type => (
+        {(Object.keys(pokemonTypeData) as PokemonType[]).map(type => (
           <TypeBadge key={type} type={type} handleClick={handleClick} />
         ))}
       </Box>
@@ -190,7 +190,7 @@ const PokemonTypeFilter = () => {
 export default PokemonTypeFilter
 
 const TypeBadge = memo(
-  ({ type, handleClick }: { type: PokemonTypes; handleClick: any }) => {
+  ({ type, handleClick }: { type: PokemonType; handleClick: any }) => {
     const { icon, primary, color } = pokemonTypeData[type]
     const { isSelected, isExpanded } = useSelectedPokemonTypes()
     return (

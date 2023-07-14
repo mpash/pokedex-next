@@ -1,11 +1,17 @@
 {
+  "ts-node": {
+    "esm": true,
+    "swc": true,
+    "files": true,
+    // "transpileOnly": true,
+    "compilerOptions": {
+      "module": "commonjs"
+    }
+  },
   "compilerOptions": {
     "target": "es5",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "downlevelIteration": true,
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -17,28 +23,25 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
-    "noImplicitAny": false,
-    "downlevelIteration": true,
+    "incremental": true,
     "baseUrl": "./src",
+    "noImplicitAny": false,
     "paths": {
-      "@components/*": [
-        "components/*"
-      ],
-      "@data/*": [
-        "data/*"
-      ],
-      "@hooks/*": [
-        "hooks/*"
-      ]
-    },
-    "incremental": true
+      "@/*": ["../*"],
+      "@src/*": ["./*"],
+      "@components/*": ["components/*"],
+      "@data/*": ["data/*"],
+      "@hooks/*": ["hooks/*"],
+      "@public/*": ["../public/*"],
+      "@api/*": ["../pages/api/*"],
+      "@pages/*": ["../pages/*"]
+    }
   },
   "include": [
     "next-env.d.ts",
     "**/*.ts",
-    "**/*.tsx"
+    "**/*.tsx",
+    "pages/api/pokemon/[pokemonId].ts"
   ],
-  "exclude": [
-    "node_modules"
-  ]
+  "exclude": ["node_modules"]
 }

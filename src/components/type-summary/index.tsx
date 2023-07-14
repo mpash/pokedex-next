@@ -1,5 +1,5 @@
 import { Box, Button, Flex, HStack } from '@chakra-ui/react'
-import { usePokemonList } from '@components/hooks/usePokemonList'
+import { usePokemonList } from '@src/components/hooks/usePokemonList_DEPRECATED'
 import Icon from '@components/icon'
 import MotionBox from '@components/motion-box'
 import {
@@ -31,7 +31,7 @@ const TypeSummary = () => {
   const typeCounts = useMemo(() => {
     type PokemonTypeCounts =
       | {
-          [k in PokemonTypes]: number
+          [k in PokemonType]: number
         }
       | {}
     const counts: PokemonTypeCounts = (
