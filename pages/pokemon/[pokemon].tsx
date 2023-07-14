@@ -34,6 +34,7 @@ type IPokemonDetail = Pokemon & {
   types: PokemonType[]
   primaryColor: { r: number; g: number; b: number }
   weaknesses: PokemonType[]
+  pokemonCards: any[]
 }
 
 const fetchPokemonDetails = async (id: string) => {
@@ -88,6 +89,8 @@ const PokemonDetail = () => {
     return forms.length > 1
   }, [pokemon])
 
+  console.log(pokemon?.pokemonCards)
+
   return (
     <Box
       py={[2, null, 10]}
@@ -115,11 +118,12 @@ const PokemonDetail = () => {
             </HStack>
             <div>{url && longId && <Image priority width={300} height={300} src={url} alt={longId} />}</div>
             <Heading>{pokemon.name}</Heading>
-            <Tabs isFitted variant="unstyled" defaultIndex={tab ? parseInt(tab) : 1} w="500px">
+            <Tabs isFitted variant="unstyled" defaultIndex={tab ? parseInt(tab) : 1} w="650px">
               <TabList>
                 <Tab {...{ ...tabProps, _selected }}>Details</Tab>
                 <Tab {...{ ...tabProps, _selected }}>Stats</Tab>
                 <Tab {...{ ...tabProps, _selected }}>Evolutions</Tab>
+                <Tab {...{ ...tabProps, _selected }}>TCG Cards</Tab>
                 <Tab hidden={!hasMultipleForms} {...{ ...tabProps, _selected }}>
                   Forms
                 </Tab>
@@ -216,6 +220,14 @@ const PokemonDetail = () => {
                     })}
                   </HStack>
                 </TabPanel>
+                {/* Cards */}
+                <TabPanel>
+                  <Box overflowX="auto" display="grid" gridTemplateColumns="repeat(3, 1fr)" gridGap={4}>
+                    {pokemon?.pokemonCards.map(card => (
+                      <PokemonTCGCard key={card.id} {...{ card }} />
+                    ))}
+                  </Box>
+                </TabPanel>
                 {/* Forms */}
                 <TabPanel hidden={!hasMultipleForms}>
                   <HStack justifyContent="center" spacing={5}>
@@ -224,7 +236,7 @@ const PokemonDetail = () => {
                       .map(evolution => (
                         <Box key={`form-${evolution.id}`}>
                           <Link
-                            href={`/pokemon/${evolution.id}?tab=3`}
+                            href={`/pokemon/${evolution.id}?tab=4`}
                             passHref
                             shallow
                             style={{
@@ -234,12 +246,12 @@ const PokemonDetail = () => {
                             }}
                           >
                             <Image
-                              width={100}
-                              height={100}
+                              width={150}
+                              height={150}
                               alt={evolution.name}
                               src={generateImageUrl(evolution)}
                             />
-                            <Heading size="xs" mt={2} textAlign="center">
+                            <Heading size="sm" mt={2} textAlign="center">
                               {evolution.name}
                               <Box as="span" fontWeight={400} color="whiteAlpha.600" ml={0.5}>
                                 #{evolution.sourceId}
@@ -427,5 +439,14 @@ const PokemonStatType = ({ type, value }: { type: PokemonType; value: number | n
         }).format(value ?? 0)}
       </div>
     </HStack>
+  )
+}
+
+const PokemonTCGCard = ({ card }: { card?: any }) => {
+  if (!card) return null
+  return (
+    <MotionBox>
+      <Image height={100} width={250} src={card.imageLg} alt={card.id} />
+    </MotionBox>
   )
 }
