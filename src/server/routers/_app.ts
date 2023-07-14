@@ -1,8 +1,8 @@
 import { prisma } from '@/prisma/seed'
 import { Prisma } from '@prisma/client'
+import { baseApiUrl } from '@src/utils'
 import { z } from 'zod'
 import { publicProcedure, router } from '../trpc'
-import { baseApiUrl } from '@src/utils'
 
 export const appRouter = router({
   pokemonList: publicProcedure

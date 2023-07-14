@@ -1,6 +1,6 @@
 import { Prisma, Region } from '@prisma/client'
 import withNextCors from '@src/client/withNextCors'
-import { baseApiUrl } from '@src/utils'
+import { getBaseUrl } from '@src/utils'
 import { prisma } from '@src/utils/prisma'
 import { get, has } from 'lodash/fp'
 import { NextApiRequest, NextApiResponse } from 'next'
@@ -154,7 +154,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<any>) => {
     const lastPokemonId = pokemon[pokemon.length - 1]?.id
     if (!lastPokemonId || pokemon.length < pageSize) return null
 
-    const nextPage = new URL('/api/pokemon', baseApiUrl)
+    const nextPage = new URL('/api/pokemon', getBaseUrl())
     nextPage.searchParams.set('pageSize', pageSize.toString())
     queryParams.query && nextPage.searchParams.set('q', queryParams.query)
     lastPokemonId && nextPage.searchParams.set('lastId', lastPokemonId.toString())
