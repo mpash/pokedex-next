@@ -1,4 +1,4 @@
-import { Box, Button, ButtonProps, Flex, Input, Stack } from '@chakra-ui/react'
+import { Box, Button, ButtonProps, HStack, Stack } from '@chakra-ui/react'
 import Icon from '@components/icon'
 import { faBackpack, faCardsBlank, faDna, faEgg, faMapLocationDot } from '@fortawesome/pro-duotone-svg-icons'
 import PokedexV2Logo from '@src/components/PokedexV2Logo'
@@ -20,13 +20,7 @@ const Home: NextPage = () => {
       <Box h="100svh" display="grid" placeItems="center">
         <Stack spacing={[2, 4]} p={[2, 4]} alignItems="center">
           <PokedexV2Logo size="4xl" lineHeight="1.5" letterSpacing={4} />
-          <Input borderRadius={25} w="700px" placeholder="Search Pokémon, moves, or abilities" />
-          <Box
-            w="700px"
-            gridGap={4}
-            display="grid"
-            gridTemplateColumns="repeat(auto-fill, minmax(130px, 1fr))"
-          >
+          <HStack>
             <BigButton
               label="Pokédex v2"
               bgColor="red.500"
@@ -42,27 +36,42 @@ const Home: NextPage = () => {
               onClick={() => router.push('/type-calculator')}
             />
             <BigButton
-              label="TCG"
-              icon={faCardsBlank}
-              bgColor="yellow.500"
-              _active={{ bgColor: 'yellow.400' }}
-            />
-            <BigButton label="Items" icon={faBackpack} bgColor="blue.500" _active={{ bgColor: 'blue.400' }} />
-            <BigButton
-              label="Locations"
-              bgColor="green.500"
-              icon={faMapLocationDot}
-              _active={{ bgColor: 'green.400' }}
-            />
-            <BigButton
+              w="40%"
               icon={faDna}
               label="Types"
               bgColor="orange.500"
               _active={{ bgColor: 'orange.400' }}
               onClick={() => router.push('/type-chart')}
             />
-            <BigButton label="Eggs" icon={faEgg} bgColor="purple.500" _active={{ bgColor: 'purple.400' }} />
-          </Box>
+            <BigButton
+              hidden
+              label="TCG"
+              icon={faCardsBlank}
+              bgColor="yellow.500"
+              _active={{ bgColor: 'yellow.400' }}
+            />
+            <BigButton
+              hidden
+              label="Items"
+              icon={faBackpack}
+              bgColor="blue.500"
+              _active={{ bgColor: 'blue.400' }}
+            />
+            <BigButton
+              hidden
+              label="Locations"
+              bgColor="green.500"
+              icon={faMapLocationDot}
+              _active={{ bgColor: 'green.400' }}
+            />
+            <BigButton
+              hidden
+              label="Eggs"
+              icon={faEgg}
+              bgColor="purple.500"
+              _active={{ bgColor: 'purple.400' }}
+            />
+          </HStack>
         </Stack>
       </Box>
 
