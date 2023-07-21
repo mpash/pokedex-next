@@ -24,20 +24,16 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<any>) => {
     },
   })
 
-  let evolutions: Pokemon[] = []
-  if (pokemon?.evolutionChain) {
-    evolutions = await prisma.pokemon.findMany({
-      where: {
-        slug: {
-          in: pokemon?.evolutionChain.split(','),
-          mode: 'insensitive',
+  const evolutions = pokemon?.evolutionChain
+    ? await prisma.pokemon.findMany({
+        where: {
+          slug: {
+            in: pokemon?.evolutionChain.split(','),
+            mode: 'insensitive',
+          },
         },
-      },
-      orderBy: {
-        id: 'asc',
-      },
-    })
-  }
+      })
+    : []
 
   if (!pokemon) {
     throw new Error('Unable to find a Pokemon with the given ID: ' + id)
