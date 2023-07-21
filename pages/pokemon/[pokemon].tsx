@@ -22,7 +22,7 @@ import { pokemonTypeData } from '@src/data/pokemon-types'
 import { typeStrengths, TypeWeakness, typeWeaknesses } from '@src/data/typeCalculator'
 import { baseApiUrl } from '@src/utils'
 import { useQuery } from '@tanstack/react-query'
-import { groupBy, uniqBy } from 'lodash/fp'
+import { groupBy, orderBy, sortBy, uniqBy } from 'lodash/fp'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
@@ -91,6 +91,8 @@ const PokemonDetail = () => {
   }, [pokemon])
 
   const pokemonCardsByRarity = groupBy('rarity', pokemon?.pokemonCards)
+
+  const evolutions = sortBy('sourceId', uniqBy('sourceId', pokemon?.evolutions))
 
   return (
     <Box
@@ -171,7 +173,7 @@ const PokemonDetail = () => {
                 {/* Evolutions */}
                 <TabPanel>
                   <HStack display="flex" justifyContent="center">
-                    {uniqBy('sourceId', pokemon.evolutions).map((evolution, index) => {
+                    {evolutions.map((evolution, index) => {
                       return (
                         <MotionBox
                           key={`evolution-${evolution.number}`}
