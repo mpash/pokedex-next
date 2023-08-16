@@ -2,7 +2,6 @@
   "name": "pokedex-next",
   "version": "0.1.1",
   "private": true,
-  "main": "",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
