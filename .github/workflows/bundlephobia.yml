@@ -2,10 +2,10 @@ name: "check my bundlephobia"
 on:
   push:
     branches:
-      - master
+      - main
   pull_request:
     branches:
-      - master
+      - main
 jobs:
   bundlecheck:
     runs-on: ubuntu-latest
