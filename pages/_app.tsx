@@ -7,6 +7,7 @@ import { SessionProvider } from 'next-auth/react'
 import { AppProps } from 'next/app'
 import { useEffect, useRef } from 'react'
 import theme from 'theme'
+import { Analytics } from '@vercel/analytics/react'
 
 config.autoAddCss = false
 
@@ -30,6 +31,7 @@ function App({ Component, pageProps: { session, dehydratedState, ...pageProps } 
           <Hydrate state={dehydratedState}>
             <AppClient>
               <Component {...pageProps} />
+              <Analytics />
             </AppClient>
           </Hydrate>
         </QueryClientProvider>
