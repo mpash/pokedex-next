@@ -16,4 +16,3 @@ jobs:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           strict: true
           threshold: 500
-          ignore-dev-dependencies: true
